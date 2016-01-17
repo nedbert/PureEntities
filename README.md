@@ -13,7 +13,7 @@ such as **clear()** or **create()**.
   
 See documentation page for details.  
   
-**[알림] 이 플러그인은 완벽하지 않습니다
+**[알림] 이 플러그인은 완벽하지 않습니다  
 크래쉬가 발생하거나, 그외에 다른문제가 발생할수도 있습니다**  
   
 엔티티매니저는 문자 그대로 엔티티를 관리하는 플러그인을 의미합니다.  
@@ -21,10 +21,10 @@ See documentation page for details.
 
 엔티티매니저는 또한 개발자 여러분을 위해  
 **clear()** 또는 **create()** 와 같은 간단한 API가 제공됩니다.  
+  
+자세한 사항은 아래를 보시기 바랍니다
 
-밑에 나와있는 세부사항들을 보시기 바랍니다
-
-### Method
+### Method(메소드)
   * EntityManager
     * public static Map<Integer, BaseEntity> getEntities();
     * public static Map<Integer, BaseEntity> getEntities(Level level);
@@ -57,7 +57,7 @@ See documentation page for details.
     * public boolean isAngry() #r u angry?
     * public void setAngry(int angry) #set how angry he is.  
   
-### Commands
+### Commands(명령어)
   * /entitymanager
     * usage: /entitymanager (check|remove|spawn)
     * permission: entitymanager.command
@@ -74,7 +74,7 @@ See documentation page for details.
     * permission: entitymanager.command.spawn
     * description: literally(If blank, it is set as a Player)
 
-### Method Examples
+### Method Examples(메소드 예시)
 ``` java  
 //Entity Method  
 EntityManager.getEntities().forEach((id, baseEntity) -> {  
