@@ -1,0 +1,13 @@
+#name, main, version and api are required
+name: EntityManager
+main: milk.entitymanager.EntityManager
+version: "1.0"
+api: ["1.0.0"]
+load: STARTUP
+author: milk0417
+commands:
+ entitymanager:
+  usage: false
+  description: ""
+  aliases: [ent, entity]
+  permission: entitymanager.command
