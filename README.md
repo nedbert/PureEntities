@@ -26,33 +26,27 @@ See documentation page for details.
 
 ### Method(메소드)
   * EntityManager
-    * public static Map<Integer, BaseEntity> getEntities();
-    * public static Map<Integer, BaseEntity> getEntities(Level level);
-    * 서버에 있는 모든 BaseEntity들의 Map을 반환합니다.
-    * returns Map of all BaseEntities in given server.
+    * public static Map<Integer, BaseEntity> getEntities()
+    * public static Map<Integer, BaseEntity> getEntities(Level level)
     * 
-    * public static void clear();
-    * public static void clear(Class[] type, type);
-    * public static void clear(Class[] type, Level level);
-    * 주어진 type의 객체를 모두 제거합니다.
-    * clears all entities with given type.
+    * public static void clear()
+    * public static void clear(Class[] type, type)
+    * public static void clear(Class[] type, Level level)
     * 
-    * public static BaseEntity create(int|String type, Position pos, Object... args);
-    * 주어진 pos, type로 엔티티를 소환합니다.
-    * spawns entity with given type and pos
+    * public static BaseEntity create(int|String type, Position pos, Object... args)
   * BaseEntity
-    * public boolean isCreated(); #check if entity is created.
-    * public boolean isMovement() #check if entity is movable.
-    * public boolean isWallCheck() #check if entity can go through walls.
-    * public void setMovement(boolean value) #literally.
-    * public void setWallCheck(boolean value) #set if entity will check walls when it moves.
+    * public boolean isCreated()
+    * public boolean isMovement()
+    * public boolean isWallCheck()
+    * public void setMovement(boolean value)
+    * public void setWallCheck(boolean value)
   * Monster
     * public double getDamage();
-    * public double getDamage(int difficulty); #returns monster's damage in given difficulty.
+    * public double getDamage(int difficulty)
     * 
     * public void setDamage(double damage)
     * public void setDamage(double[] damage)
-    * public void setDamage(double damage, int difficulty) #set monster's damage with given difficulty.
+    * public void setDamage(double damage, int difficulty)
   * PigZombie
     * public boolean isAngry() #r u angry?
     * public void setAngry(int angry) #set how angry he is.  

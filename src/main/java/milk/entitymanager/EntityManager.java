@@ -80,7 +80,6 @@ public class EntityManager extends PluginBase implements Listener{
             FireBall.class,
         };*/
 
-
         ArrayList<Class<? extends Entity>> clazz2 = new ArrayList<>();
         clazz2.add(Wolf.class);
         clazz2.add(Ocelot.class);
@@ -117,7 +116,6 @@ public class EntityManager extends PluginBase implements Listener{
                     entity = (Entity) constructor.newInstance(objects);
                 }
             }catch(Exception ignore){}
-
         }
 
         return entity;
@@ -166,7 +164,7 @@ public class EntityManager extends PluginBase implements Listener{
                 .add(new DoubleTag("", 0)))
             .putList(new ListTag<FloatTag>("Rotation")
                 .add(new FloatTag("", source instanceof Location ? (float) ((Location) source).yaw : 0))
-                .add(new FloatTag("", source instanceof Location ? (float) ((Location) source).yaw : 0)));
+                .add(new FloatTag("", source instanceof Location ? (float) ((Location) source).pitch : 0)));
 
         if (knownEntities.containsKey(type)) {
             Class<? extends Entity> clazz = knownEntities.get(type);
@@ -303,6 +301,7 @@ public class EntityManager extends PluginBase implements Listener{
     }
 
     public void onDisable(){
+        this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]Plugin has been disable");
         //file_put_contents(this.getServer().getDataPath() + "plugins/EntityManager/spawner.yml", yaml_emit(spawn, YAML_UTF8_ENCODING));
     }
 
