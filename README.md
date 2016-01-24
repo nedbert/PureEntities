@@ -1,7 +1,9 @@
 # EntityManager   
   
 Author: **[@milk0417(승원)](https://github.com/milk0417)**  
-
+  
+자매품(PMMP): [EntityManager-PMMP](https://github.com/EntityManager)
+  
 **[NOTICE] This plugin is NOT perfect at all.  
 It can cause your server crash, or something bad else :P**
   
