@@ -18,10 +18,8 @@ public abstract class FlyMonster extends FlyEntity{
 
     int attackDelay = 0;
 
-    private int entityTick = 0;
-
-    private double[] minDamage = new double[]{0, 0, 0, 0};
-    private double[] maxDamage = new double[]{0, 0, 0, 0};
+    double[] minDamage;
+    double[] maxDamage;
 
     public FlyMonster(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
@@ -29,81 +27,7 @@ public abstract class FlyMonster extends FlyEntity{
 
     public abstract void attackEntity(Entity player);
 
-    public double getDamage(){
-        return getDamage(null);
-    }
-
-    public double getDamage(Integer difficulty){
-        return Utils.rand((int) this.getMinDamage(difficulty), (int) this.getMaxDamage(difficulty));
-    }
-
-    public double getMinDamage(){
-        return getMinDamage(null);
-    }
-
-    public double getMinDamage(Integer difficulty){
-        if(difficulty == null || difficulty > 3 || difficulty < 0){
-            difficulty = Server.getInstance().getDifficulty();
-        }
-        return this.minDamage[difficulty];
-    }
-
-    public double getMaxDamage(){
-        return getMaxDamage(null);
-    }
-
-    public double getMaxDamage(Integer difficulty){
-        if(difficulty == null || difficulty > 3 || difficulty < 0){
-            difficulty = Server.getInstance().getDifficulty();
-        }
-        return this.maxDamage[difficulty];
-    }
-
-    public void setDamage(double[] damage){
-        this.setMinDamage(damage);
-        this.setMaxDamage(damage);
-    }
-
-    public void setDamage(double damage, int difficulty){
-        this.setMinDamage(damage, difficulty);
-        this.setMaxDamage(damage, difficulty);
-    }
-
-    public void setMinDamage(double[] damage){
-        if(damage.length < 4) return;
-        minDamage[0] = Math.min(damage[0], maxDamage[0]);
-        minDamage[1] = Math.min(damage[1], maxDamage[1]);
-        minDamage[2] = Math.min(damage[2], maxDamage[2]);
-        minDamage[3] = Math.min(damage[3], maxDamage[3]);
-    }
-
-    public void setMinDamage(double damage){
-        setMinDamage(damage, Server.getInstance().getDifficulty());
-    }
-
-    public void setMinDamage(double damage, int difficulty){
-        if(difficulty >= 1 && difficulty <= 3){
-            this.minDamage[difficulty] = Math.min(damage, this.maxDamage[difficulty]);
-        }
-    }
-
-    public void setMaxDamage(double[] damage){
-        if(damage.length < 4) return;
-        maxDamage[0] = Math.min(damage[0], minDamage[0]);
-        maxDamage[1] = Math.min(damage[1], minDamage[1]);
-        maxDamage[2] = Math.min(damage[2], minDamage[2]);
-        maxDamage[3] = Math.min(damage[3], minDamage[3]);
-    }
-
-    public void setMaxDamage(double damage){
-        setMinDamage(damage, Server.getInstance().getDifficulty());
-    }
-
-    public void setMaxDamage(double damage, Integer difficulty){
-        if(difficulty >= 1 && difficulty <= 3){
-            this.maxDamage[difficulty] = Math.max(damage, this.minDamage[difficulty]);
-        }
-    }
+    //TODO: add Damage
 
     public void updateTick(){
         if(this.server.getDifficulty() < 1){
@@ -127,10 +51,7 @@ public abstract class FlyMonster extends FlyEntity{
             this.moveTime = 0;
         }
 
-        if(this.entityTick++ >= 5){
-            this.entityTick = 0;
-            this.entityBaseTick(5);
-        }
+        this.entityBaseTick();
     }
 
     public boolean entityBaseTick(int tickDiff){
@@ -140,15 +61,9 @@ public abstract class FlyMonster extends FlyEntity{
             return false;
         }
 
-        boolean hasUpdate;
+        //TODO
+        boolean hasUpdate = this.entityBaseTick2(tickDiff);
         EntityDamageEvent ev;
-        try{
-            Class<?> clazz = this.getClass().getSuperclass().getSuperclass().getSuperclass().getSuperclass().getSuperclass();
-            Method method = clazz.getMethod("entityBaseTick");
-            hasUpdate = (boolean) method.invoke(this);
-        }catch(Exception ignore){
-            return false;
-        }
         
         if(this.atkTime > 0){
             this.atkTime -= tickDiff;

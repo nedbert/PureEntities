@@ -1,25 +1,29 @@
 package milk.entitymanager.entity;
 
+import cn.nukkit.Player;
+import cn.nukkit.Server;
+import cn.nukkit.block.Block;
 import cn.nukkit.entity.Creature;
+import cn.nukkit.entity.Effect;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.EntityEventPacket;
-import cn.nukkit.Server;
+import cn.nukkit.network.protocol.AddEntityPacket;
 
-import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class BaseEntity extends Creature{
 
     int stayTime = 0;
     int moveTime = 0;
-
-    boolean created = false;
     
     Vector3 baseTarget = null;
     Vector3 mainTarget = null;
@@ -27,10 +31,14 @@ public abstract class BaseEntity extends Creature{
     Entity attacker = null;
     int atkTime = 0;
 
-    private boolean movement = true;
-    private boolean wallcheck = true;
+    List<Block> blocksAround = new ArrayList<>();
 
-    private boolean friendly = false;
+    boolean created = false;
+
+    boolean movement = true;
+    boolean wallcheck = true;
+
+    boolean friendly = false;
 
     public BaseEntity(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
@@ -82,25 +90,41 @@ public abstract class BaseEntity extends Creature{
         return 1;
     }
 
-    public void initEntity(){
+    @Override
+    protected void initEntity(){
+        super.initEntity();
+
         if(this.namedTag.contains("Movement")){
             this.setMovement(this.namedTag.getBoolean("Movement"));
         }
         this.setDataProperty(DATA_NO_AI, new ByteEntityData((byte) 1));
-
-        try{
-            Class<?> clazz = this.getClass().getSuperclass().getSuperclass().getSuperclass();
-            Method method = clazz.getMethod("initEntity");
-            method.invoke(this);
-        }catch(Exception ignore){
-            ignore.printStackTrace();
-            //getServer().getLogger().info(ignore.getMessage());
-        }
     }
 
     public void saveNBT(){
-        this.namedTag.putBoolean("Movement", this.isMovement());
         super.saveNBT();
+        this.namedTag.putBoolean("Movement", this.isMovement());
+    }
+
+    @Override
+    public void spawnTo(Player player){
+        if(
+            !this.hasSpawned.containsKey(player.getLoaderId())
+            && player.usedChunks.containsKey(Level.chunkHash(this.chunk.getX(), this.chunk.getZ()))
+        ){
+            AddEntityPacket pk = new AddEntityPacket();
+            pk.eid = this.getId();
+            pk.type = this.getNetworkId();
+            pk.x = (float) this.x;
+            pk.y = (float) this.y;
+            pk.z = (float) this.z;
+            pk.speedX = pk.speedY = pk.speedZ = 0;
+            pk.yaw = (float) this.yaw;
+            pk.pitch = (float) this.pitch;
+            pk.metadata = this.dataProperties;
+            player.dataPacket(pk);
+
+            this.hasSpawned.put(player.getLoaderId(), player);
+        }
     }
 
     @Override
@@ -116,42 +140,140 @@ public abstract class BaseEntity extends Creature{
     }
 
     @Override
+    public List<Block> getBlocksAround(){
+        if(this.blocksAround == null){
+            int minX = NukkitMath.floorDouble(this.boundingBox.minX);
+            int minY = NukkitMath.floorDouble(this.boundingBox.minY);
+            int minZ = NukkitMath.floorDouble(this.boundingBox.minZ);
+            int maxX = NukkitMath.ceilDouble(this.boundingBox.maxX);
+            int maxY = NukkitMath.ceilDouble(this.boundingBox.maxY);
+            int maxZ = NukkitMath.ceilDouble(this.boundingBox.maxZ);
+
+            this.blocksAround = new ArrayList<>();
+
+            for(int z = minZ; z <= maxZ; ++z){
+                for(int x = minX; x <= maxX; ++x){
+                    for(int y = minY; y <= maxY; ++y){
+                        Block block = this.level.getBlock(this.temporalVector.setComponents(x, y, z));
+                        if(block.hasEntityCollision()){
+                            this.blocksAround.add(block);
+                        }
+                    }
+                }
+            }
+        }
+
+        return this.blocksAround;
+    }
+
+    public boolean entityBaseTick2(int tickDiff){
+        this.blocksAround = null;
+        this.justCreated = false;
+
+        if(!this.effects.isEmpty()){
+            for(Effect effect : this.effects.values()){
+                if(effect.canTick()){
+                    effect.applyEffect(this);
+                }
+                effect.setDuration(effect.getDuration() - tickDiff);
+
+                if(effect.getDuration() <= 0){
+                    this.removeEffect(effect.getId());
+                }
+            }
+        }
+
+        boolean hasUpdate = false;
+
+        if(this.y <= -16 && this.isAlive()){
+            EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_VOID, 10);
+            this.attack(ev);
+            hasUpdate = true;
+        }
+
+        if(this.fireTicks > 0){
+            if(this.fireProof){
+                this.fireTicks -= 4 * tickDiff;
+                if(this.fireTicks < 0){
+                    this.fireTicks = 0;
+                }
+            }else{
+                if(!this.hasEffect(Effect.FIRE_RESISTANCE) && (this.fireTicks % 20) == 0 || tickDiff > 20){
+                    EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_FIRE_TICK, 1);
+                    this.attack(ev);
+                }
+                this.fireTicks -= tickDiff;
+            }
+
+            if(this.fireTicks <= 0){
+                this.extinguish();
+            }else{
+                this.setDataFlag(DATA_FLAGS, DATA_FLAG_ONFIRE, true);
+                hasUpdate = true;
+            }
+        }
+
+        if(this.attackTime > 0){
+            this.attackTime = 0;
+        }
+
+        if(this.noDamageTicks > 0){
+            this.noDamageTicks -= tickDiff;
+            if(this.noDamageTicks < 0){
+                this.noDamageTicks = 0;
+            }
+        }
+
+        this.age += tickDiff;
+        this.ticksLived += tickDiff;
+
+        return hasUpdate;
+    }
+
+    @Override
     public void attack(EntityDamageEvent source){
-        if(this.attackTime > 0 || this.noDamageTicks > 0){
-            EntityDamageEvent lastCause = this.getLastDamageCause();
-            if(lastCause != null && lastCause.getDamage() >= source.getDamage()){
-                source.setCancelled();
-            }
+        if(this.atkTime > 0) return;
+
+        super.attack(source);
+
+        if(source.isCancelled() || !(source instanceof EntityDamageByEntityEvent)){
+            return;
         }
 
-        try{
-            Class<?> clazz = this.getClass().getSuperclass().getSuperclass().getSuperclass();
-            Method method = clazz.getMethod("attack");
-            method.invoke(this, source);
-        }catch(Exception ignore){
-            ignore.printStackTrace();
-            //getServer().getLogger().info(ignore.getMessage());
-        }
-
-        if(source.isCancelled()) return;
-
-        if(source instanceof EntityDamageByEntityEvent){
-            this.atkTime = 16;
+        synchronized(this){
+            this.atkTime = 15;
             this.stayTime = 0;
+
             this.attacker = ((EntityDamageByEntityEvent) source).getDamager();
-            if(this instanceof PigZombie){
-                ((PigZombie) this).setAngry(1000);
-            }else if(this instanceof Ocelot){
-                ((Ocelot) this).setAngry(1000);
-            }else if(this instanceof Wolf){
-                ((Wolf) this).setAngry(1000);
+            double x = this.attacker.x - this.x;
+            double z = this.attacker.z - this.z;
+            double diff = Math.abs(x) + Math.abs(z);
+
+            if(this instanceof FlyEntity){
+                double k = Math.abs(x) + Math.abs(y);
+
+                this.motionX = -0.5 * (diff == 0 ? 0 : x / diff);
+                this.motionZ = -0.5 * (diff == 0 ? 0 : z / diff);
+                this.motionY = this.getSpeed() * 0.1 * (k == 0 ? 0 : y / k);
+            }else{
+                this.motionX = -0.4 * (diff == 0 ? 0 : x / diff);
+                this.motionZ = -0.4 * (diff == 0 ? 0 : z / diff);
             }
+            this.move(this.motionX, 0.6, this.motionZ);
         }
 
-        EntityEventPacket pk = new EntityEventPacket();
-        pk.eid = this.getId();
-        pk.event = (byte) (this.isAlive() ? 2 : 3);
-        Server.broadcastPacket(this.hasSpawned.values(), pk);
+        if(this instanceof PigZombie){
+            ((PigZombie) this).setAngry(1000);
+        }else if(this instanceof Ocelot){
+            ((Ocelot) this).setAngry(1000);
+        }else if(this instanceof Wolf){
+            ((Wolf) this).setAngry(1000);
+        }
+    }
+
+    @Override
+    public void knockBack(Entity attacker, float damage, double x, double z, float base){
+
     }
 
     public boolean move(double dx, double dy, double dz){
@@ -160,11 +282,14 @@ public abstract class BaseEntity extends Creature{
         double movX = dx;
         double movY = dy;
         double movZ = dz;
+
         AxisAlignedBB[] list = this.level.getCollisionCubes(this, this.level.getTickRate() > 1 ? this.boundingBox.getOffsetBoundingBox(dx, dy, dz) : this.boundingBox.addCoord(dx, dy, dz));
+
         for(AxisAlignedBB bb : list){
             dy = bb.calculateYOffset(this.boundingBox, dy);
         }
         this.boundingBox.offset(0, dy, 0);
+
         for(AxisAlignedBB bb : list){
             if(
                 this.isWallCheck()
@@ -183,6 +308,7 @@ public abstract class BaseEntity extends Creature{
             }
         }
         this.boundingBox.offset(dx, 0, 0);
+
         for(AxisAlignedBB bb : list){
             if(
                 this.isWallCheck()
@@ -201,8 +327,8 @@ public abstract class BaseEntity extends Creature{
             }
         }
         this.boundingBox.offset(0, 0, dz);
-        this.setComponents(this.x + dx, this.y + dy, this.z + dz);
 
+        this.setComponents(this.x + dx, this.y + dy, this.z + dz);
         this.checkChunks();
 
         this.checkGroundState(movX, movY, movZ, dx, dy, dz);

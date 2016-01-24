@@ -12,7 +12,7 @@ import cn.nukkit.entity.Creature;
 public class Wolf extends Monster{
     public static final int NETWORK_ID = 14;
 
-    private int angry = 0;
+    int angry = 0;
 
     public Wolf(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
@@ -29,18 +29,8 @@ public class Wolf extends Monster{
     }
 
     @Override
-    public float getLength() {
-        return 0.6f;
-    }
-
-    @Override
     public float getHeight() {
         return 0.9f;
-    }
-
-    @Override
-    public float getEyeHeight() {
-        return 1.62f;
     }
 
     @Override
@@ -48,24 +38,17 @@ public class Wolf extends Monster{
         return 1.2;
     }
 
-    public void initEntity(){
-        this.fireProof = true;
+    protected void initEntity(){
+        super.initEntity();
 
+        this.fireProof = true;
         this.setMaxHealth(8);
-        if(this.namedTag.contains("Health")){
-            this.setHealth(this.namedTag.getInt("Health"));
-        }else{
-            this.setHealth(this.getMaxHealth());
-        }
 
         if(this.namedTag.contains("Angry")){
             this.angry = this.namedTag.getInt("Angry");
         }
 
-        this.setDamage(new double[]{0, 3, 4, 6});
-
-        super.initEntity();
-
+        this.setDamage(new int[]{0, 3, 4, 6});
         this.created = true;
     }
 

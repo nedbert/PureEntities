@@ -1,9 +1,8 @@
-package milk.entitymanager.task;
+package milk.entitymanager.thread;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.level.Position;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.scheduler.Task;
 import milk.entitymanager.EntityManager;
 import milk.entitymanager.util.Utils;

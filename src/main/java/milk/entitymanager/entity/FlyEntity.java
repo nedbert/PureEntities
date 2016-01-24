@@ -14,7 +14,7 @@ public abstract class FlyEntity extends BaseEntity{
         super(chunk, nbt);
     }
 
-    private void checkTarget(){
+    void checkTarget(){
     	if(this.getViewers().isEmpty()){
             return;
         }
@@ -47,9 +47,11 @@ public abstract class FlyEntity extends BaseEntity{
             this.baseTarget instanceof Creature
             && ((Creature) this.baseTarget).isAlive()
         ){
+            this.stayTime = 0;
             return;
         }
 
+        int x, y, z;
         if(this.stayTime > 0){
             if(Utils.rand(1, 125) > 4) return;
             x = Utils.rand(25, 80);
@@ -59,7 +61,7 @@ public abstract class FlyEntity extends BaseEntity{
             }else{
             	y = Utils.rand(-2, 2);
             }
-            this.baseTarget = this.add(Utils.rand(0, 1) == 0 ? x : -x, y, Utils.rand(0, 1) == 0 ? z : -z);
+            this.baseTarget = this.add(Utils.rand() ? x : -x, y, Utils.rand() ? z : -z);
         }else if(Utils.rand(1, 420) == 1){
             this.stayTime = Utils.rand(95, 420);
             x = Utils.rand(25, 80);
@@ -69,7 +71,7 @@ public abstract class FlyEntity extends BaseEntity{
             }else{
             	y = Utils.rand(-2, 2);
             }
-            this.baseTarget = this.add(Utils.rand(0, 1) == 0 ? x : -x, y, Utils.rand(0, 1) == 0 ? z : -z);
+            this.baseTarget = this.add(Utils.rand() ? x : -x, y, Utils.rand() ? z : -z);
         }else if(this.moveTime <= 0 || !(this.baseTarget instanceof Vector3)){
             this.moveTime = Utils.rand(100, 1000);
             x = Utils.rand(25, 80);
@@ -79,28 +81,18 @@ public abstract class FlyEntity extends BaseEntity{
             }else{
             	y = Utils.rand(-2, 2);
             }
-            this.baseTarget = this.add(Utils.rand(0, 1) == 0 ? x : -x, y, Utils.rand(0, 1) == 0 ? z : -z);
+            this.baseTarget = this.add(Utils.rand() ? x : -x, y, Utils.rand() ? z : -z);
         }
     }
 
     public Vector3 updateMove(){
-        if(!this.isMovement()) return null;
-        Vector3 target;
+        if(!this.isMovement()){
+            return null;
+        }
+
         if(this.attacker instanceof Player && this.atkTime > 0){
-            if(this.atkTime == 5 || (this.motionX == 0 && this.motionZ == 0)){
-                target = this.attacker;
-                x = target.x - this.x;
-                y = this.baseTarget.y - this.y;
-                z = target.z - this.z;
-                double diff = Math.abs(x) + Math.abs(z);
-                this.motionX = -0.5 * (diff == 0 ? 0 : x / diff);
-
-                double k;
-                this.motionY = this.getSpeed() * 0.1 * ((k = Math.abs(x) + Math.abs(y)) == 0 ? 0 : y / k);
-
-                this.motionZ = -0.5 * (diff == 0 ? 0 : z / diff);
-            }
             this.move(this.motionX, this.motionY, this.motionZ);
+
             if(--this.atkTime <= 0){
             	this.attacker = null;
             	this.motionX = 0;
@@ -113,10 +105,10 @@ public abstract class FlyEntity extends BaseEntity{
         Vector3 before = this.baseTarget;
         this.checkTarget();
         if(this.baseTarget instanceof Player || before != this.baseTarget){
-            x = this.baseTarget.x - this.x;
-            y = this.baseTarget.y - this.y;
-            z = this.baseTarget.z - this.z;
-            if(this.stayTime > 0 || x * x + z * z < 0.5){
+            double x = this.baseTarget.x - this.x;
+            double y = this.baseTarget.y - this.y;
+            double z = this.baseTarget.z - this.z;
+            if(this.stayTime > 0 || x * x + z * z < 0.7){
                 this.motionX = 0;
                 this.motionZ = 0;
             }else{
@@ -128,7 +120,8 @@ public abstract class FlyEntity extends BaseEntity{
             this.yaw = (-Math.atan2(this.motionX, this.motionZ) * 180 / Math.PI);
             this.pitch = y == 0 ? 0 : Math.toDegrees(-Math.atan2(y, Math.sqrt(x * x + z * z)));
         }
-        target = this.mainTarget != null ? this.mainTarget : this.baseTarget;
+
+        Vector3 target = this.mainTarget != null ? this.mainTarget : this.baseTarget;
         if(this.stayTime > 0){
             --this.stayTime;
         }else{

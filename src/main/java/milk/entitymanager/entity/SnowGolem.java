@@ -2,11 +2,11 @@ package milk.entitymanager.entity;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.Projectile;
-import cn.nukkit.entity.ProjectileSource;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.sound.LaunchSound;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
@@ -14,33 +14,51 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Creature;
+import milk.entitymanager.util.Utils;
 
-class SnowGolem extends Monster implements ProjectileSource{
-    const NETWORK_ID = 21;
+public class SnowGolem extends Monster{
+    public static final int NETWORK_ID = 21;
 
-    public width = 0.65;
-    public height = 1.2;
+    public SnowGolem(FullChunk chunk, CompoundTag nbt){
+        super(chunk, nbt);
+    }
 
-    public function initEntity(){
-        if(isset(this.namedtag.Health)){
-            this.setHealth((int) this.namedtag["Health"]);
-        }else{
-            this.setHealth(this.getMaxHealth());
-        }
+    @Override
+    public int getNetworkId(){
+        return NETWORK_ID;
+    }
+
+    @Override
+    public float getWidth() {
+        return 0.65f;
+    }
+
+    @Override
+    public float getHeight() {
+        return 2.1f;
+    }
+
+    @Override
+    public float getEyeHeight() {
+        return 1.92f;
+    }
+
+    public void initEntity(){
         super.initEntity();
+
         this.setFriendly(true);
         this.created = true;
     }
 
-    public function getName(){
+    public String getName(){
         return "SnowGolem";
     }
 
-    public function attackEntity(Entity player){
-        if(this.attackDelay > 23  && Utils.rand(1, 32) < 4 && this.distanceSquared(player) <= 55){
+    public void attackEntity(Entity player){
+        /*if(this.attackDelay > 23  && Utils.rand(1, 32) < 4 && this.distanceSquared(player) <= 55){
             this.attackDelay = 0;
         
-            f = 1.2;
+            double f = 1.2;
             yaw = this.yaw + Utils.rand(-220, 220) / 10;
             pitch = this.pitch + Utils.rand(-120, 120) / 10;
             nbt = new CompoundTag("", [
@@ -60,11 +78,9 @@ class SnowGolem extends Monster implements ProjectileSource{
                 ]),
             ]);
 
-            /** @var Projectile arrow */
             snowball = Entity.createEntity("Snowball", this.chunk, nbt, this);
             snowball.setMotion ( snowball.getMotion ().multiply ( f ) );
-            
-            /* Snowball damage change */
+
             property = (new .ReflectionClass ( snowball )).getProperty ( "damage" );
             property.setAccessible(true);
             property.setValue ( snowball, 2 );
@@ -85,21 +101,17 @@ class SnowGolem extends Monster implements ProjectileSource{
                     this.level.addSound(new LaunchSound(this), this.getViewers());
                 }
             }
-        }
+        }*/
     }
 
-    public function getDrops(){
+    public Item[] getDrops(){
         if(this.lastDamageCause instanceof EntityDamageByEntityEvent){
-            return [
-                Item.get(Item.SNOWBALL, 0, 15)
-            ];
+            return new Item[]{Item.get(Item.SNOWBALL, 0, 15)};
         }
-        return [];
+        return new Item[0];
     }
     
-    public function targetOption(Creature creature, distance){
-    	if(! creature instanceof Player)
-    		return creature.isAlive() && distance <= 60;
-    	return false;
+    public boolean targetOption(Creature creature, double distance){
+        return !(creature instanceof Player) && creature.isAlive() && distance <= 60;
     }
 }

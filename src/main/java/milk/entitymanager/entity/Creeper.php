@@ -15,7 +15,7 @@ class Creeper extends Monster implements Explosive{
     public height = 1.8;
     public eyeHeight = 1.62;
 
-    private bombTime = 0;
+    bombTime = 0;
 
     protected speed = 0.9;
 

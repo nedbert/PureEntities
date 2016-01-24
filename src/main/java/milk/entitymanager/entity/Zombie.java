@@ -1,16 +1,18 @@
 package milk.entitymanager.entity;
 
+import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import milk.entitymanager.util.Utils;
 
-public class Enderman extends Monster{
-    public static final int NETWORK_ID = 38;
+public class Zombie extends Monster{
+    public static final int NETWORK_ID = 32;
 
-    public Enderman(FullChunk chunk, CompoundTag nbt){
+    public Zombie(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
     }
 
@@ -26,33 +28,35 @@ public class Enderman extends Monster{
 
     @Override
     public float getHeight() {
-        return 2.8f;
+        return 1.8f;
     }
 
     @Override
     public float getEyeHeight() {
-        return 2.62f;
+        return 1.62f;
     }
 
     @Override
     public double getSpeed(){
-        return 1.21;
+        return 1.1;
     }
 
+    @Override
+    public String getName(){
+        return "Zombie";
+    }
+
+    @Override
     protected void initEntity(){
         super.initEntity();
-        this.setDamage(new int[]{0, 1, 2, 3});
+
+        this.setDamage(new int[]{0, 3, 4, 6});
         this.created = true;
     }
 
-    public String getName(){
-        return "Enderman";
-    }
-
     public void attackEntity(Entity player){
-        if(this.attackDelay > 10 && this.distanceSquared(player) < 1){
+        if(this.attackDelay > 10 && this.distanceSquared(player) < 2){
             this.attackDelay = 0;
-
             EntityDamageEvent ev = new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_ENTITY_ATTACK, (float) this.getDamage());
             player.attack(ev);
         }
@@ -60,7 +64,14 @@ public class Enderman extends Monster{
 
     public Item[] getDrops(){
         if(this.lastDamageCause instanceof EntityDamageByEntityEvent){
-            return new Item[]{Item.get(Item.END_STONE, 0, 1)};
+            switch(Utils.rand(0, 2)){
+                case 0:
+                    return new Item[]{Item.get(Item.FEATHER, 0, 1)};
+                case 1:
+                    return new Item[]{Item.get(Item.CARROT, 0, 1)};
+                case 2:
+                    return new Item[]{Item.get(Item.POTATO, 0, 1)};
+            }
         }
         return new Item[0];
     }

@@ -10,15 +10,15 @@ import cn.nukkit.nbt.tag.CompoundTag;
 
 public abstract class Animal extends WalkEntity implements Ageable{
 
-    int entityTick = 0;
-
-    protected double speed = 0.7;
-
     public Animal(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
     }
 
-    public void initEntity(){
+    public double getSpeed(){
+        return 0.7;
+    }
+
+    protected void initEntity(){
         if(this.getDataProperty(DATA_AGEABLE_FLAGS) == null){
             this.setDataProperty(DATA_AGEABLE_FLAGS, new ByteEntityData((byte) 0));
         }
@@ -47,10 +47,8 @@ public abstract class Animal extends WalkEntity implements Ageable{
         }else if(!(target instanceof Entity)){
             if(this.distance(target) <= 1) this.moveTime = 0;
         }
-        if(this.entityTick++ >= 5){
-            this.entityTick = 0;
-            this.entityBaseTick(5);
-        }
+
+        this.entityBaseTick();
     }
 
 }

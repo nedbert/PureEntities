@@ -14,16 +14,12 @@ import cn.nukkit.entity.Creature;
 import cn.nukkit.nbt.tag.CompoundTag;
 import milk.entitymanager.util.Utils;
 
-import java.lang.reflect.Method;
-
 public abstract class Monster extends WalkEntity{
 
     int attackDelay = 0;
 
-    private int entityTick = 0;
-
-    private double[] minDamage = new double[]{0, 0, 0, 0};
-    private double[] maxDamage = new double[]{0, 0, 0, 0};
+    int[] minDamage;
+    int[] maxDamage;
 
     public Monster(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
@@ -31,79 +27,99 @@ public abstract class Monster extends WalkEntity{
 
     public abstract void attackEntity(Entity player);
 
-    public double getDamage(){
+    public int getDamage(){
         return getDamage(null);
     }
 
-    public double getDamage(Integer difficulty){
-        return Utils.rand((int) this.getMinDamage(difficulty), (int) this.getMaxDamage(difficulty));
+    public int getDamage(Integer difficulty){
+        return Utils.rand(this.getMinDamage(difficulty), this.getMaxDamage(difficulty));
     }
 
-    public double getMinDamage(){
+    public int getMinDamage(){
         return getMinDamage(null);
     }
 
-    public double getMinDamage(Integer difficulty){
+    public int getMinDamage(Integer difficulty){
         if(difficulty == null || difficulty > 3 || difficulty < 0){
             difficulty = Server.getInstance().getDifficulty();
         }
+
         return this.minDamage[difficulty];
     }
 
-    public double getMaxDamage(){
+    public int getMaxDamage(){
         return getMaxDamage(null);
     }
 
-    public double getMaxDamage(Integer difficulty){
+    public int getMaxDamage(Integer difficulty){
         if(difficulty == null || difficulty > 3 || difficulty < 0){
             difficulty = Server.getInstance().getDifficulty();
         }
+
         return this.maxDamage[difficulty];
     }
 
-    public void setDamage(double[] damage){
-        this.setMinDamage(damage);
-        this.setMaxDamage(damage);
+    public void setDamage(int damage){
+        this.setDamage(damage, Server.getInstance().getDifficulty());
     }
 
-    public void setDamage(double damage, int difficulty){
-        this.setMinDamage(damage, difficulty);
-        this.setMaxDamage(damage, difficulty);
-    }
-
-    public void setMinDamage(double[] damage){
-        if(damage.length < 4) return;
-        minDamage[0] = Math.min(damage[0], maxDamage[0]);
-        minDamage[1] = Math.min(damage[1], maxDamage[1]);
-        minDamage[2] = Math.min(damage[2], maxDamage[2]);
-        minDamage[3] = Math.min(damage[3], maxDamage[3]);
-    }
-
-    public void setMinDamage(double damage){
-        setMinDamage(damage, Server.getInstance().getDifficulty());
-    }
-
-    public void setMinDamage(double damage, int difficulty){
+    public void setDamage(int damage, int difficulty){
         if(difficulty >= 1 && difficulty <= 3){
-            this.minDamage[difficulty] = Math.min(damage, this.maxDamage[difficulty]);
+            this.minDamage[difficulty] = damage;
+            this.maxDamage[difficulty] = damage;
         }
     }
 
-    public void setMaxDamage(double[] damage){
+    public void setDamage(int[] damage){
         if(damage.length < 4) return;
-        maxDamage[0] = Math.min(damage[0], minDamage[0]);
-        maxDamage[1] = Math.min(damage[1], minDamage[1]);
-        maxDamage[2] = Math.min(damage[2], minDamage[2]);
-        maxDamage[3] = Math.min(damage[3], minDamage[3]);
+
+        if(minDamage == null || minDamage.length < 4){
+            minDamage = new int[]{0, 0, 0, 0};
+        }
+
+        if(maxDamage == null || maxDamage.length < 4){
+            maxDamage = new int[]{0, 0, 0, 0};
+        }
+
+        for(int i = 0; i < 4; i++){
+            this.minDamage[i] = damage[i];
+            this.maxDamage[i] = damage[i];
+        }
     }
 
-    public void setMaxDamage(double damage){
+    public void setMinDamage(int[] damage){
+        if(damage.length < 4) return;
+
+        for(int i = 0; i < 4; i++){
+            this.setMinDamage(Math.min(damage[i], this.getMaxDamage(i)), i);
+        }
+    }
+
+    public void setMinDamage(int damage){
+        this.setMinDamage(damage, Server.getInstance().getDifficulty());
+    }
+
+    public void setMinDamage(int damage, int difficulty){
+        if(difficulty >= 1 && difficulty <= 3){
+            this.minDamage[difficulty] = Math.min(damage, this.getMaxDamage(difficulty));
+        }
+    }
+
+    public void setMaxDamage(int[] damage){
+        if(damage.length < 4) return;
+
+        for(int i = 0; i < 4; i++){
+            this.setMaxDamage(Math.max(damage[i], this.getMinDamage(i)), i);
+        }
+    }
+
+    public void setMaxDamage(int damage){
         setMinDamage(damage, Server.getInstance().getDifficulty());
     }
 
-    public void setMaxDamage(double damage, Integer difficulty){
+    public void setMaxDamage(int damage, Integer difficulty){
         if(difficulty >= 1 && difficulty <= 3){
-            this.maxDamage[difficulty] = Math.max(damage, this.minDamage[difficulty]);
+            this.maxDamage[difficulty] = Math.max(damage, this.getMinDamage(difficulty));
         }
     }
 
@@ -112,15 +128,18 @@ public abstract class Monster extends WalkEntity{
             this.close();
             return;
         }
+
         if(!this.isAlive()){
-            if(++this.deadTicks >= 23) this.close();
+            if(++this.deadTicks >= 23){
+                this.close();
+            }
             return;
         }
 
         --this.moveTime;
         ++this.attackDelay;
+
         Vector3 target = this.updateMove();
-        
         if(this.isFriendly()){
         	if(!(target instanceof Player)){
         		if(target instanceof Entity){
@@ -143,10 +162,7 @@ public abstract class Monster extends WalkEntity{
             }
         }
 
-        if(this.entityTick++ >= 5){
-       		this.entityTick = 0;
-      		this.entityBaseTick(5);
-      	}
+        this.entityBaseTick();
     }
 
     @Override
@@ -157,15 +173,8 @@ public abstract class Monster extends WalkEntity{
             return false;
         }
 
-        boolean hasUpdate;
+        boolean hasUpdate = this.entityBaseTick2(tickDiff);
         EntityDamageEvent ev;
-        try{
-            Class<?> clazz = this.getClass().getSuperclass().getSuperclass().getSuperclass().getSuperclass().getSuperclass();
-            Method method = clazz.getMethod("entityBaseTick");
-            hasUpdate = (boolean) method.invoke(this);
-        }catch(Exception ignore){
-            return false;
-        }
         
         if(this.atkTime > 0){
             this.atkTime -= tickDiff;

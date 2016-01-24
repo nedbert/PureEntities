@@ -13,7 +13,7 @@ import milk.entitymanager.util.Utils;
 public class PigZombie extends Monster{
     public static final int NETWORK_ID = 36;
 
-    private int angry = 0;
+    int angry = 0;
 
     public PigZombie(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
@@ -27,11 +27,6 @@ public class PigZombie extends Monster{
     @Override
     public float getWidth() {
         return 0.72f;
-    }
-
-    @Override
-    public float getLength() {
-        return 0.6f;
     }
 
     @Override
@@ -49,24 +44,17 @@ public class PigZombie extends Monster{
         return 1.15;
     }
 
-    public void initEntity(){
-        this.fireProof = true;
-
+    protected void initEntity(){
         this.setMaxHealth(22);
-        if(this.namedTag.contains("Health")){
-            this.setHealth(this.namedTag.getInt("Health"));
-        }else{
-            this.setHealth(this.getMaxHealth());
-        }
+
+        super.initEntity();
+        this.fireProof = true;
 
         if(this.namedTag.contains("Angry")){
             this.angry = this.namedTag.getInt("Angry");
         }
 
-        this.setDamage(new double[]{0, 5, 9, 13});
-
-        super.initEntity();
-
+        this.setDamage(new int[]{0, 5, 9, 13});
         this.created = true;
     }
 

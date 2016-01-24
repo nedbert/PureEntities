@@ -16,7 +16,7 @@ import cn.nukkit.nbt.tag.FloatTag;
 import milk.entitymanager.util.Utils;
 
 public class Skeleton extends Monster{
-    public static final int NETWORK_ID = 36;
+    public static final int NETWORK_ID = 34;
 
     public Skeleton(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
@@ -33,11 +33,6 @@ public class Skeleton extends Monster{
     }
 
     @Override
-    public float getLength() {
-        return 0.6f;
-    }
-
-    @Override
     public float getHeight() {
         return 1.8f;
     }
@@ -47,13 +42,9 @@ public class Skeleton extends Monster{
         return 1.62f;
     }
 
-    public void initEntity(){
-        if(this.namedTag.contains("Health")){
-            this.setHealth(this.namedTag.getInt("Health"));
-        }else{
-            this.setHealth(this.getMaxHealth());
-        }
+    protected void initEntity(){
         super.initEntity();
+
         this.created = true;
     }
 
@@ -66,8 +57,8 @@ public class Skeleton extends Monster{
             this.attackDelay = 0;
         
             double f = 1.2;
-            yaw = this.yaw + Utils.rand(-220, 220) / 10;
-            pitch = this.pitch + Utils.rand(-120, 120) / 10;
+            double yaw = this.yaw + Utils.rand(-220, 220) / 10;
+            double pitch = this.pitch + Utils.rand(-120, 120) / 10;
             CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
                     .add(new DoubleTag("", this.x + (-Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * 0.5)))

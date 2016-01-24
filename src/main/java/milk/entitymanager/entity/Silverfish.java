@@ -7,10 +7,10 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
-public class Enderman extends Monster{
-    public static final int NETWORK_ID = 38;
+public class Silverfish extends Monster{
+    public static final int NETWORK_ID = 39;
 
-    public Enderman(FullChunk chunk, CompoundTag nbt){
+    public Silverfish(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
     }
 
@@ -21,48 +21,40 @@ public class Enderman extends Monster{
 
     @Override
     public float getWidth() {
-        return 0.72f;
+        return 0.65f;
     }
 
     @Override
     public float getHeight() {
-        return 2.8f;
-    }
-
-    @Override
-    public float getEyeHeight() {
-        return 2.62f;
+        return 1.8f;
     }
 
     @Override
     public double getSpeed(){
-        return 1.21;
+        return 1.4;
     }
 
-    protected void initEntity(){
+    public void initEntity(){
         super.initEntity();
-        this.setDamage(new int[]{0, 1, 2, 3});
+
+        this.setDamage(new int[]{0, 1, 1, 1});
         this.created = true;
     }
 
     public String getName(){
-        return "Enderman";
+        return "Silverfish";
     }
 
     public void attackEntity(Entity player){
         if(this.attackDelay > 10 && this.distanceSquared(player) < 1){
             this.attackDelay = 0;
-
-            EntityDamageEvent ev = new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_ENTITY_ATTACK, (float) this.getDamage());
+            EntityDamageEvent ev = new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_ENTITY_ATTACK, this.getDamage());
             player.attack(ev);
         }
     }
 
     public Item[] getDrops(){
-        if(this.lastDamageCause instanceof EntityDamageByEntityEvent){
-            return new Item[]{Item.get(Item.END_STONE, 0, 1)};
-        }
-        return new Item[0];
+    	return new Item[0];
     }
 
 }

@@ -1,9 +1,7 @@
 # EntityManager   
   
 Author: **[@milk0417(승원)](https://github.com/milk0417)**  
-  
-자매품(PMMP): [EntityManager-PMMP](https://github.com/EntityManager)
-  
+
 **[NOTICE] This plugin is NOT perfect at all.  
 It can cause your server crash, or something bad else :P**
   
@@ -88,8 +86,8 @@ EntityManager.getEntities().forEach((id, baseEntity) -> {
 });  
   
 //Create Entity  
-Entity arrow = EntityManager.create("Arrow", position, player, true); //Nukkit default Class
-Entity baseEntity = EntityManager.create("Zombie", position);  
+Arrow arrow = (Arrow) EntityManager.create("Arrow", position, player, true);
+Zombie zombie = (Zombie) EntityManager.create("Zombie", position);  
   
 //Remove Entity  
 EntityManager.clear(new Class[]{BaseEntity.class, Projectile.class, Item.class});  

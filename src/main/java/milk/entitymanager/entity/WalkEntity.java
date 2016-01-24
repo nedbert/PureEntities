@@ -12,7 +12,7 @@ import cn.nukkit.entity.Creature;
 import cn.nukkit.nbt.tag.CompoundTag;
 import milk.entitymanager.util.Utils;
 
-import java.util.HashMap;
+import java.util.Arrays;
 
 public abstract class WalkEntity extends BaseEntity{
 
@@ -21,9 +21,6 @@ public abstract class WalkEntity extends BaseEntity{
     }
 
     void checkTarget(){
-    	if(this.getViewers().isEmpty()){
-            return;
-        }
         Vector3 target = this.baseTarget;
         if(!(target instanceof Creature) || !this.targetOption((Creature) target, this.distanceSquared(target))){
             double near = Integer.MAX_VALUE;
@@ -40,25 +37,33 @@ public abstract class WalkEntity extends BaseEntity{
                 this.baseTarget = creature;
             }
         }
-        if(this.baseTarget instanceof Creature)
-        	if(((Creature) this.baseTarget).isAlive()){
-                return;
-            }
+        if(
+            this.baseTarget instanceof Creature
+            && ((Creature) this.baseTarget).isAlive()
+        ){
+            this.stayTime = 0;
+            return;
+        }
+
+        int x, z;
         if(this.stayTime > 0){
             if(Utils.rand(1, 125) > 4) return;
             x = Utils.rand(25, 80);
             z = Utils.rand(25, 80);
-            this.baseTarget = this.add(Utils.rand(0, 1) == 0 ? x : -x, Utils.rand(-20, 20) / 10, Utils.rand(0, 1) == 0 ? z : -z);
+            this.baseTarget = this.add(Utils.rand() ? x : -x, Utils.rand(-20, 20) / 10, Utils.rand() ? z : -z);
         }else if(Utils.rand(1, 420) == 1){
             this.stayTime = Utils.rand(95, 420);
+
             x = Utils.rand(25, 80);
             z = Utils.rand(25, 80);
-            this.baseTarget = this.add(Utils.rand(0, 1) == 0 ? x : -x, Utils.rand(-20, 20) / 10, Utils.rand(0, 1) == 0 ? z : -z);
+            this.baseTarget = this.add(Utils.rand() ? x : -x, Utils.rand(-20, 20) / 10, Utils.rand() ? z : -z);
         }else if(this.moveTime <= 0 || this.baseTarget == null){
+            this.stayTime = 0;
             this.moveTime = Utils.rand(100, 1000);
+
             x = Utils.rand(25, 80);
             z = Utils.rand(25, 80);
-            this.baseTarget = this.add(Utils.rand(0, 1) == 0 ? x : -x, 0, Utils.rand(0, 1) == 0 ? z : -z);
+            this.baseTarget = this.add(Utils.rand() ? x : -x, 0, Utils.rand() ? z : -z);
         }
     }
 
@@ -66,25 +71,14 @@ public abstract class WalkEntity extends BaseEntity{
         if(!this.isMovement()) return null;
         
         if(this.attacker != null){
-            if(this.atkTime == 16){
-                Vector3 target = this.attacker;
-                double x = target.x - this.x;
-                double z = target.z - this.z;
-                double diff = Math.abs(x) + Math.abs(z);
-                this.motionX = -0.5 * (diff == 0 ? 0 : x / diff);
-                this.motionZ = -0.5 * (diff == 0 ? 0 : z / diff);
-                --this.atkTime;
-            }
-            
-            HashMap<Integer, Double> y = new HashMap<Integer, Double>(){{
-                put(11, 0.3d);
-                put(12, 0.3d);
-                put(13, 0.4d);
-                put(14, 0.4d);
-                put(15, 0.5d);
-                put(16, 0.5d);
-            }};
-            this.move(this.motionX, y.containsKey(this.atkTime) ?  y.get(this.atkTime) : -0.2, this.motionZ);
+            double[] y = new double[17];
+            Arrays.fill(y, 0, 11, -0.2);
+            y[11] = 0.4;
+            y[12] = 0.4;
+            y[13] = 0.5;
+            y[14] = 0.5;
+            y[15] = 0.6;
+            this.move(this.motionX, y[this.atkTime], this.motionZ);
             
             if(--this.atkTime <= 0){
             	this.attacker = null;
@@ -98,10 +92,10 @@ public abstract class WalkEntity extends BaseEntity{
         Vector3 before = this.baseTarget;
         this.checkTarget();
         if(this.baseTarget instanceof Creature || before != this.baseTarget){
-            x = this.baseTarget.x - this.x;
-            y = this.baseTarget.y - this.y;
-            z = this.baseTarget.z - this.z;
-            if(this.stayTime > 0 || x * x + z * z < 0.5){
+            double x = this.baseTarget.x - this.x;
+            double y = this.baseTarget.y - this.y;
+            double z = this.baseTarget.z - this.z;
+            if(this.stayTime > 0 || x * x + z * z < 0.7){
                 this.motionX = 0;
                 this.motionZ = 0;
             }else{
@@ -127,8 +121,8 @@ public abstract class WalkEntity extends BaseEntity{
             Vector2 af = new Vector2(this.x, this.z);
 
             if(be.x != af.x || be.y != af.y){
-                x = 0;
-                z = 0;
+                int x = 0;
+                int z = 0;
                 if(be.x - af.x != 0) x += be.x - af.x > 0 ? 1 : -1;
                 if(be.y - af.y != 0) z += be.y - af.y > 0 ? 1 : -1;
 
@@ -138,11 +132,11 @@ public abstract class WalkEntity extends BaseEntity{
                     AxisAlignedBB bb = block2.getBoundingBox();
                     if(block2.canPassThrough() || (bb == null || bb.maxY - this.y <= 1)){
                         isJump = true;
-                        this.motionY = 0.2;
+                        this.motionY = 0.15;
                     }else{
                         if(this.level.getBlock(block.add(-x, 0, -z)).getId() == Item.LADDER){
                             isJump = true;
-                            this.motionY = 0.2;
+                            this.motionY = 0.15;
                         }
                     }
                 }
@@ -154,7 +148,7 @@ public abstract class WalkEntity extends BaseEntity{
             if(this.onGround && !isJump){
                 this.motionY = 0;
             }else if(!isJump){
-                this.motionY -= this.getGravity();
+                this.motionY -= 0.2;
             }
         }
         this.updateMovement();

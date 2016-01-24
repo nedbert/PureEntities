@@ -12,7 +12,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 public class Ocelot extends Monster{
     public static final int NETWORK_ID = 22;
 
-    private int angry = 0;
+    int angry = 0;
 
     public Ocelot(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
@@ -29,43 +29,26 @@ public class Ocelot extends Monster{
     }
 
     @Override
-    public float getLength() {
-        return 0.6f;
-    }
-
-    @Override
     public float getHeight() {
         return 0.9f;
     }
 
-    //TODO: IDK
-    /*@Override
-    public float getEyeHeight() {
-        return 1.62f;
-    }*/
-
+    @Override
     public double getSpeed(){
         return 1.5;
     }
 
-    public void initEntity(){
-        this.fireProof = true;
+    protected void initEntity(){
+        super.initEntity();
 
+        this.fireProof = true;
         this.setMaxHealth(10);
-        if(this.namedTag.contains("Health")){
-            this.setHealth(this.namedTag.getInt("Health"));
-        }else{
-            this.setHealth(this.getMaxHealth());
-        }
 
         if(this.namedTag.contains("Angry")){
             this.angry = this.namedTag.getInt("Angry");
         }
 
-        this.setDamage(new double[]{0, 2, 2, 2});
-
-        super.initEntity();
-
+        this.setDamage(new int[]{0, 2, 2, 2});
         this.created = true;
     }
 
