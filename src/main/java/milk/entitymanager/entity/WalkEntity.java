@@ -59,15 +59,15 @@ public abstract class WalkEntity extends BaseEntity{
             x = Utils.rand(25, 80);
             z = Utils.rand(25, 80);
             this.baseTarget = this.add(Utils.rand() ? x : -x, Utils.rand(-20, 20) / 10, Utils.rand() ? z : -z);
-        }else if(Utils.rand(1, 420) == 1){
-            this.stayTime = Utils.rand(95, 420);
+        }else if(Utils.rand(1, 320) == 1){
+            this.stayTime = Utils.rand(90, 400);
 
             x = Utils.rand(25, 80);
             z = Utils.rand(25, 80);
             this.baseTarget = this.add(Utils.rand() ? x : -x, Utils.rand(-20, 20) / 10, Utils.rand() ? z : -z);
         }else if(this.moveTime <= 0 || this.baseTarget == null){
             this.stayTime = 0;
-            this.moveTime = Utils.rand(100, 1000);
+            this.moveTime = Utils.rand(300, 1200);
 
             x = Utils.rand(25, 80);
             z = Utils.rand(25, 80);
@@ -140,7 +140,7 @@ public abstract class WalkEntity extends BaseEntity{
                     }
                 }
                 if(!isJump){
-                    this.moveTime = 0;
+                    this.moveTime -= 80;
                 }
             }
 
