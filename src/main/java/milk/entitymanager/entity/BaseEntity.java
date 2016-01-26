@@ -244,7 +244,7 @@ public abstract class BaseEntity extends Creature{
         }
 
         this.stayTime = 0;
-        this.knockback = 10;
+        this.knockback = 11;
 
         Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
         Vector3 motion = new Vector3(this.x - damager.x, this.y - damager.y, this.z - damager.z).normalize();
@@ -255,8 +255,6 @@ public abstract class BaseEntity extends Creature{
         }else{
             this.motionY = 0.6;
         }
-        this.move(this.motionX, this.motionY, this.motionZ);
-        this.updateMovement();
 
         if(this instanceof PigZombie){
             ((PigZombie) this).setAngry(1000);
