@@ -2,7 +2,7 @@
   
 Author(제작자): **[SW-Team](https://github.com/SW-Team)**  
   
-자매품(PMMP): [EntityManager-PMMP](https://github.com/EntityManager)
+자매품(PMMP): [EntityManager-PMMP](https://github.com/milk0417/EntityManager)
   
 **[NOTICE] This plug-in is not perfect, the entity may move abnormally (It was written in Java8)**
   
