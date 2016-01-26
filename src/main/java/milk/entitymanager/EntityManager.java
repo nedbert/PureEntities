@@ -29,15 +29,13 @@ import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.TextFormat;
 import milk.entitymanager.entity.*;
+import milk.entitymanager.task.AutoClearTask;
 import milk.entitymanager.task.SpawnEntityTask;
 import milk.entitymanager.util.Utils;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class EntityManager extends PluginBase implements Listener{
 
@@ -172,7 +170,6 @@ public class EntityManager extends PluginBase implements Listener{
             }else{
                 return false;
             }
-
             shortNames.put(clazz.getSimpleName(), clazz);
             return true;
         }catch(Exception e){
@@ -234,6 +231,10 @@ public class EntityManager extends PluginBase implements Listener{
         this.getServer().getPluginManager().registerEvents(this, this);
         this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]Plugin has been enabled");
         this.getServer().getScheduler().scheduleRepeatingTask(new SpawnEntityTask(this), this.getData("spawn.tick", 120));
+
+        if(this.getData("autoclear.turn-on", true)){
+            this.getServer().getScheduler().scheduleRepeatingTask(new AutoClearTask(), this.getData("autoclear.tick", 120));
+        }
     }
 
     public void onDisable(){
@@ -338,7 +339,7 @@ public class EntityManager extends PluginBase implements Listener{
         Block pos = ev.getBlock();
         if(ev.isCancelled()) return;
         if(pos.getId() == Item.MONSTER_SPAWNER){
-            spawner.remove(String.format("%s:%s:%s:%s", pos.x, pos.y, pos.z, pos.getLevel().getFolderName()));
+            spawner.remove(String.format("%s:%s:%s:%s", (int) pos.x, (int) pos.y, (int) pos.z, pos.getLevel().getFolderName()));
         }
 
         if(
@@ -348,7 +349,7 @@ public class EntityManager extends PluginBase implements Listener{
             || ev.getBlock().getId() == Block.STONE_BRICK_STAIRS
         ){
             if(ev.getBlock().getLightLevel() < 12 && Utils.rand(1,3) < 2){
-                Silverfish entity = (Silverfish) create("Silverfish", pos);
+                Silverfish entity = (Silverfish) EntityManager.create("Silverfish", pos);
                 if(entity != null){
                     entity.spawnToAll();
                 }
@@ -363,10 +364,28 @@ public class EntityManager extends PluginBase implements Listener{
 
     @EventHandler
     public void EntityDeathEvent(EntityDeathEvent ev){
-        /*Entity entity = ev.getEntity();
-        if(!(entity instanceof BaseEntity) || !isset(drops[entity.NETWORK_ID])) return;
-        drops = [];
-        foreach(drops[entity.NETWORK_ID] as key => data){
+        Entity entity = ev.getEntity();
+        if(!(entity instanceof BaseEntity) || drops.containsKey(entity.NETWORK_ID + "")){
+            return;
+        }
+
+        if(!(drops.get(entity.NETWORK_ID + "") instanceof List)){
+            return;
+        }
+
+        //TODO: Change drop item
+        /*List drops = (List) EntityManager.drops.get(entity.NETWORK_ID);
+        drops.forEach(k -> {
+            if(!(k instanceof List)){
+                return;
+            }
+
+            List data = (List) k;
+            if(data.size() < 3){
+                return;
+            }
+        });
+        foreach( as key => data){
             if(!isset(data[0]) || !isset(data[1]) || !isset(data[2])){
                 unset(drops[entity.NETWORK_ID][key]);
                 continue;
@@ -485,8 +504,8 @@ public class EntityManager extends PluginBase implements Listener{
                 }
 
                 Entity ent;
-                if((ent = create(type1, pos)) == null){
-                    if((ent = create(type2, pos)) == null){
+                if((ent = EntityManager.create(type1, pos)) == null){
+                    if((ent = EntityManager.create(type2, pos)) == null){
                         output += "엔티티를 소환하는도중 에러가 발생했습니다";
                         break;
                     }

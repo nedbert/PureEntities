@@ -1,6 +1,6 @@
 # EntityManager   
   
-Author: **[@milk0417(승원)](https://github.com/milk0417)**  
+Author(제작자): **[SW-Team](https://github.com/SW-Team)**  
   
 자매품(PMMP): [EntityManager-PMMP](https://github.com/EntityManager)
   
