@@ -82,7 +82,7 @@ public abstract class WalkEntity extends BaseEntity{
         
         if(this.isKnockback()){
             this.knockback--;
-            this.motionY -= 0.25;
+            this.motionY -= 0.23;
             this.move(this.motionX, this.motionY, this.motionZ);
             this.updateMovement();
             return null;
@@ -147,7 +147,7 @@ public abstract class WalkEntity extends BaseEntity{
             if(this.onGround && !isJump){
                 this.motionY = 0;
             }else if(!isJump){
-                this.motionY -= 0.3;
+                this.motionY -= 0.22;
             }
         }
         this.updateMovement();
