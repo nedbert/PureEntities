@@ -21,12 +21,12 @@ public class Pig extends Animal implements Rideable{
     }
 
     @Override
-    public float getWidth() {
+    public float getWidth(){
         return 1.6f;
     }
 
     @Override
-    public float getHeight() {
+    public float getHeight(){
         return 1.12f;
     }
 
@@ -38,7 +38,6 @@ public class Pig extends Animal implements Rideable{
         super.initEntity();
 
         this.setMaxHealth(10);
-        this.created = true;
     }
 
     public boolean targetOption(Creature creature, double distance){

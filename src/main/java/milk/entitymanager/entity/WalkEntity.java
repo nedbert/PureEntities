@@ -29,11 +29,17 @@ public abstract class WalkEntity extends BaseEntity{
                 if(!(ent instanceof Creature) || ent instanceof Animal || ent == this) continue;
                 Creature creature = (Creature) ent;
 
-                if(creature instanceof BaseEntity && ((BaseEntity) creature).isFriendly() == this.isFriendly()) continue;
+                if(creature instanceof BaseEntity && ((BaseEntity) creature).isFriendly() == this.isFriendly()){
+                    continue;
+                }
 
                 double distance;
-                if((distance = this.distanceSquared(creature)) > near || !this.targetOption(creature, distance)) continue;
+                if((distance = this.distanceSquared(creature)) > near || !this.targetOption(creature, distance)){
+                    continue;
+                }
                 near = distance;
+
+                this.stayTime = 0;
                 this.baseTarget = creature;
             }
         }
@@ -41,13 +47,15 @@ public abstract class WalkEntity extends BaseEntity{
             this.baseTarget instanceof Creature
             && ((Creature) this.baseTarget).isAlive()
         ){
-            this.stayTime = 0;
             return;
         }
 
         int x, z;
         if(this.stayTime > 0){
-            if(Utils.rand(1, 125) > 4) return;
+            if(Utils.rand(1, 125) > 4){
+                return;
+            }
+
             x = Utils.rand(25, 80);
             z = Utils.rand(25, 80);
             this.baseTarget = this.add(Utils.rand() ? x : -x, Utils.rand(-20, 20) / 10, Utils.rand() ? z : -z);
@@ -68,24 +76,15 @@ public abstract class WalkEntity extends BaseEntity{
     }
 
     public Vector3 updateMove(){
-        if(!this.isMovement()) return null;
+        if(!this.isMovement()){
+            return null;
+        }
         
-        if(this.attacker != null){
-            double[] y = new double[17];
-            Arrays.fill(y, 0, 11, -0.2);
-            y[11] = 0.4;
-            y[12] = 0.4;
-            y[13] = 0.5;
-            y[14] = 0.5;
-            y[15] = 0.6;
-            this.move(this.motionX, y[this.atkTime], this.motionZ);
-            
-            if(--this.atkTime <= 0){
-            	this.attacker = null;
-            	this.motionX = 0;
-            	this.motionY = 0;
-            	this.motionZ = 0;
-            }
+        if(this.isKnockback()){
+            this.knockback--;
+            this.motionY -= 0.25;
+            this.move(this.motionX, this.motionY, this.motionZ);
+            this.updateMovement();
             return null;
         }
         
@@ -132,11 +131,11 @@ public abstract class WalkEntity extends BaseEntity{
                     AxisAlignedBB bb = block2.getBoundingBox();
                     if(block2.canPassThrough() || (bb == null || bb.maxY - this.y <= 1)){
                         isJump = true;
-                        this.motionY = 0.15;
+                        this.motionY = 0.22;
                     }else{
                         if(this.level.getBlock(block.add(-x, 0, -z)).getId() == Item.LADDER){
                             isJump = true;
-                            this.motionY = 0.15;
+                            this.motionY = 0.22;
                         }
                     }
                 }
@@ -148,7 +147,7 @@ public abstract class WalkEntity extends BaseEntity{
             if(this.onGround && !isJump){
                 this.motionY = 0;
             }else if(!isJump){
-                this.motionY -= 0.2;
+                this.motionY -= 0.3;
             }
         }
         this.updateMovement();

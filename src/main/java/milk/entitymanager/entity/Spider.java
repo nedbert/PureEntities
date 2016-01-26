@@ -21,17 +21,17 @@ public class Spider extends Monster{
     }
 
     @Override
-    public float getWidth() {
+    public float getWidth(){
         return 1.5f;
     }
 
     @Override
-    public float getHeight() {
+    public float getHeight(){
         return 1.2f;
     }
 
     @Override
-    public float getEyeHeight() {
+    public float getEyeHeight(){
         return 1;
     }
 
@@ -46,13 +46,14 @@ public class Spider extends Monster{
         super.initEntity();
 
         this.setDamage(new int[]{0, 2, 2, 3});
-        this.created = true;
     }
 
+    @Override
     public String getName(){
         return "Spider";
     }
 
+    @Override
     public void attackEntity(Entity player){
         if(this.attackDelay > 10 && this.distanceSquared(player) < 1.32){
             this.attackDelay = 0;
@@ -61,6 +62,7 @@ public class Spider extends Monster{
         }
     }
 
+    @Override
     public Item[] getDrops(){
         return this.lastDamageCause instanceof EntityDamageByEntityEvent ? new Item[]{Item.get(Item.STRING, 0, Utils.rand(0, 3))} : new Item[0];
     }

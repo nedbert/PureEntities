@@ -21,17 +21,17 @@ public class ZombieVillager extends Monster{
     }
 
     @Override
-    public float getWidth() {
+    public float getWidth(){
         return 0.72f;
     }
 
     @Override
-    public float getHeight() {
+    public float getHeight(){
         return 1.8f;
     }
 
     @Override
-    public float getEyeHeight() {
+    public float getEyeHeight(){
         return 1.62f;
     }
 
@@ -45,9 +45,9 @@ public class ZombieVillager extends Monster{
         super.initEntity();
 
         this.setDamage(new int[]{0, 3, 4, 6});
-        this.created = true;
     }
 
+    @Override
     public String getName(){
         return "ZombieVillager";
     }
@@ -62,6 +62,7 @@ public class ZombieVillager extends Monster{
         }
     }
 
+    @Override
     public Item[] getDrops(){
         if(this.lastDamageCause instanceof EntityDamageByEntityEvent){
             switch(Utils.rand(0, 2)){

@@ -19,12 +19,12 @@ public class Rabbit extends Animal{
     }
 
     @Override
-    public float getWidth() {
+    public float getWidth(){
         return 0.4f;
     }
 
     @Override
-    public float getHeight() {
+    public float getHeight(){
         return 0.75f;
     }
 
@@ -41,7 +41,6 @@ public class Rabbit extends Animal{
         super.initEntity();
 
         this.setMaxHealth(4);
-        this.created = true;
     }
 
     public boolean targetOption(Creature creature, double distance){

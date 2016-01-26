@@ -28,24 +28,23 @@ public class Skeleton extends Monster{
     }
 
     @Override
-    public float getWidth() {
+    public float getWidth(){
         return 0.65f;
     }
 
     @Override
-    public float getHeight() {
+    public float getHeight(){
         return 1.8f;
     }
 
     @Override
-    public float getEyeHeight() {
+    public float getEyeHeight(){
         return 1.62f;
     }
 
     protected void initEntity(){
         super.initEntity();
 
-        this.created = true;
     }
 
     public String getName(){
@@ -100,7 +99,7 @@ public class Skeleton extends Monster{
                 Item.get(Item.ARROW, 0, Utils.rand(0, 3)),
             };
         }
-        return new Item[]{};
+        return new Item[0];
     }
 
 }

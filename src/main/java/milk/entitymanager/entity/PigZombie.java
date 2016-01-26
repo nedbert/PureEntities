@@ -25,17 +25,17 @@ public class PigZombie extends Monster{
     }
 
     @Override
-    public float getWidth() {
+    public float getWidth(){
         return 0.72f;
     }
 
     @Override
-    public float getHeight() {
+    public float getHeight(){
         return 1.8f;
     }
 
     @Override
-    public float getEyeHeight() {
+    public float getEyeHeight(){
         return 1.62f;
     }
 
@@ -55,7 +55,6 @@ public class PigZombie extends Monster{
         }
 
         this.setDamage(new int[]{0, 5, 9, 13});
-        this.created = true;
     }
 
     public void saveNBT(){

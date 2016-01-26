@@ -6,7 +6,7 @@ version: "1.0"
 api: ["1.0.0"]
 
 load: STARTUP
-author: milk0417(SW-Team)
+author: SW-Team
 description: control entity's movement
 website: https://github.com/SW-Team/EntityManager
 commands:

@@ -5,13 +5,16 @@ import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.Vector3;
+import cn.nukkit.entity.Creature;
+import cn.nukkit.Player;
 import cn.nukkit.nbt.tag.CompoundTag;
 import milk.entitymanager.util.Utils;
 
-public class Zombie extends Monster{
-    public static final int NETWORK_ID = 32;
+public class IronGolem extends Monster{
+    public static final int NETWORK_ID = 20;
 
-    public Zombie(FullChunk chunk, CompoundTag nbt){
+    public IronGolem(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
     }
 
@@ -22,7 +25,7 @@ public class Zombie extends Monster{
 
     @Override
     public float getWidth(){
-        return 0.72f;
+        return 1.3f;
     }
 
     @Override
@@ -31,37 +34,36 @@ public class Zombie extends Monster{
     }
 
     @Override
-    public float getEyeHeight(){
-        return 1.62f;
-    }
-
-    @Override
     public double getSpeed(){
         return 1.1;
     }
 
-    @Override
-    public String getName(){
-        return "Zombie";
-    }
-
-    @Override
-    protected void initEntity(){
+    public void initEntity(){
+        this.setMaxHealth(100);
         super.initEntity();
 
+        this.setFriendly(true);
         this.setDamage(new int[]{0, 3, 4, 6});
     }
 
-    @Override
+    public String getName(){
+        return "IronGolem";
+    }
+
     public void attackEntity(Entity player){
-        if(this.attackDelay > 10 && this.distanceSquared(player) < 2){
+        if(this.attackDelay > 10 && this.distanceSquared(player) < 4){
             this.attackDelay = 0;
-            EntityDamageEvent ev = new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_ENTITY_ATTACK, (float) this.getDamage());
+
+            EntityDamageEvent ev = new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_ENTITY_ATTACK, this.getDamage());
             player.attack(ev);
+            player.setMotion(new Vector3(0, 0.7, 0));
         }
     }
 
-    @Override
+    public boolean targetOption(Creature creature, double distance){
+        return !(creature instanceof Player) && creature.isAlive() && distance <= 60;
+    }
+
     public Item[] getDrops(){
         if(this.lastDamageCause instanceof EntityDamageByEntityEvent){
             switch(Utils.rand(0, 2)){

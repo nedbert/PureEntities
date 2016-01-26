@@ -1,9 +1,7 @@
 package milk.entitymanager.entity;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.Projectile;
-import cn.nukkit.entity.Snowball;
-import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.item.Item;
@@ -13,14 +11,13 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.FloatTag;
-import cn.nukkit.Player;
-import cn.nukkit.entity.Creature;
+import cn.nukkit.entity.Projectile;
 import milk.entitymanager.util.Utils;
 
-public class SnowGolem extends Monster{
-    public static final int NETWORK_ID = 21;
+public class Ghast extends FlyMonster{
+    public static final int NETWORK_ID = 41;
 
-    public SnowGolem(FullChunk chunk, CompoundTag nbt){
+    public Ghast(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
     }
 
@@ -31,37 +28,34 @@ public class SnowGolem extends Monster{
 
     @Override
     public float getWidth(){
-        return 0.65f;
+        return 4;
     }
 
     @Override
     public float getHeight(){
-        return 2.1f;
+        return 4;
     }
 
     @Override
-    public float getEyeHeight(){
-        return 1.92f;
+    public double getSpeed(){
+        return 1.2;
     }
 
-    @Override
     public void initEntity(){
         super.initEntity();
 
-        this.setFriendly(true);
+        this.setDamage(new int[]{0, 4, 6, 9});
     }
 
-    @Override
     public String getName(){
-        return "SnowGolem";
+        return "Ghast";
     }
 
-    @Override
-    public void attackEntity(Entity player){
-        if(this.attackDelay > 23  && Utils.rand(1, 32) < 4 && this.distanceSquared(player) <= 55){
+	public void attackEntity(Entity player){
+        if(this.attackDelay > 30 && Utils.rand(1, 32) < 4 && this.distanceSquared(player) <= 200){
             this.attackDelay = 0;
 
-            double f = 1.2;
+            double f = 2;
             double yaw = this.yaw + Utils.rand(-220, 220) / 10;
             double pitch = this.pitch + Utils.rand(-120, 120) / 10;
             CompoundTag nbt = new CompoundTag()
@@ -77,22 +71,17 @@ public class SnowGolem extends Monster{
                     .add(new FloatTag("", (float) yaw))
                     .add(new FloatTag("", (float) pitch)));
 
-            Entity k = Entity.createEntity("Snowball", this.chunk, nbt, this);
-            if(k == null){
+            Entity k = Entity.createEntity("FireBall", this.chunk, nbt, this);
+            if(!(k instanceof FireBall)){
                 return;
             }
 
-            Snowball snowball = (Snowball) k;
-            snowball.setMotion(snowball.getMotion().multiply(f));
+            FireBall fireball = (FireBall) k;
+            fireball.setExplode(true);
+            fireball.setMotion(fireball.getMotion().multiply(f));
+            EntityShootBowEvent ev = new EntityShootBowEvent(this, Item.get(Item.ARROW, 0, 1), fireball, f);
 
-            //TODO: I can't change Snowball's damage
-            /*property = (new \ReflectionClass(snowball)).getProperty("damage");
-            property.setAccessible(true);
-            property.setValue ( snowball, 2 );*/
-
-            EntityShootBowEvent ev = new EntityShootBowEvent(this, Item.get(Item.ARROW, 0, 1), snowball, f);
             this.server.getPluginManager().callEvent(ev);
-
             Projectile projectile = ev.getProjectile();
             if(ev.isCancelled()){
                 projectile.kill();
@@ -109,16 +98,8 @@ public class SnowGolem extends Monster{
         }
     }
 
-    @Override
     public Item[] getDrops(){
-        if(this.lastDamageCause instanceof EntityDamageByEntityEvent){
-            return new Item[]{Item.get(Item.SNOWBALL, 0, 15)};
-        }
         return new Item[0];
     }
 
-    @Override
-    public boolean targetOption(Creature creature, double distance){
-        return !(creature instanceof Player) && creature.isAlive() && distance <= 60;
-    }
 }

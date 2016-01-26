@@ -20,17 +20,17 @@ public class Enderman extends Monster{
     }
 
     @Override
-    public float getWidth() {
+    public float getWidth(){
         return 0.72f;
     }
 
     @Override
-    public float getHeight() {
+    public float getHeight(){
         return 2.8f;
     }
 
     @Override
-    public float getEyeHeight() {
+    public float getEyeHeight(){
         return 2.62f;
     }
 
@@ -42,7 +42,6 @@ public class Enderman extends Monster{
     protected void initEntity(){
         super.initEntity();
         this.setDamage(new int[]{0, 1, 2, 3});
-        this.created = true;
     }
 
     public String getName(){

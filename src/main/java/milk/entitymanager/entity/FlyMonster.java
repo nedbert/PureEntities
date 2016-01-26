@@ -18,8 +18,8 @@ public abstract class FlyMonster extends FlyEntity{
 
     int attackDelay = 0;
 
-    double[] minDamage;
-    double[] maxDamage;
+    int[] minDamage;
+    int[] maxDamage;
 
     public FlyMonster(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
@@ -27,13 +27,109 @@ public abstract class FlyMonster extends FlyEntity{
 
     public abstract void attackEntity(Entity player);
 
-    //TODO: add Damage
+    public int getDamage(){
+        return getDamage(null);
+    }
 
+    public int getDamage(Integer difficulty){
+        return Utils.rand(this.getMinDamage(difficulty), this.getMaxDamage(difficulty));
+    }
+
+    public int getMinDamage(){
+        return getMinDamage(null);
+    }
+
+    public int getMinDamage(Integer difficulty){
+        if(difficulty == null || difficulty > 3 || difficulty < 0){
+            difficulty = Server.getInstance().getDifficulty();
+        }
+
+        return this.minDamage[difficulty];
+    }
+
+    public int getMaxDamage(){
+        return getMaxDamage(null);
+    }
+
+    public int getMaxDamage(Integer difficulty){
+        if(difficulty == null || difficulty > 3 || difficulty < 0){
+            difficulty = Server.getInstance().getDifficulty();
+        }
+
+        return this.maxDamage[difficulty];
+    }
+
+    public void setDamage(int damage){
+        this.setDamage(damage, Server.getInstance().getDifficulty());
+    }
+
+    public void setDamage(int damage, int difficulty){
+        if(difficulty >= 1 && difficulty <= 3){
+            this.minDamage[difficulty] = damage;
+            this.maxDamage[difficulty] = damage;
+        }
+    }
+
+    public void setDamage(int[] damage){
+        if(damage.length < 4) return;
+
+        if(minDamage == null || minDamage.length < 4){
+            minDamage = new int[]{0, 0, 0, 0};
+        }
+
+        if(maxDamage == null || maxDamage.length < 4){
+            maxDamage = new int[]{0, 0, 0, 0};
+        }
+
+        for(int i = 0; i < 4; i++){
+            this.minDamage[i] = damage[i];
+            this.maxDamage[i] = damage[i];
+        }
+    }
+
+    public void setMinDamage(int[] damage){
+        if(damage.length < 4) return;
+
+        for(int i = 0; i < 4; i++){
+            this.setDamage(Math.min(damage[i], this.getMaxDamage(i)), i);
+        }
+    }
+
+    public void setMinDamage(int damage){
+        this.setDamage(damage, Server.getInstance().getDifficulty());
+    }
+
+    public void setMinDamage(int damage, int difficulty){
+        if(difficulty >= 1 && difficulty <= 3){
+            this.minDamage[difficulty] = Math.min(damage, this.getMaxDamage(difficulty));
+        }
+    }
+
+    public void setMaxDamage(int[] damage){
+        if(damage.length < 4) return;
+
+        for(int i = 0; i < 4; i++){
+            this.setMaxDamage(Math.max(damage[i], this.getMinDamage(i)), i);
+        }
+    }
+
+    public void setMaxDamage(int damage){
+        setMinDamage(damage, Server.getInstance().getDifficulty());
+    }
+
+    public void setMaxDamage(int damage, Integer difficulty){
+        if(difficulty >= 1 && difficulty <= 3){
+            this.maxDamage[difficulty] = Math.max(damage, this.getMinDamage(difficulty));
+        }
+    }
+
+    @Override
     public void updateTick(){
         if(this.server.getDifficulty() < 1){
             this.close();
             return;
         }
+
         if(!this.isAlive()){
             if(++this.deadTicks >= 23) this.close();
             return;
@@ -41,6 +137,7 @@ public abstract class FlyMonster extends FlyEntity{
 
         --this.moveTime;
         ++this.attackDelay;
+
         Vector3 target = this.updateMove();
         if(target instanceof Entity){
             this.attackEntity((Entity) target);
@@ -57,17 +154,13 @@ public abstract class FlyMonster extends FlyEntity{
     public boolean entityBaseTick(int tickDiff){
         //Timings.timerEntityBaseTick.startTiming();
 
-        if(!this.isCreated()){
+        if(!this.closed){
             return false;
         }
 
-        //TODO
         boolean hasUpdate = this.entityBaseTick2(tickDiff);
         EntityDamageEvent ev;
-        
-        if(this.atkTime > 0){
-            this.atkTime -= tickDiff;
-        }
+
         if(this.isInsideOfSolid()){
             hasUpdate = true;
             ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_SUFFOCATION, 1);

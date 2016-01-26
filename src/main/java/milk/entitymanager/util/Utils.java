@@ -5,10 +5,7 @@ import java.util.Random;
 public class Utils{
 
     public static int rand(int min, int max){
-        if(max == min){
-            return max;
-        }
-        return min + new Random().nextInt(max - min);
+        return (int) (min + Math.random() * (max - min + 1));
     }
 
     public static boolean rand(){

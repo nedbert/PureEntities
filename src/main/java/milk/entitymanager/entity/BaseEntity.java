@@ -1,7 +1,6 @@
 package milk.entitymanager.entity;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Creature;
 import cn.nukkit.entity.Effect;
@@ -28,32 +27,16 @@ public abstract class BaseEntity extends Creature{
     Vector3 baseTarget = null;
     Vector3 mainTarget = null;
 
-    Entity attacker = null;
-    int atkTime = 0;
+    int knockback = 0;
 
     List<Block> blocksAround = new ArrayList<>();
 
-    boolean created = false;
-
-    boolean movement = true;
-    boolean wallcheck = true;
-
-    boolean friendly = false;
+    private boolean movement = true;
+    private boolean friendly = false;
+    private boolean wallcheck = true;
 
     public BaseEntity(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
-    }
-
-    public boolean isFriendly(){
-    	return this.friendly;
-    }
-
-    public void setFriendly(boolean bool){
-    	this.friendly = bool;
-    }
-
-    public boolean onUpdate(int currentTick){
-        return false;
     }
 
     public abstract void updateTick();
@@ -62,32 +45,45 @@ public abstract class BaseEntity extends Creature{
 
     public abstract boolean targetOption(Creature creature, double distance);
 
-    public String getSaveId(){
-        return this.getClass().getSimpleName();
-    }
-
-    public boolean isCreated(){
-        return this.created;
+    public boolean isFriendly(){
+    	return this.friendly;
     }
 
     public boolean isMovement(){
         return this.movement;
     }
 
-    public void setMovement(boolean value){
-        this.movement = value;
+    public boolean isKnockback(){
+        return this.knockback > 0;
     }
 
     public boolean isWallCheck(){
         return this.wallcheck;
     }
 
+    public void setFriendly(boolean bool){
+        this.friendly = bool;
+    }
+
+    public void setMovement(boolean value){
+        this.movement = value;
+    }
+
     public void setWallCheck(boolean value){
         this.wallcheck = value;
     }
 
+    public String getSaveId(){
+        return this.getClass().getSimpleName();
+    }
+
     public double getSpeed(){
         return 1;
+    }
+
+    public boolean onUpdate(int currentTick){
+        this.updateTick();
+        return true;
     }
 
     @Override
@@ -129,14 +125,21 @@ public abstract class BaseEntity extends Creature{
 
     @Override
     public void updateMovement(){
-        if(this.lastX == this.x && this.lastY == this.y && this.lastZ == this.z && this.lastYaw == this.yaw && this.lastPitch == this.pitch) return;
-        this.lastX = this.x;
-        this.lastY = this.y;
-        this.lastZ = this.z;
-        this.lastYaw = this.yaw;
-        this.lastPitch = this.pitch;
+        if(
+            this.lastX != this.x
+            || this.lastY != this.y
+            || this.lastZ != this.z
+            || this.lastYaw != this.yaw
+            || this.lastPitch != this.pitch
+        ){
+            this.lastX = this.x;
+            this.lastY = this.y;
+            this.lastZ = this.z;
+            this.lastYaw = this.yaw;
+            this.lastPitch = this.pitch;
 
-        this.level.addEntityMovement(this.chunk.getX(), this.chunk.getZ(), this.id, this.x, this.y, this.z, this.yaw, this.pitch);
+            this.level.addEntityMovement(this.chunk.getX(), this.chunk.getZ(), this.id, this.x, this.y, this.z, this.yaw, this.pitch);
+        }
     }
 
     @Override
@@ -232,7 +235,7 @@ public abstract class BaseEntity extends Creature{
 
     @Override
     public void attack(EntityDamageEvent source){
-        if(this.atkTime > 0) return;
+        if(this.isKnockback()) return;
 
         super.attack(source);
 
@@ -240,27 +243,20 @@ public abstract class BaseEntity extends Creature{
             return;
         }
 
-        synchronized(this){
-            this.atkTime = 15;
-            this.stayTime = 0;
+        this.stayTime = 0;
+        this.knockback = 10;
 
-            this.attacker = ((EntityDamageByEntityEvent) source).getDamager();
-            double x = this.attacker.x - this.x;
-            double z = this.attacker.z - this.z;
-            double diff = Math.abs(x) + Math.abs(z);
-
-            if(this instanceof FlyEntity){
-                double k = Math.abs(x) + Math.abs(y);
-
-                this.motionX = -0.5 * (diff == 0 ? 0 : x / diff);
-                this.motionZ = -0.5 * (diff == 0 ? 0 : z / diff);
-                this.motionY = this.getSpeed() * 0.1 * (k == 0 ? 0 : y / k);
-            }else{
-                this.motionX = -0.4 * (diff == 0 ? 0 : x / diff);
-                this.motionZ = -0.4 * (diff == 0 ? 0 : z / diff);
-            }
-            this.move(this.motionX, 0.6, this.motionZ);
+        Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
+        Vector3 motion = new Vector3(this.x - damager.x, this.y - damager.y, this.z - damager.z).normalize();
+        this.motionX = motion.z * 0.2;
+        this.motionZ = motion.x * 0.2;
+        if(this instanceof FlyEntity){
+            this.motionY = motion.y * 0.2;
+        }else{
+            this.motionY = 0.6;
         }
+        this.move(this.motionX, this.motionY, this.motionZ);
+        this.updateMovement();
 
         if(this instanceof PigZombie){
             ((PigZombie) this).setAngry(1000);
@@ -276,6 +272,7 @@ public abstract class BaseEntity extends Creature{
 
     }
 
+    @Override
     public boolean move(double dx, double dy, double dz){
         //Timings.entityMoveTimer.startTiming();
 
@@ -293,10 +290,10 @@ public abstract class BaseEntity extends Creature{
         for(AxisAlignedBB bb : list){
             if(
                 this.isWallCheck()
-                && this.boundingBox.maxY > bb.minY
-                && this.boundingBox.minY < bb.maxY
-                && this.boundingBox.maxZ > bb.minZ
-                && this.boundingBox.minZ < bb.maxZ
+                && this.boundingBox.maxY >= bb.minY
+                && this.boundingBox.minY <= bb.maxY
+                && this.boundingBox.maxZ >= bb.minZ
+                && this.boundingBox.minZ <= bb.maxZ
             ){
                 double x1;
                 if(this.boundingBox.maxX + dx >= bb.minX && this.boundingBox.maxX <= bb.minX){
@@ -312,10 +309,10 @@ public abstract class BaseEntity extends Creature{
         for(AxisAlignedBB bb : list){
             if(
                 this.isWallCheck()
-                && this.boundingBox.maxY > bb.minY
-                && this.boundingBox.minY < bb.maxY
-                && this.boundingBox.maxX > bb.minX
-                && this.boundingBox.minX < bb.maxX
+                && this.boundingBox.maxY >= bb.minY
+                && this.boundingBox.minY <= bb.maxY
+                && this.boundingBox.maxX >= bb.minX
+                && this.boundingBox.minX <= bb.maxX
             ){
                 double z1;
                 if(this.boundingBox.maxZ + dz >= bb.minZ && this.boundingBox.maxZ <= bb.minZ){
@@ -336,11 +333,6 @@ public abstract class BaseEntity extends Creature{
 
         //Timings.entityMoveTimer.stopTiming();
         return true;
-    }
-
-    public void close(){
-        this.created = false;
-        super.close();
     }
 
 }

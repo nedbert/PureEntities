@@ -24,12 +24,12 @@ public class Ocelot extends Monster{
     }
 
     @Override
-    public float getWidth() {
+    public float getWidth(){
         return 0.72f;
     }
 
     @Override
-    public float getHeight() {
+    public float getHeight(){
         return 0.9f;
     }
 
@@ -49,7 +49,6 @@ public class Ocelot extends Monster{
         }
 
         this.setDamage(new int[]{0, 2, 2, 2});
-        this.created = true;
     }
 
     public void saveNBT(){

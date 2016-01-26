@@ -91,12 +91,12 @@ public abstract class Monster extends WalkEntity{
         if(damage.length < 4) return;
 
         for(int i = 0; i < 4; i++){
-            this.setMinDamage(Math.min(damage[i], this.getMaxDamage(i)), i);
+            this.setDamage(Math.min(damage[i], this.getMaxDamage(i)), i);
         }
     }
 
     public void setMinDamage(int damage){
-        this.setMinDamage(damage, Server.getInstance().getDifficulty());
+        this.setDamage(damage, Server.getInstance().getDifficulty());
     }
 
     public void setMinDamage(int damage, int difficulty){
@@ -169,16 +169,8 @@ public abstract class Monster extends WalkEntity{
     public boolean entityBaseTick(int tickDiff){
         //Timings.timerEntityBaseTick.startTiming();
 
-        if(!this.isCreated()){
-            return false;
-        }
-
         boolean hasUpdate = this.entityBaseTick2(tickDiff);
         EntityDamageEvent ev;
-        
-        if(this.atkTime > 0){
-            this.atkTime -= tickDiff;
-        }
         
         if(this.isInsideOfSolid()){
             hasUpdate = true;

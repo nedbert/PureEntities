@@ -38,8 +38,9 @@ public abstract class FlyEntity extends BaseEntity{
                 if((distance = this.distanceSquared(creature)) > near || !this.targetOption(creature, distance)){
                     continue;
                 }
-
                 near = distance;
+
+                this.stayTime = 0;
                 this.baseTarget = creature;
             }
         }
@@ -47,7 +48,6 @@ public abstract class FlyEntity extends BaseEntity{
             this.baseTarget instanceof Creature
             && ((Creature) this.baseTarget).isAlive()
         ){
-            this.stayTime = 0;
             return;
         }
 
@@ -85,20 +85,16 @@ public abstract class FlyEntity extends BaseEntity{
         }
     }
 
+    @Override
     public Vector3 updateMove(){
         if(!this.isMovement()){
             return null;
         }
 
-        if(this.attacker instanceof Player && this.atkTime > 0){
+        if(this.isKnockback()){
+            this.knockback--;
             this.move(this.motionX, this.motionY, this.motionZ);
-
-            if(--this.atkTime <= 0){
-            	this.attacker = null;
-            	this.motionX = 0;
-            	this.motionY = 0;
-            	this.motionZ = 0;
-            }
+            this.updateMovement();
             return null;
         }
         

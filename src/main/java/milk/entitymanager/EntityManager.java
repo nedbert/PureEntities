@@ -26,9 +26,10 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.plugin.PluginBase;
+import cn.nukkit.utils.Config;
 import cn.nukkit.utils.TextFormat;
 import milk.entitymanager.entity.*;
-import milk.entitymanager.thread.EntityThread;
+import milk.entitymanager.task.SpawnEntityTask;
 import milk.entitymanager.util.Utils;
 
 import java.io.File;
@@ -40,22 +41,29 @@ import java.util.Map;
 
 public class EntityManager extends PluginBase implements Listener{
 
-    String path;
+    static LinkedHashMap<String, Object> data;
+    public static LinkedHashMap<String, Object> drops;
+    public static LinkedHashMap<String, Object> spawner;
 
-    static Map data;
-    //static HashMap drops;
-    static LinkedHashMap<String, Object> spawner;
+    static HashMap<Long, BaseEntity> entities = new HashMap<>();
 
-    static Map<Long, BaseEntity> entities = new HashMap<>();
-
-    static Map<String, Class<? extends Entity>> shortNames = new HashMap<>();
-    static Map<Integer, Class<? extends Entity>> knownEntities = new HashMap<>();
+    static HashMap<String, Class<? extends Entity>> shortNames = new HashMap<>();
+    static HashMap<Integer, Class<? extends Entity>> knownEntities = new HashMap<>();
 
     public void onLoad(){
         final int[] count = {0};
 
         ArrayList<Class<? extends Entity>> clazz2 = new ArrayList<>();
+        clazz2.add(Blaze.class);
+        clazz2.add(CaveSpider.class);
+        clazz2.add(Chicken.class);
+        clazz2.add(Cow.class);
+        clazz2.add(Creeper.class);
         clazz2.add(Enderman.class);
+        clazz2.add(Ghast.class);
+        clazz2.add(IronGolem.class);
+        clazz2.add(MagmaCube.class);
+        clazz2.add(Mooshroom.class);
         clazz2.add(Ocelot.class);
         clazz2.add(Pig.class);
         clazz2.add(PigZombie.class);
@@ -70,6 +78,8 @@ public class EntityManager extends PluginBase implements Listener{
         clazz2.add(Zombie.class);
         clazz2.add(ZombieVillager.class);
         clazz2.forEach(clazz -> count[0] += registerEntity(clazz) ? 1 : 0);
+
+        Entity.registerEntity(FireBall.class);
 
         if(count[0] == clazz2.size()){
             this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]All entities were registered");
@@ -108,10 +118,6 @@ public class EntityManager extends PluginBase implements Listener{
             }catch(Exception ignore){}
         }
 
-        if(entity == null){
-            return Entity.createEntity(clazz.getSimpleName(), chunk, nbt, args);
-        }
-
         return entity;
     }
 
@@ -141,6 +147,15 @@ public class EntityManager extends PluginBase implements Listener{
         }else if(type instanceof Integer && knownEntities.containsKey(type)){
             clazz = knownEntities.get(type);
         }
+
+        if(clazz == null){
+            if(type instanceof String){
+                return Entity.createEntity((String) type, chunk, nbt, args);
+            }else if(type instanceof Integer){
+                return Entity.createEntity((int) type, chunk, nbt, args);
+            }
+        }
+
         return create(clazz, chunk, nbt, args);
     }
 
@@ -149,6 +164,7 @@ public class EntityManager extends PluginBase implements Listener{
             return false;
         }
 
+        Entity.registerEntity(clazz);
         try{
             int networkId = clazz.getField("NETWORK_ID").getInt(null);
             if(networkId != -1){
@@ -186,71 +202,29 @@ public class EntityManager extends PluginBase implements Listener{
     }
 
     public void onEnable(){
-        path = this.getServer().getDataPath() + "plugins/EntityManager/";
-        File file = new File(path);
-        if(!file.isDirectory()){
-            try{
-                file.mkdirs();
-            }catch(Exception ignore){}
+        this.getDataFolder().mkdirs();
+
+        File conFile = new File(this.getDataFolder(), "config.yml");
+        if(!conFile.exists()){
+            this.saveResource("config.yml");
         }
 
-        /*function getData(ar, key, default){
-            vars = explode(".", key);
-            base = array_shift(vars);
-            if(!isset(ar[base])) return default;
-            base = ar[base];
-            while(count(vars) > 0){
-                baseKey = array_shift(vars);
-                if(!is_array(base) || !isset(base[baseKey])) return default;
-                base = base[baseKey];
-            }
-            return base;
-        }
+        File dropFile = new File(this.getDataFolder(), "drops.yml");
+        File spawnFile = new File(this.getDataFolder(), "spawner.yml");
 
-        data = [];
-        if(file_exists(path + "config.yml")){
-            data = yaml_parse(this.yaml(path + "config.yml"));
-        }
-        data = [
-            "entity" => [
-                "maximum" => getData(data, "entity.maximum", 30),
-                "explode" => getData(data, "entity.explode", true),
-            ],
-            "spawn" => [
-                "rand" => getData(data, "spawn.rand", "1/3"),
-                "tick" => getData(data, "spawn.tick", 120),
-            ],
-            "autospawn" => [
-                "turn-on" => getData(data, "autospawn.turn-on", getData(data, "spawn.auto", true)),
-                "radius" => getData(data, "autospawn.radius", getData(data, "spawn.radius", 25)),
-            ]
-        ];
-        file_put_contents(path + "config.yml", yaml_emit(data, YAML_UTF8_ENCODING));
+        EntityManager.data = (LinkedHashMap<String, Object>) new Config(conFile, Config.YAML).getAll();
+        EntityManager.drops = (LinkedHashMap<String, Object>) new Config(dropFile, Config.YAML).getAll();
+        EntityManager.spawner = (LinkedHashMap<String, Object>) new Config(spawnFile, Config.YAML).getAll();
 
-        if(file_exists(path. "SpawnerData.yml")){
-            spawn = yaml_parse(this.yaml(path + "SpawnerData.yml"));
-            unlink(path. "SpawnerData.yml");
-        }else if(file_exists(path. "spawner.yml")){
-            spawn = yaml_parse(this.yaml(path + "spawner.yml"));
-        }else{
-            spawn = [];
-            file_put_contents(path + "spawner.yml", yaml_emit([], YAML_UTF8_ENCODING));
-        }
-
-        if(file_exists(path. "drops.yml")){
-            drops = yaml_parse(this.yaml(path + "drops.yml"));
-        }else{
-            drops = [
-                Zombie.NETWORK_ID => [
-                    //[Item id, Item meta, Count, Percentage]
-                    //example: [Item.FEATHER, 0, "1,10", "1/1"]
-                ],
-                Creeper.NETWORK_ID => [
-
-                ],
-            ];
-            file_put_contents(path + "drops.yml", yaml_emit([], YAML_UTF8_ENCODING));
-        }*/
+        /*Drops Example
+        //TYPE_ID
+        32:
+          #id  meta count
+          [288, 0, "1,10"],
+          [392, 0, "1,10"]
+        36:
+          [266, 0, "0,8"]
+        */
 
         knownEntities.forEach((id, clazz) -> {
             Item item = Item.get(Item.SPAWN_EGG, id);
@@ -259,59 +233,50 @@ public class EntityManager extends PluginBase implements Listener{
 
         this.getServer().getPluginManager().registerEvents(this, this);
         this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]Plugin has been enabled");
-        this.getServer().getScheduler().scheduleRepeatingTask(new EntityThread(), 1);
-        //this.getServer().getScheduler().scheduleRepeatingTask(new SpawnEntityTask(), (int) this.getData("spawn.tick"));
+        this.getServer().getScheduler().scheduleRepeatingTask(new SpawnEntityTask(this), this.getData("spawn.tick", 120));
     }
 
     public void onDisable(){
+        Config con = new Config(new File(this.getDataFolder(), "spawner.yml"), Config.YAML);
+        con.setAll(EntityManager.spawner);
+        con.save();
+
+        Config con2 = new Config(new File(this.getDataFolder(), "drops.yml"), Config.YAML);
+        con2.setAll(EntityManager.drops);
+        con2.save();
+
         this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]Plugin has been disable");
-        //file_put_contents(this.getServer().getDataPath() + "plugins/EntityManager/spawner.yml", yaml_emit(spawn, YAML_UTF8_ENCODING));
     }
 
     public <T> T getData(String key, T defaultValue){
-        String[] vars = key.split(".");
-        if(vars.length < 1) return defaultValue;
+        try{
+            String[] vars = key.split(".");
+            if(vars.length < 1)
+                return defaultValue;
 
-        Object base = vars[0];
-        if(!data.containsKey(base)) return defaultValue;
-
-        if(!(data.get(base) instanceof Map)){
-            return (T) data.get(base);
-        }
-        base = data.get(base);
-
-        int index = 0;
-        while(++index < vars.length){
-            String baseKey = vars[index];
-            if(!(data.get(baseKey) instanceof Map)){
-                return (T) data.get(baseKey);
+            String base = vars[0];
+            if(!data.containsKey(base)){
+                return defaultValue;
             }
-            base = data.get(baseKey);
-        }
-        return (T) base;
-    }
 
-    public Object getData(String key){
-        String[] vars = key.split(".");
-        if(vars.length < 1) return null;
-
-        Object base = vars[0];
-        if(!data.containsKey(base)) return null;
-
-        if(!(data.get(base) instanceof Map)){
-            return data.get(base);
-        }
-        base = data.get(base);
-
-        int index = 0;
-        while(++index < vars.length){
-            String baseKey = vars[index];
-            if(!(data.get(baseKey) instanceof Map)){
-                return data.get(baseKey);
+            if(!(data.get(base) instanceof Map)){
+                return (T) data.get(base);
             }
-            base = data.get(baseKey);
+
+            Object nbase = data.get(base);
+
+            int index = 0;
+            while(++index < vars.length){
+                String baseKey = vars[index];
+                if(!(data.get(baseKey) instanceof Map)){
+                    return (T) data.get(baseKey);
+                }
+                nbase = data.get(baseKey);
+            }
+            return (T) nbase;
+        }catch(Exception e){
+            return defaultValue;
         }
-        return base;
     }
 
     @EventHandler
@@ -352,23 +317,19 @@ public class EntityManager extends PluginBase implements Listener{
         }else if(item.getId() == Item.MONSTER_SPAWNER){
             LinkedHashMap<String, Object> hashdata = new LinkedHashMap<>();
             hashdata.put("radius", 5);
-            hashdata.put("mob-list", new ArrayList<ArrayList<String>>(){{
-                add(new ArrayList<String>(){{
-                    add("Cow");
-                    add("Pig");
-                    add("Sheep");
-                    add("Chicken");
-                }});
-                add(new ArrayList<String>(){{
-                    add("Zombie");
-                    add("Creeper");
-                    add("Skeleton");
-                    add("Spider");
-                    add("PigZombie");
-                    add("Enderman");
-                }});
+            hashdata.put("mob-list", new ArrayList<String>(){{
+                add("Cow");
+                add("Pig");
+                add("Sheep");
+                add("Chicken");
+                add("Zombie");
+                add("Creeper");
+                add("Skeleton");
+                add("Spider");
+                add("PigZombie");
+                add("Enderman");
             }});
-            spawner.put(String.format("%s:%s:%s:%s", pos.x, pos.y, pos.z, pos.getLevel().getFolderName()), hashdata);
+            spawner.put(String.format("%s:%s:%s:%s", (int) pos.x, (int) pos.y, (int) pos.z, pos.getLevel().getFolderName()), hashdata);
         }
     }
 
@@ -377,11 +338,7 @@ public class EntityManager extends PluginBase implements Listener{
         Block pos = ev.getBlock();
         if(ev.isCancelled()) return;
         if(pos.getId() == Item.MONSTER_SPAWNER){
-            /*if(isset(spawn["{pos.x}:{pos.y}:{pos.z}"])){
-                unset(spawn["{pos.x}:{pos.y}:{pos.z}"]);
-            }else if(isset(spawn["{pos.x}:{pos.y}:{pos.z}:{pos.getLevel().getFolderName()}"])){
-                unset(spawn["{pos.x}:{pos.y}:{pos.z}:{pos.getLevel().getFolderName()}"]);
-            }*/
+            spawner.remove(String.format("%s:%s:%s:%s", pos.x, pos.y, pos.z, pos.getLevel().getFolderName()));
         }
 
         if(
@@ -401,7 +358,7 @@ public class EntityManager extends PluginBase implements Listener{
 
     @EventHandler
     public void ExplosionPrimeEvent(ExplosionPrimeEvent ev){
-        ev.setCancelled(!this.getData("entity.explode", true));
+        ev.setCancelled(!this.getData("entity.explode", false));
     }
 
     @EventHandler
@@ -465,7 +422,7 @@ public class EntityManager extends PluginBase implements Listener{
                 for(Entity ent : lv.getEntities()){
                     if(ent instanceof Monster){
                         mob++;
-                    }else if(ent instanceof Animal || ent instanceof cn.nukkit.entity.Animal){
+                    }else if(ent instanceof Animal){
                         animal++;
                     }else if(ent instanceof DroppedItem){
                         item++;
@@ -534,7 +491,6 @@ public class EntityManager extends PluginBase implements Listener{
                         break;
                     }
                 }
-                output = "";
                 ent.spawnToAll();
                 break;
             default:

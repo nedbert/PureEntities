@@ -1,0 +1,9 @@
+entity:
+  maximum: 40
+  explode: false
+spawn:
+  rand: "1/3"
+  tick: 120
+autospawn:
+  turn-on: true
+  radius: 25

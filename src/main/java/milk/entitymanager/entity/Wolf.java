@@ -24,12 +24,12 @@ public class Wolf extends Monster{
     }
 
     @Override
-    public float getWidth() {
+    public float getWidth(){
         return 0.72f;
     }
 
     @Override
-    public float getHeight() {
+    public float getHeight(){
         return 0.9f;
     }
 
@@ -49,12 +49,11 @@ public class Wolf extends Monster{
         }
 
         this.setDamage(new int[]{0, 3, 4, 6});
-        this.created = true;
     }
 
     public void saveNBT(){
-        this.namedTag.putInt("Angry", this.angry);
         super.saveNBT();
+        this.namedTag.putInt("Angry", this.angry);
     }
 
     public String getName(){
@@ -69,10 +68,12 @@ public class Wolf extends Monster{
         this.angry = val;
     }
 
+    @Override
     public boolean targetOption(Creature creature, double distance){
-    	return super.targetOption(creature, distance) && this.isAngry();
+    	return this.isAngry() && super.targetOption(creature, distance);
     }
 
+    @Override
     public void attackEntity(Entity player){
         if(this.attackDelay > 10 && this.distanceSquared(player) < 1.6){
             this.attackDelay = 0;
@@ -82,6 +83,7 @@ public class Wolf extends Monster{
         }
     }
 
+    @Override
     public Item[] getDrops(){
     	return new Item[0];
     }

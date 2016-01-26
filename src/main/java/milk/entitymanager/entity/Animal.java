@@ -31,11 +31,14 @@ public abstract class Animal extends WalkEntity implements Ageable{
 
     public void updateTick(){
         if(!this.isAlive()){
-            if(++this.deadTicks >= 23) this.close();
+            if(++this.deadTicks >= 23){
+                this.close();
+            }
             return;
         }
 
         --this.moveTime;
+
         Vector3 target = this.updateMove();
         if(target instanceof Player){
             if(this.distance(target) <= 2){
@@ -45,7 +48,7 @@ public abstract class Animal extends WalkEntity implements Ageable{
                 this.z = this.lastZ;
             }
         }else if(!(target instanceof Entity)){
-            if(this.distance(target) <= 1) this.moveTime = 0;
+            if(this.distanceSquared(target) <= 1) this.moveTime = 0;
         }
 
         this.entityBaseTick();

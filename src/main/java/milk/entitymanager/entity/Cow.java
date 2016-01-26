@@ -8,10 +8,10 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import milk.entitymanager.util.Utils;
 
-public class Sheep extends Animal{
-    public static final int NETWORK_ID = 13;
+public class Cow extends Animal{
+    public static final int NETWORK_ID = 11;
 
-    public Sheep(FullChunk chunk, CompoundTag nbt){
+    public Cow(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
     }
 
@@ -30,33 +30,33 @@ public class Sheep extends Animal{
         return 1.12f;
     }
 
-    @Override
     public String getName(){
-        return "Sheep";
+        return "Cow";
     }
 
-    @Override
     public void initEntity(){
         super.initEntity();
 
-        this.setMaxHealth(8);
+        this.setMaxHealth(10);
     }
 
-    @Override
     public boolean targetOption(Creature creature, double distance){
-    	if(creature instanceof Player){
+        if(creature instanceof Player){
             Player player = (Player) creature;
-            return player.spawned && player.isAlive() && !player.closed && player.getInventory().getItemInHand().getId() == Item.SEEDS && distance <= 49;
+            return player.isAlive() && !player.closed && player.getInventory().getItemInHand().getId() == Item.WHEAT && distance <= 49;
         }
         return false;
     }
 
-    @Override
     public Item[] getDrops(){
         if(this.lastDamageCause instanceof EntityDamageByEntityEvent){
-            return new Item[]{Item.get(Item.WOOL, Utils.rand(0, 15), 1)};
+            switch(Utils.rand(0, 1)){
+                case 0 :
+                    return new Item[]{Item.get(Item.RAW_BEEF, 0, 1)};
+                case 1 :
+                    return new Item[]{Item.get(Item.LEATHER, 0, 1)};
+            }
         }
         return new Item[0];
     }
-
 }

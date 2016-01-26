@@ -8,10 +8,10 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import milk.entitymanager.util.Utils;
 
-public class Sheep extends Animal{
-    public static final int NETWORK_ID = 13;
+public class Chicken extends Animal{
+    public static final int NETWORK_ID = 10;
 
-    public Sheep(FullChunk chunk, CompoundTag nbt){
+    public Chicken(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
     }
 
@@ -22,39 +22,42 @@ public class Sheep extends Animal{
 
     @Override
     public float getWidth(){
-        return 1.6f;
+        return 0.4f;
     }
 
     @Override
     public float getHeight(){
-        return 1.12f;
+        return 0.75f;
     }
 
-    @Override
     public String getName(){
-        return "Sheep";
+        return "Chicken";
     }
 
-    @Override
     public void initEntity(){
         super.initEntity();
 
-        this.setMaxHealth(8);
+        this.setMaxHealth(4);
     }
 
-    @Override
     public boolean targetOption(Creature creature, double distance){
     	if(creature instanceof Player){
             Player player = (Player) creature;
-            return player.spawned && player.isAlive() && !player.closed && player.getInventory().getItemInHand().getId() == Item.SEEDS && distance <= 49;
+            return player.isAlive() && !player.closed && player.getInventory().getItemInHand().getId() == Item.SEEDS && distance <= 49;
         }
-        return false;
+    	return false;
     }
 
-    @Override
     public Item[] getDrops(){
         if(this.lastDamageCause instanceof EntityDamageByEntityEvent){
-            return new Item[]{Item.get(Item.WOOL, Utils.rand(0, 15), 1)};
+            switch(Utils.rand(0, 2)){
+                case 0 :
+                    return new Item[]{Item.get(Item.RAW_CHICKEN, 0, 1)};
+                case 1 :
+                    return new Item[]{Item.get(Item.EGG, 0, 1)};
+                case 2 :
+                    return new Item[]{Item.get(Item.FEATHER, 0, 1)};
+            }
         }
         return new Item[0];
     }

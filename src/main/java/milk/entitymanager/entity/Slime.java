@@ -20,17 +20,17 @@ public class Slime extends Animal{
     }
 
     @Override
-    public float getWidth() {
+    public float getWidth(){
         return 1.2f;
     }
 
     @Override
-    public float getHeight() {
+    public float getHeight(){
         return 1.2f;
     }
 
     @Override
-    public float getEyeHeight() {
+    public float getEyeHeight(){
         return 1.62f;
     }
 
@@ -39,21 +39,24 @@ public class Slime extends Animal{
         return 0.8;
     }
 
+    @Override
     public String getName(){
         return "Slime";
     }
 
+    @Override
     public void initEntity(){
         this.setMaxHealth(4);
 
         super.initEntity();
-        this.created = true;
     }
 
+    @Override
     public boolean targetOption(Creature creature, double distance){
     	return false;
     }
-    
+
+    @Override
     public Item[] getDrops(){
         if(this.lastDamageCause instanceof EntityDamageByEntityEvent){
         	return new Item[]{Item.get(Item.SLIMEBALL, 0, Utils.rand(0, 2))};
