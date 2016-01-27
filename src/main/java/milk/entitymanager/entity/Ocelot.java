@@ -38,6 +38,7 @@ public class Ocelot extends Monster{
         return 1.5;
     }
 
+    @Override
     protected void initEntity(){
         super.initEntity();
 
@@ -51,13 +52,24 @@ public class Ocelot extends Monster{
         this.setDamage(new int[]{0, 2, 2, 2});
     }
 
+    @Override
     public void saveNBT(){
-        this.namedTag.putInt("Angry", this.angry);
         super.saveNBT();
+        this.namedTag.putInt("Angry", this.angry);
     }
 
+    @Override
     public String getName(){
         return "Ocelot";
+    }
+
+    @Override
+    public boolean targetOption(Creature creature, double distance){
+    	if(creature instanceof Player){
+            Player player = (Player) creature;
+            return (player.spawned && player.isAlive() && !player.closed && player.getInventory().getItemInHand().getId() == Item.RAW_FISH && distance <= 49) || this.isAngry();
+        }
+    	return super.targetOption(creature, distance);
     }
 
     public boolean isAngry(){
@@ -68,20 +80,19 @@ public class Ocelot extends Monster{
         this.angry = val;
     }
 
-    public boolean targetOption(Creature creature, double distance){
-    	if(creature instanceof Player){
-            Player player = (Player) creature;
-            return (player.spawned && player.isAlive() && !player.closed && player.getInventory().getItemInHand().getId() == Item.RAW_FISH && distance <= 49) || this.isAngry();
+    @Override
+    public void attack(EntityDamageEvent ev){
+        super.attack(ev);
+
+        if(!ev.isCancelled()){
+            this.setAngry(1000);
         }
-    	return super.targetOption(creature, distance);
     }
 
     public void attackEntity(Entity player){
         if(this.attackDelay > 10 && this.distanceSquared(player) < 1.44){
             this.attackDelay = 0;
-
-            EntityDamageByEntityEvent ev = new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_ENTITY_ATTACK, (float) this.getDamage());
-            player.attack(ev);
+            player.attack(new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_ENTITY_ATTACK, (float) this.getDamage()));
         }
     }
 

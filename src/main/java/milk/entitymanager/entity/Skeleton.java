@@ -7,6 +7,7 @@ import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.sound.LaunchSound;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -80,8 +81,8 @@ public class Skeleton extends Monster{
             if(ev.isCancelled()){
                 projectile.kill();
             }else{
-                ProjectileLaunchEvent launch;
-                this.server.getPluginManager().callEvent(launch = new ProjectileLaunchEvent(projectile));
+                ProjectileLaunchEvent launch = new ProjectileLaunchEvent(projectile);
+                this.server.getPluginManager().callEvent(launch);
                 if(launch.isCancelled()){
                     projectile.kill();
                 }else{
@@ -90,6 +91,21 @@ public class Skeleton extends Monster{
                 }
             }
         }
+    }
+
+    @Override
+    public boolean entityBaseTick(int tickDiff){
+        //Timings.timerEntityBaseTick.startTiming();
+
+        boolean hasUpdate = super.entityBaseTick(tickDiff);
+
+        int time = this.getLevel().getTime() % Level.TIME_FULL;
+        if(time < Level.TIME_NIGHT || time > Level.TIME_SUNRISE){
+            this.setOnFire(5);
+        }
+
+        //Timings.timerEntityBaseTick.stopTiming();
+        return hasUpdate;
     }
 
     public Item[] getDrops(){

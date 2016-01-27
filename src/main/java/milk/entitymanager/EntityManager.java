@@ -116,9 +116,6 @@ public class EntityManager extends PluginBase implements Listener{
             }catch(Exception ignore){}
         }
 
-        if(entity instanceof IronGolem){
-
-        }
         return entity;
     }
 

@@ -1,6 +1,7 @@
 package milk.entitymanager.entity;
 
 import cn.nukkit.entity.Entity;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.IntTag;
@@ -44,6 +45,7 @@ public class PigZombie extends Monster{
         return 1.15;
     }
 
+    @Override
     protected void initEntity(){
         super.initEntity();
 
@@ -55,13 +57,43 @@ public class PigZombie extends Monster{
         this.setDamage(new int[]{0, 5, 9, 13});
     }
 
+    @Override
     public void saveNBT(){
         this.namedTag.putInt("Angry", this.angry);
         super.saveNBT();
     }
 
+    @Override
     public String getName(){
         return "PigZombie";
+    }
+
+    @Override
+    public boolean targetOption(Creature creature, double distance){
+        return super.targetOption(creature, distance) && this.isAngry();
+    }
+
+    @Override
+    public void attackEntity(Entity player){
+        if(this.attackDelay > 10 && this.distanceSquared(player) < 1.44){
+            this.attackDelay = 0;
+            player.attack(new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_ENTITY_ATTACK, (float) this.getDamage()));
+        }
+    }
+
+    @Override
+    public boolean entityBaseTick(int tickDiff){
+        //Timings.timerEntityBaseTick.startTiming();
+
+        boolean hasUpdate = super.entityBaseTick(tickDiff);
+
+        int time = this.getLevel().getTime() % Level.TIME_FULL;
+        if(time < Level.TIME_NIGHT || time > Level.TIME_SUNRISE){
+            this.setOnFire(5);
+        }
+
+        //Timings.timerEntityBaseTick.stopTiming();
+        return hasUpdate;
     }
 
     public boolean isAngry(){
@@ -72,19 +104,16 @@ public class PigZombie extends Monster{
         this.angry = val;
     }
 
-    public boolean targetOption(Creature creature, double distance){
-        return super.targetOption(creature, distance) && this.isAngry();
-    }
+    @Override
+    public void attack(EntityDamageEvent ev){
+        super.attack(ev);
 
-    public void attackEntity(Entity player){
-        if(this.attackDelay > 10 && this.distanceSquared(player) < 1.44){
-            this.attackDelay = 0;
-
-            EntityDamageByEntityEvent ev = new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_ENTITY_ATTACK, (float) this.getDamage());
-            player.attack(ev);
+        if(!ev.isCancelled()){
+            this.setAngry(1000);
         }
     }
 
+    @Override
     public Item[] getDrops(){
         if(this.lastDamageCause instanceof EntityDamageByEntityEvent){
             switch(Utils.rand(0, 2)){

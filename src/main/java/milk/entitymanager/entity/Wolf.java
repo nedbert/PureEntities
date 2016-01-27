@@ -38,6 +38,7 @@ public class Wolf extends Monster{
         return 1.2;
     }
 
+    @Override
     protected void initEntity(){
         super.initEntity();
 
@@ -51,6 +52,7 @@ public class Wolf extends Monster{
         this.setDamage(new int[]{0, 3, 4, 6});
     }
 
+    @Override
     public void saveNBT(){
         super.saveNBT();
         this.namedTag.putInt("Angry", this.angry);
@@ -58,6 +60,11 @@ public class Wolf extends Monster{
 
     public String getName(){
         return "Wolf";
+    }
+
+    @Override
+    public boolean targetOption(Creature creature, double distance){
+    	return this.isAngry() && super.targetOption(creature, distance);
     }
 
     public boolean isAngry(){
@@ -69,8 +76,12 @@ public class Wolf extends Monster{
     }
 
     @Override
-    public boolean targetOption(Creature creature, double distance){
-    	return this.isAngry() && super.targetOption(creature, distance);
+    public void attack(EntityDamageEvent ev){
+        super.attack(ev);
+
+        if(!ev.isCancelled()){
+            this.setAngry(1000);
+        }
     }
 
     @Override

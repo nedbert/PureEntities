@@ -248,14 +248,6 @@ public abstract class BaseEntity extends Creature{
         }else{
             this.motionY = 0.58;
         }
-
-        if(this instanceof PigZombie){
-            ((PigZombie) this).setAngry(1000);
-        }else if(this instanceof Ocelot){
-            ((Ocelot) this).setAngry(1000);
-        }else if(this instanceof Wolf){
-            ((Wolf) this).setAngry(1000);
-        }
     }
 
     @Override

@@ -4,6 +4,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import milk.entitymanager.util.Utils;
@@ -76,6 +77,21 @@ public class Zombie extends Monster{
             EntityDamageEvent ev = new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_ENTITY_ATTACK, (float) this.getDamage());
             player.attack(ev);
         }
+    }
+
+    @Override
+    public boolean entityBaseTick(int tickDiff){
+        //Timings.timerEntityBaseTick.startTiming();
+
+        boolean hasUpdate = super.entityBaseTick(tickDiff);
+
+        int time = this.getLevel().getTime() % Level.TIME_FULL;
+        if(time < Level.TIME_NIGHT || time > Level.TIME_SUNRISE){
+            this.setOnFire(5);
+        }
+
+        //Timings.timerEntityBaseTick.stopTiming();
+        return hasUpdate;
     }
 
     @Override
