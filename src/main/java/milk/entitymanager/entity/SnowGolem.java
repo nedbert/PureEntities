@@ -7,14 +7,17 @@ import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Location;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.sound.LaunchSound;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Creature;
+import milk.entitymanager.EntityManager;
 import milk.entitymanager.util.Utils;
 
 public class SnowGolem extends Monster{
@@ -64,26 +67,28 @@ public class SnowGolem extends Monster{
             double f = 1.2;
             double yaw = this.yaw + Utils.rand(-220, 220) / 10;
             double pitch = this.pitch + Utils.rand(-120, 120) / 10;
-            CompoundTag nbt = new CompoundTag()
-                .putList(new ListTag<DoubleTag>("Pos")
-                    .add(new DoubleTag("", this.x + (-Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * 0.5)))
-                    .add(new DoubleTag("", this.getEyeHeight()))
-                    .add(new DoubleTag("", this.z +(Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * 0.5))))
-                .putList(new ListTag<DoubleTag>("Motion")
-                    .add(new DoubleTag("", -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * f))
-                    .add(new DoubleTag("", -Math.sin(pitch / 180 * Math.PI) * f))
-                    .add(new DoubleTag("", Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * f)))
-                .putList(new ListTag<FloatTag>("Rotation")
-                    .add(new FloatTag("", (float) yaw))
-                    .add(new FloatTag("", (float) pitch)));
+            Location location = new Location(
+                this.x + (-Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * 0.5),
+                this.getEyeHeight(),
+                this.z +(Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * 0.5),
+                yaw,
+                pitch,
+                this.level
+            );
 
-            Entity k = Entity.createEntity("Snowball", this.chunk, nbt, this);
+            Entity k = EntityManager.create("Snowball", location, this);
             if(k == null){
                 return;
             }
 
             Snowball snowball = (Snowball) k;
-            snowball.setMotion(snowball.getMotion().multiply(f));
+
+            Vector3 motion = new Vector3(
+                -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * f * f,
+                -Math.sin(pitch / 180 * Math.PI) * f * f,
+                Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * f * f
+            ).multiply(f);
+            snowball.setMotion(motion);
 
             //TODO: I can't change Snowball's damage
             /*property = (new \ReflectionClass(snowball)).getProperty("damage");

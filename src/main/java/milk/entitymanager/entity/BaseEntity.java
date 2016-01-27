@@ -39,8 +39,6 @@ public abstract class BaseEntity extends Creature{
         super(chunk, nbt);
     }
 
-    public abstract void updateTick();
-
     public abstract Vector3 updateMove();
 
     public abstract boolean targetOption(Creature creature, double distance);
@@ -79,11 +77,6 @@ public abstract class BaseEntity extends Creature{
 
     public double getSpeed(){
         return 1;
-    }
-
-    public boolean onUpdate(int currentTick){
-        this.updateTick();
-        return true;
     }
 
     @Override

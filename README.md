@@ -24,6 +24,31 @@ See documentation page for details.
   
 자세한 사항은 아래를 보시기 바랍니다
 
+### YAML data
+  * config.yml
+    * TODO
+  * spawner.yml
+    * TODO
+  * drops.yml
+    * TODO
+  
+### Commands(명령어)
+  * /entitymanager
+    * usage: /entitymanager (check|remove|spawn)
+    * permission: entitymanager.command
+  * /entitymanager check
+    * usage: /entitymanager check (Level="")
+    * permission: entitymanager.command.check
+    * description: Check the number of entities(If blank, it is set as a default Level)
+  * /entitymanager remove
+    * usage: /entitymanager remove (Level="")
+    * permission: entitymanager.command.remove
+    * description: Remove all entities in Level(If blank, it is set as a default Level)
+  * /entitymanager spawn:
+    * usage: /entitymanager spawn (type) (x="") (y="") (z="") (Level="")
+    * permission: entitymanager.command.spawn
+    * description: literally(If blank, it is set as a Player)
+
 ### Method(메소드)
   * EntityManager
     * public static Map<Integer, BaseEntity> getEntities()
@@ -51,48 +76,28 @@ See documentation page for details.
   * PigZombie
     * public boolean isAngry()
     * public void setAngry(int angry)
-  
-### Commands(명령어)
-  * /entitymanager
-    * usage: /entitymanager (check|remove|spawn)
-    * permission: entitymanager.command
-  * /entitymanager check
-    * usage: /entitymanager check (Level="")
-    * permission: entitymanager.command.check
-    * description: Check the number of entities(If blank, it is set as a default Level)
-  * /entitymanager remove
-    * usage: /entitymanager remove (Level="")
-    * permission: entitymanager.command.remove
-    * description: Remove all entities in Level(If blank, it is set as a default Level)
-  * /entitymanager spawn:
-    * usage: /entitymanager spawn (type) (x="") (y="") (z="") (Level="")
-    * permission: entitymanager.command.spawn
-    * description: literally(If blank, it is set as a Player)
-
-### YAML data
-  * TODO
 
 ### Method Examples(메소드 예시)
-``` java  
-//Entity Method  
-EntityManager.getEntities().forEach((id, baseEntity) -> {  
-    if(!baseEntity.isMovement()){  
-        baseEntity.setMovement(true);  
+``` java
+//Entity Method
+EntityManager.getEntities().forEach((id, baseEntity) -> {
+    if(!baseEntity.isMovement()){
+        baseEntity.setMovement(true);
     }  
     if(baseEntity instanceof Monster){
         Monster mob = (Monster) baseEntity;
-        
+
         mob.setDamage(10);
-          
-        mob.setMaxDamage(10);  
-        mob.setMinDamage(10);  
-    }  
-});  
-  
-//Create Entity  
+
+        mob.setMaxDamage(10); 
+        mob.setMinDamage(10); 
+    } 
+});
+ 
+//Create Entity 
 Arrow arrow = (Arrow) EntityManager.create("Arrow", position, player, true);
-Zombie zombie = (Zombie) EntityManager.create("Zombie", position);  
-  
-//Remove Entity  
-EntityManager.clear(new Class[]{BaseEntity.class, Projectile.class, Item.class});  
+Zombie zombie = (Zombie) EntityManager.create("Zombie", position);
+ 
+//Remove Entity 
+EntityManager.clear(new Class[]{BaseEntity.class, Projectile.class, Item.class}); 
 ```

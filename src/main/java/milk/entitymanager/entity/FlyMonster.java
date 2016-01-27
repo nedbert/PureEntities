@@ -124,15 +124,18 @@ public abstract class FlyMonster extends FlyEntity{
     }
 
     @Override
-    public void updateTick(){
+    public boolean onUpdate(int currentTick){
         if(this.server.getDifficulty() < 1){
             this.close();
-            return;
+            return true;
         }
 
         if(!this.isAlive()){
-            if(++this.deadTicks >= 23) this.close();
-            return;
+            if(++this.deadTicks >= 23){
+                this.close();
+                return false;
+            }
+            return true;
         }
 
         --this.moveTime;
@@ -149,6 +152,7 @@ public abstract class FlyMonster extends FlyEntity{
         }
 
         this.entityBaseTick();
+        return true;
     }
 
     public boolean entityBaseTick(int tickDiff){

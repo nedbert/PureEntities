@@ -38,6 +38,7 @@ public class Silverfish extends Monster{
     public void initEntity(){
         super.initEntity();
 
+        this.setMaxHealth(8);
         this.setDamage(new int[]{0, 1, 1, 1});
     }
 

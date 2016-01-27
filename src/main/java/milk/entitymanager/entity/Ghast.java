@@ -1,6 +1,5 @@
 package milk.entitymanager.entity;
 
-import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
@@ -44,7 +43,7 @@ public class Ghast extends FlyMonster{
     public void initEntity(){
         super.initEntity();
 
-        this.setDamage(new int[]{0, 4, 6, 9});
+        this.setMaxHealth(10);
     }
 
     public String getName(){
@@ -52,7 +51,7 @@ public class Ghast extends FlyMonster{
     }
 
 	public void attackEntity(Entity player){
-        if(this.attackDelay > 30 && Utils.rand(1, 32) < 4 && this.distanceSquared(player) <= 200){
+        if(this.attackDelay > 30 && Utils.rand(1, 32) < 4 && this.distanceSquared(player) <= 10000){
             this.attackDelay = 0;
 
             double f = 2;

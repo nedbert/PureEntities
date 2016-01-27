@@ -230,10 +230,10 @@ public class EntityManager extends PluginBase implements Listener{
 
         this.getServer().getPluginManager().registerEvents(this, this);
         this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]Plugin has been enabled");
-        this.getServer().getScheduler().scheduleRepeatingTask(new SpawnEntityTask(this), this.getData("spawn.tick", 120));
+        this.getServer().getScheduler().scheduleRepeatingTask(new SpawnEntityTask(this), this.getData("spawn.tick", 100));
 
         if(this.getData("autoclear.turn-on", true)){
-            this.getServer().getScheduler().scheduleRepeatingTask(new AutoClearTask(), this.getData("autoclear.tick", 120));
+            this.getServer().getScheduler().scheduleRepeatingTask(new AutoClearTask(), this.getData("autoclear.tick", 6000));
         }
     }
 

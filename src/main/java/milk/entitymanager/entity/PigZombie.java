@@ -45,11 +45,9 @@ public class PigZombie extends Monster{
     }
 
     protected void initEntity(){
-        this.setMaxHealth(22);
-
         super.initEntity();
-        this.fireProof = true;
 
+        this.fireProof = true;
         if(this.namedTag.contains("Angry")){
             this.angry = this.namedTag.getInt("Angry");
         }

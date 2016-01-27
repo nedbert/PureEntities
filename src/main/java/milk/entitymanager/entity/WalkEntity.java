@@ -26,8 +26,19 @@ public abstract class WalkEntity extends BaseEntity{
             double near = Integer.MAX_VALUE;
 
             for(Entity ent : this.getLevel().getEntities()){
-                if(!(ent instanceof Creature) || ent instanceof Animal || ent == this) continue;
+                if(!(ent instanceof Creature) || ent instanceof Animal || ent == this){
+                    continue;
+                }
+
                 Creature creature = (Creature) ent;
+                if(
+                    ent instanceof PigZombie
+                    && this instanceof PigZombie
+                    && !((PigZombie) ent).isAngry()
+                    && ((PigZombie) this).isAngry()
+                ){
+                    ((PigZombie) ent).setAngry(1000);
+                }
 
                 if(creature instanceof BaseEntity && ((BaseEntity) creature).isFriendly() == this.isFriendly()){
                     continue;
@@ -43,10 +54,8 @@ public abstract class WalkEntity extends BaseEntity{
                 this.baseTarget = creature;
             }
         }
-        if(
-            this.baseTarget instanceof Creature
-            && ((Creature) this.baseTarget).isAlive()
-        ){
+
+        if(this.baseTarget instanceof Creature && ((Creature) this.baseTarget).isAlive()){
             return;
         }
 

@@ -20,13 +20,13 @@ public class SpawnEntityTask implements Runnable{
     @Override
     public void run(){
         EntityManager owner = this.owner;
-        if(EntityManager.getEntities().size() >= (owner.getData("entity.maximum", 40))){
+        if(EntityManager.getEntities().size() >= (owner.getData("entity.maximum", 120))){
             return;
         }
 
         int[] rand;
         try{
-            String[] k = owner.getData("spawn.rand", "1/3").split("/");
+            String[] k = owner.getData("spawn.rand", "1/4").split("/");
             rand = new int[]{Integer.parseInt(k[0]), Integer.parseInt(k[1])};
         }catch(Exception e){
             Server.getInstance().getLogger().warning("[EntityManager]에러 발생! \"config.yml\"파일을 확인해주세요");

@@ -49,7 +49,24 @@ public class Zombie extends Monster{
     protected void initEntity(){
         super.initEntity();
 
-        this.setDamage(new int[]{0, 3, 4, 6});
+        this.setDamage(new int[]{0, 2, 3, 4});
+    }
+
+    @Override
+    public void setHealth(float health){
+        super.setHealth(health);
+
+        if(this.isAlive()){
+            if(20 * 3 / 4 < this.getHealth()){
+                this.setDamage(new int[]{0, 2, 3, 4});
+            }else if(20 / 2 < this.getHealth()){
+                this.setDamage(new int[]{0, 3, 4, 6});
+            }else if(20 / 4 < this.getHealth()){
+                this.setDamage(new int[]{0, 3, 5, 7});
+            }else{
+                this.setDamage(new int[]{0, 4, 6, 9});
+            }
+        }
     }
 
     @Override

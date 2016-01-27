@@ -29,12 +29,13 @@ public abstract class Animal extends WalkEntity implements Ageable{
         return this.getDataFlag(DATA_AGEABLE_FLAGS, DATA_FLAG_BABY);
     }
 
-    public void updateTick(){
+    public boolean onUpdate(int currentTick){
         if(!this.isAlive()){
             if(++this.deadTicks >= 23){
                 this.close();
+                return false;
             }
-            return;
+            return true;
         }
 
         --this.moveTime;
@@ -52,6 +53,7 @@ public abstract class Animal extends WalkEntity implements Ageable{
         }
 
         this.entityBaseTick();
+        return true;
     }
 
 }

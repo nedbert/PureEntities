@@ -3,6 +3,7 @@ package milk.entitymanager.entity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.Projectile;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.item.Item;
@@ -44,7 +45,7 @@ public class Blaze extends FlyMonster{
     public void initEntity(){
         super.initEntity();
 
-        this.setDamage(new int[]{0, 4, 6, 9});
+        this.setDamage(new int[]{0, 5, 6, 8});
     }
 
     public String getName(){
@@ -54,6 +55,7 @@ public class Blaze extends FlyMonster{
 	public void attackEntity(Entity player){
         if(this.attackDelay > 20 && Utils.rand(1, 32) < 4 && this.distanceSquared(player) <= 100){
             this.attackDelay = 0;
+            player.attack(new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_FIRE, this.getDamage()));
 
             double f = 1.2;
             double yaw = this.yaw + Utils.rand(-220, 220) / 10;

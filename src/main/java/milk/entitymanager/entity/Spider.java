@@ -41,10 +41,9 @@ public class Spider extends Monster{
     }
 
     public void initEntity(){
-        this.setMaxHealth(16);
-
         super.initEntity();
 
+        this.setMaxHealth(16);
         this.setDamage(new int[]{0, 2, 2, 3});
     }
 
@@ -57,8 +56,7 @@ public class Spider extends Monster{
     public void attackEntity(Entity player){
         if(this.attackDelay > 10 && this.distanceSquared(player) < 1.32){
             this.attackDelay = 0;
-            EntityDamageEvent ev = new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_ENTITY_ATTACK, this.getDamage());
-            player.attack(ev);
+            player.attack(new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_ENTITY_ATTACK, this.getDamage()));
         }
     }
 

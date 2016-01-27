@@ -22,12 +22,12 @@ public class CaveSpider extends Monster{
 
     @Override
     public float getWidth(){
-        return 1.5f;
+        return 0.9f;
     }
 
     @Override
     public float getHeight(){
-        return 1.2f;
+        return 0.75f;
     }
 
     @Override

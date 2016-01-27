@@ -40,7 +40,7 @@ public class Rabbit extends Animal{
     public void initEntity(){
         super.initEntity();
 
-        this.setMaxHealth(4);
+        this.setMaxHealth(3);
     }
 
     public boolean targetOption(Creature creature, double distance){

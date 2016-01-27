@@ -123,17 +123,18 @@ public abstract class Monster extends WalkEntity{
         }
     }
 
-    public void updateTick(){
+    public boolean onUpdate(int currentTick){
         if(this.server.getDifficulty() < 1){
             this.close();
-            return;
+            return false;
         }
 
         if(!this.isAlive()){
             if(++this.deadTicks >= 23){
                 this.close();
+                return false;
             }
-            return;
+            return true;
         }
 
         --this.moveTime;
@@ -163,6 +164,7 @@ public abstract class Monster extends WalkEntity{
         }
 
         this.entityBaseTick();
+        return true;
     }
 
     @Override
