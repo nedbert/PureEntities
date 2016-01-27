@@ -21,12 +21,12 @@ public class Silverfish extends Monster{
 
     @Override
     public float getWidth(){
-        return 0.65f;
+        return 0.4f;
     }
 
     @Override
     public float getHeight(){
-        return 1.8f;
+        return 0.2f;
     }
 
     @Override

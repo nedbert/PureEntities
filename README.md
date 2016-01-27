@@ -26,7 +26,12 @@ See documentation page for details.
 
 ### YAML data
   * config.yml
-    * TODO
+    * entity.maximum: 엔티티의 최대 소환 한계치
+    * entity.explode: 모든 폭발장치의 폭발 여부
+    * spawn.rand: "min/max" min/max의 확률로 엔티티 소환
+    * spawn.tick: 엔티티 소환 속도
+    * autospawn.turn-on: 자동 소환 여부
+    * autospawn.radius: 자동 소환 반지름(플레이어 기준)
   * spawner.yml
     * TODO
   * drops.yml
@@ -83,21 +88,21 @@ See documentation page for details.
 EntityManager.getEntities().forEach((id, baseEntity) -> {
     if(!baseEntity.isMovement()){
         baseEntity.setMovement(true);
-    }  
+    }
     if(baseEntity instanceof Monster){
         Monster mob = (Monster) baseEntity;
 
         mob.setDamage(10);
 
-        mob.setMaxDamage(10); 
-        mob.setMinDamage(10); 
-    } 
+        mob.setMaxDamage(10);
+        mob.setMinDamage(10);
+    }
 });
- 
-//Create Entity 
+
+//Create Entity
 Arrow arrow = (Arrow) EntityManager.create("Arrow", position, player, true);
 Zombie zombie = (Zombie) EntityManager.create("Zombie", position);
- 
-//Remove Entity 
-EntityManager.clear(new Class[]{BaseEntity.class, Projectile.class, Item.class}); 
+
+//Remove Entity
+EntityManager.clear(new Class[]{BaseEntity.class, Projectile.class, Item.class});
 ```

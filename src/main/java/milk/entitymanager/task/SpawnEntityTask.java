@@ -73,10 +73,10 @@ public class SpawnEntityTask implements Runnable{
             pos.y = player.level.getHighestBlockAt((int) (pos.x += Utils.rand(-radius, radius)), (int) (pos.z += Utils.rand(-radius, radius))) + 1;
 
             String[][] ent = {
-                {"Cow", "Pig", "Sheep", "Chicken", "Slime", "Wolf", "Ocelot", "Mooshroom", "Rabbit", "IronGolem", "SnowGolem"},
-                {"Zombie", "Creeper", "Skeleton", "Spider", "PigZombie", "Enderman", "CaveSpider", "MagmaCube", "ZombieVillager", "Ghast", "Blaze"}
+                {"Cow", "Pig", "Sheep", "Chicken", "Slime", "Wolf", "Ocelot", "Rabbit"},
+                {"Zombie", "Creeper", "Skeleton", "Spider", "PigZombie", "Enderman", "", ""}
             };
-            EntityManager.create(ent[Utils.rand(0, 1)][Utils.rand(0, 10)], pos);
+            EntityManager.create(ent[Utils.rand(0, 1)][Utils.rand(0, 7)], pos);
         });
     }
 

@@ -117,7 +117,7 @@ public abstract class BaseEntity extends Creature{
     }
 
     @Override
-    public void updateMovement(){
+    protected void updateMovement(){
         if(
             this.lastX != this.x
             || this.lastY != this.y
@@ -271,50 +271,51 @@ public abstract class BaseEntity extends Creature{
         double movY = dy;
         double movZ = dz;
 
-        AxisAlignedBB[] list = this.level.getCollisionCubes(this, this.level.getTickRate() > 1 ? this.boundingBox.getOffsetBoundingBox(dx, dy, dz) : this.boundingBox.addCoord(dx, dy, dz));
 
+        //TODO: AABB 충돌 관련 문제 해결
+        AxisAlignedBB[] list = this.level.getCollisionCubes(this, this.level.getTickRate() > 1 ? this.boundingBox.getOffsetBoundingBox(dx, dy, dz) : this.boundingBox.addCoord(dx, dy, dz));
         for(AxisAlignedBB bb : list){
             dy = bb.calculateYOffset(this.boundingBox, dy);
         }
         this.boundingBox.offset(0, dy, 0);
 
-        for(AxisAlignedBB bb : list){
-            if(
-                this.isWallCheck()
-                && this.boundingBox.maxY >= bb.minY
-                && this.boundingBox.minY <= bb.maxY
-                && this.boundingBox.maxZ >= bb.minZ
-                && this.boundingBox.minZ <= bb.maxZ
-            ){
-                double x1;
-                if(this.boundingBox.maxX + dx >= bb.minX && this.boundingBox.maxX <= bb.minX){
-                    if((x1 = bb.minX - (this.boundingBox.maxX + dx)) < 0) dx += x1;
-                }
-                if(this.boundingBox.minX + dx <= bb.maxX && this.boundingBox.minX >= bb.maxX){
-                    if((x1 = bb.maxX - (this.boundingBox.minX + dx)) > 0) dx += x1;
+        if(this.isWallCheck()){
+            for(AxisAlignedBB bb : list){
+                if(
+                    this.boundingBox.maxY >= bb.minY
+                    && this.boundingBox.minY <= bb.maxY
+                    && this.boundingBox.maxX >= bb.minX
+                    && this.boundingBox.minX <= bb.maxX
+                ){
+                    double z1;
+                    if(this.boundingBox.maxZ + dz >= bb.minZ && this.boundingBox.maxZ <= bb.minZ){
+                        if((z1 = bb.minZ - (this.boundingBox.maxZ + dz)) < 0) dz += z1;
+                    }
+                    if(this.boundingBox.minZ + dz <= bb.maxZ && this.boundingBox.minZ >= bb.maxZ){
+                        if((z1 = bb.maxZ - (this.boundingBox.minZ + dz)) > 0) dz += z1;
+                    }
                 }
             }
-        }
-        this.boundingBox.offset(dx, 0, 0);
+            this.boundingBox.offset(0, 0, dz);
 
-        for(AxisAlignedBB bb : list){
-            if(
-                this.isWallCheck()
-                && this.boundingBox.maxY >= bb.minY
-                && this.boundingBox.minY <= bb.maxY
-                && this.boundingBox.maxX >= bb.minX
-                && this.boundingBox.minX <= bb.maxX
-            ){
-                double z1;
-                if(this.boundingBox.maxZ + dz >= bb.minZ && this.boundingBox.maxZ <= bb.minZ){
-                    if((z1 = bb.minZ - (this.boundingBox.maxZ + dz)) < 0) dz += z1;
-                }
-                if(this.boundingBox.minZ + dz <= bb.maxZ && this.boundingBox.minZ >= bb.maxZ){
-                    if((z1 = bb.maxZ - (this.boundingBox.minZ + dz)) > 0) dz += z1;
+            for(AxisAlignedBB bb : list){
+                if(
+                    this.boundingBox.maxY >= bb.minY
+                    && this.boundingBox.minY <= bb.maxY
+                    && this.boundingBox.maxZ >= bb.minZ
+                    && this.boundingBox.minZ <= bb.maxZ
+                ){
+                    double x1;
+                    if(this.boundingBox.maxX + dx >= bb.minX && this.boundingBox.maxX <= bb.minX){
+                        if((x1 = bb.minX - (this.boundingBox.maxX + dx)) < 0) dx += x1;
+                    }
+                    if(this.boundingBox.minX + dx <= bb.maxX && this.boundingBox.minX >= bb.maxX){
+                        if((x1 = bb.maxX - (this.boundingBox.minX + dx)) > 0) dx += x1;
+                    }
                 }
             }
+            this.boundingBox.offset(dx, 0, 0);
         }
-        this.boundingBox.offset(0, 0, dz);
 
         this.setComponents(this.x + dx, this.y + dy, this.z + dz);
         this.checkChunks();

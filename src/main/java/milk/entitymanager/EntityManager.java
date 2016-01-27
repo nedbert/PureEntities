@@ -116,6 +116,9 @@ public class EntityManager extends PluginBase implements Listener{
             }catch(Exception ignore){}
         }
 
+        if(entity instanceof IronGolem){
+
+        }
         return entity;
     }
 
@@ -252,8 +255,9 @@ public class EntityManager extends PluginBase implements Listener{
     public <T> T getData(String key, T defaultValue){
         try{
             String[] vars = key.split(".");
-            if(vars.length < 1)
+            if(vars.length < 1){
                 return defaultValue;
+            }
 
             String base = vars[0];
             if(!data.containsKey(base)){
