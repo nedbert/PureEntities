@@ -1,14 +1,14 @@
 package milk.entitymanager.entity;
 
-import cn.nukkit.entity.Rideable;
+import cn.nukkit.entity.EntityCreature;
+import cn.nukkit.entity.EntityRideable;
 import cn.nukkit.item.Item;
 import cn.nukkit.Player;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.entity.Creature;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
-public class Pig extends Animal implements Rideable{
+public class Pig extends Animal implements EntityRideable{
     public static final int NETWORK_ID = 12;
 
     public Pig(FullChunk chunk, CompoundTag nbt){
@@ -40,7 +40,7 @@ public class Pig extends Animal implements Rideable{
         this.setMaxHealth(10);
     }
 
-    public boolean targetOption(Creature creature, double distance){
+    public boolean targetOption(EntityCreature creature, double distance){
     	if(creature instanceof Player){
             Player player = (Player) creature;
             return player.spawned && player.isAlive() && !player.closed && player.getInventory().getItemInHand().getId() == Item.CARROT && distance <= 49;

@@ -1,14 +1,13 @@
 package milk.entitymanager.entity;
 
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.IntTag;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.entity.Creature;
 import milk.entitymanager.util.Utils;
 
 public class PigZombie extends Monster{
@@ -69,7 +68,7 @@ public class PigZombie extends Monster{
     }
 
     @Override
-    public boolean targetOption(Creature creature, double distance){
+    public boolean targetOption(EntityCreature creature, double distance){
         return super.targetOption(creature, distance) && this.isAngry();
     }
 
@@ -88,7 +87,7 @@ public class PigZombie extends Monster{
         boolean hasUpdate = super.entityBaseTick(tickDiff);
 
         int time = this.getLevel().getTime() % Level.TIME_FULL;
-        if(time < Level.TIME_NIGHT || time > Level.TIME_SUNRISE){
+        if((time < Level.TIME_NIGHT || time > Level.TIME_SUNRISE) && !this.isOnFire()){
             this.setOnFire(5);
         }
 

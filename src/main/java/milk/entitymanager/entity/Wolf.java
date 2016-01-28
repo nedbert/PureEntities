@@ -1,13 +1,12 @@
 package milk.entitymanager.entity;
 
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.IntTag;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.entity.Creature;
 
 public class Wolf extends Monster{
     public static final int NETWORK_ID = 14;
@@ -63,7 +62,7 @@ public class Wolf extends Monster{
     }
 
     @Override
-    public boolean targetOption(Creature creature, double distance){
+    public boolean targetOption(EntityCreature creature, double distance){
     	return this.isAngry() && super.targetOption(creature, distance);
     }
 

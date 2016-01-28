@@ -1,18 +1,16 @@
 package milk.entitymanager.entity;
 
-import cn.nukkit.entity.Effect;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.entity.data.ShortEntityData;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.entity.Creature;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.potion.Effect;
 import milk.entitymanager.util.Utils;
-
-import java.lang.reflect.Method;
 
 public abstract class FlyMonster extends FlyEntity{
 
@@ -188,7 +186,7 @@ public abstract class FlyMonster extends FlyEntity{
         return hasUpdate;
     }
 
-    public boolean targetOption(Creature creature, double distance){
+    public boolean targetOption(EntityCreature creature, double distance){
         if(creature instanceof Player){
             Player player = (Player) creature;
             return player.spawned && player.isAlive() && !player.closed && player.isSurvival() && distance <= 200;

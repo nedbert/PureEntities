@@ -4,7 +4,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.Player;
-import cn.nukkit.entity.Creature;
+import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.nbt.tag.CompoundTag;
 import milk.entitymanager.util.Utils;
 
@@ -20,12 +20,12 @@ public abstract class FlyEntity extends BaseEntity{
         }
 
         Vector3 target = this.baseTarget;
-        if(!(target instanceof Creature) || !this.targetOption((Creature) target, this.distanceSquared(target))){
+        if(!(target instanceof EntityCreature) || !this.targetOption((EntityCreature) target, this.distanceSquared(target))){
             double near = Integer.MAX_VALUE;
 
             for(Entity entity : this.getLevel().getEntities()){
-                if(entity == this || !(entity instanceof Creature) || entity instanceof Animal) continue;
-                Creature creature = (Creature) entity;
+                if(entity == this || !(entity instanceof EntityCreature) || entity instanceof Animal) continue;
+                EntityCreature creature = (EntityCreature) entity;
 
                 if(
                     creature instanceof BaseEntity
@@ -45,8 +45,8 @@ public abstract class FlyEntity extends BaseEntity{
             }
         }
         if(
-            this.baseTarget instanceof Creature
-            && ((Creature) this.baseTarget).isAlive()
+            this.baseTarget instanceof EntityCreature
+            && ((EntityCreature) this.baseTarget).isAlive()
         ){
             return;
         }

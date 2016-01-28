@@ -1,17 +1,16 @@
 package milk.entitymanager.entity;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.Explosive;
+import cn.nukkit.entity.EntityExplosive;
 import cn.nukkit.event.entity.ExplosionPrimeEvent;
 import cn.nukkit.level.Explosion;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.IntTag;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.item.Item;
 import milk.entitymanager.util.Utils;
 
-public class Creeper extends Monster implements Explosive{
+public class Creeper extends Monster implements EntityExplosive{
     public static final int NETWORK_ID = 33;
 
     int bombTime = 0;

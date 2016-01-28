@@ -1,8 +1,8 @@
 package milk.entitymanager.entity;
 
+import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.item.Item;
 import cn.nukkit.Player;
-import cn.nukkit.entity.Creature;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -43,7 +43,7 @@ public class Rabbit extends Animal{
         this.setMaxHealth(3);
     }
 
-    public boolean targetOption(Creature creature, double distance){
+    public boolean targetOption(EntityCreature creature, double distance){
     	if(creature instanceof Player){
             Player player = (Player) creature;
             return player.spawned && player.isAlive() && !player.closed && player.getInventory().getItemInHand().getId() == Item.SEEDS && distance <= 49;

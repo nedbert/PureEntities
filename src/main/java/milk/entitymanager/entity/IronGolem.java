@@ -1,12 +1,12 @@
 package milk.entitymanager.entity;
 
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.entity.Creature;
 import cn.nukkit.Player;
 import cn.nukkit.nbt.tag.CompoundTag;
 import milk.entitymanager.util.Utils;
@@ -25,12 +25,12 @@ public class IronGolem extends Monster{
 
     @Override
     public float getWidth(){
-        return 1.3f;
+        return 1.9f;
     }
 
     @Override
     public float getHeight(){
-        return 1.8f;
+        return 2.1f;
     }
 
     @Override
@@ -43,6 +43,8 @@ public class IronGolem extends Monster{
         super.initEntity();
 
         this.setFriendly(true);
+
+        this.setDamage(new int[]{0, 0, 0, 0});
         this.setMinDamage(new int[]{0, 7, 7, 7});
         this.setMaxDamage(new int[]{0, 21, 21, 21});
     }
@@ -61,7 +63,7 @@ public class IronGolem extends Monster{
         }
     }
 
-    public boolean targetOption(Creature creature, double distance){
+    public boolean targetOption(EntityCreature creature, double distance){
         return !(creature instanceof Player) && creature.isAlive() && distance <= 60;
     }
 

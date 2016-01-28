@@ -5,9 +5,9 @@ import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.entity.DroppedItem;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.Projectile;
+import cn.nukkit.entity.item.EntityItem;
+import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.block.BlockBreakEvent;
@@ -419,7 +419,7 @@ public class EntityManager extends PluginBase implements Listener{
                     level = i instanceof Player ? ((Player) i).getLevel() : null;
                 }
 
-                clear(new Class[]{BaseEntity.class, Projectile.class, DroppedItem.class}, level);
+                clear(new Class[]{BaseEntity.class, EntityProjectile.class, EntityItem.class}, level);
                 output += "All spawned entities were removed";
                 break;
             case "check":
@@ -444,9 +444,9 @@ public class EntityManager extends PluginBase implements Listener{
                         mob++;
                     }else if(ent instanceof Animal){
                         animal++;
-                    }else if(ent instanceof DroppedItem){
+                    }else if(ent instanceof EntityItem){
                         item++;
-                    }else if(ent instanceof Projectile){
+                    }else if(ent instanceof EntityProjectile){
                         projectile++;
                     }else if(!(ent instanceof Player)){
                         other++;

@@ -86,7 +86,7 @@ public class Zombie extends Monster{
         boolean hasUpdate = super.entityBaseTick(tickDiff);
 
         int time = this.getLevel().getTime() % Level.TIME_FULL;
-        if(time < Level.TIME_NIGHT || time > Level.TIME_SUNRISE){
+        if((time < Level.TIME_NIGHT || time > Level.TIME_SUNRISE) && !this.isOnFire()){
             this.setOnFire(5);
         }
 

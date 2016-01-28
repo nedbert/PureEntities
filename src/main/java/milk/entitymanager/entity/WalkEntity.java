@@ -8,11 +8,9 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector2;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.entity.Creature;
+import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.nbt.tag.CompoundTag;
 import milk.entitymanager.util.Utils;
-
-import java.util.Arrays;
 
 public abstract class WalkEntity extends BaseEntity{
 
@@ -22,15 +20,15 @@ public abstract class WalkEntity extends BaseEntity{
 
     void checkTarget(){
         Vector3 target = this.baseTarget;
-        if(!(target instanceof Creature) || !this.targetOption((Creature) target, this.distanceSquared(target))){
+        if(!(target instanceof EntityCreature) || !this.targetOption((EntityCreature) target, this.distanceSquared(target))){
             double near = Integer.MAX_VALUE;
 
             for(Entity ent : this.getLevel().getEntities()){
-                if(!(ent instanceof Creature) || ent instanceof Animal || ent == this){
+                if(!(ent instanceof EntityCreature) || ent instanceof Animal || ent == this){
                     continue;
                 }
 
-                Creature creature = (Creature) ent;
+                EntityCreature creature = (EntityCreature) ent;
                 if(
                     ent instanceof PigZombie
                     && this instanceof PigZombie
@@ -55,7 +53,7 @@ public abstract class WalkEntity extends BaseEntity{
             }
         }
 
-        if(this.baseTarget instanceof Creature && ((Creature) this.baseTarget).isAlive()){
+        if(this.baseTarget instanceof EntityCreature && ((EntityCreature) this.baseTarget).isAlive()){
             return;
         }
 
@@ -99,7 +97,7 @@ public abstract class WalkEntity extends BaseEntity{
         
         Vector3 before = this.baseTarget;
         this.checkTarget();
-        if(this.baseTarget instanceof Creature || before != this.baseTarget){
+        if(this.baseTarget instanceof EntityCreature || before != this.baseTarget){
             double x = this.baseTarget.x - this.x;
             double y = this.baseTarget.y - this.y;
             double z = this.baseTarget.z - this.z;

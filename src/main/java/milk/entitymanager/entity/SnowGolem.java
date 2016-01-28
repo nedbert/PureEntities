@@ -1,8 +1,9 @@
 package milk.entitymanager.entity;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.Projectile;
-import cn.nukkit.entity.Snowball;
+import cn.nukkit.entity.EntityCreature;
+import cn.nukkit.entity.projectile.EntityProjectile;
+import cn.nukkit.entity.projectile.EntitySnowball;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
@@ -12,11 +13,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.sound.LaunchSound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.DoubleTag;
-import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.Player;
-import cn.nukkit.entity.Creature;
 import milk.entitymanager.EntityManager;
 import milk.entitymanager.util.Utils;
 
@@ -60,6 +57,11 @@ public class SnowGolem extends Monster{
     }
 
     @Override
+    public boolean targetOption(EntityCreature creature, double distance){
+        return !(creature instanceof Player) && creature.isAlive() && distance <= 60;
+    }
+
+    @Override
     public void attackEntity(Entity player){
         if(this.attackDelay > 23  && Utils.rand(1, 32) < 4 && this.distanceSquared(player) <= 55){
             this.attackDelay = 0;
@@ -76,12 +78,12 @@ public class SnowGolem extends Monster{
                 this.level
             );
 
-            Entity k = EntityManager.create("Snowball", location, this);
+            Entity k = EntityManager.create("EntitySnowball", location, this);
             if(k == null){
                 return;
             }
 
-            Snowball snowball = (Snowball) k;
+            EntitySnowball snowball = (EntitySnowball) k;
 
             Vector3 motion = new Vector3(
                 -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * f * f,
@@ -90,15 +92,10 @@ public class SnowGolem extends Monster{
             ).multiply(f);
             snowball.setMotion(motion);
 
-            //TODO: I can't change Snowball's damage
-            /*property = (new \ReflectionClass(snowball)).getProperty("damage");
-            property.setAccessible(true);
-            property.setValue ( snowball, 2 );*/
-
             EntityShootBowEvent ev = new EntityShootBowEvent(this, Item.get(Item.ARROW, 0, 1), snowball, f);
             this.server.getPluginManager().callEvent(ev);
 
-            Projectile projectile = ev.getProjectile();
+            EntityProjectile projectile = ev.getProjectile();
             if(ev.isCancelled()){
                 projectile.kill();
             }else if(projectile != null){
@@ -122,8 +119,4 @@ public class SnowGolem extends Monster{
         return new Item[0];
     }
 
-    @Override
-    public boolean targetOption(Creature creature, double distance){
-        return !(creature instanceof Player) && creature.isAlive() && distance <= 60;
-    }
 }

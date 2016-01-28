@@ -2,8 +2,7 @@ package milk.entitymanager.entity;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
-import cn.nukkit.entity.Creature;
-import cn.nukkit.entity.Effect;
+import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -15,19 +14,19 @@ import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
+import cn.nukkit.potion.Effect;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BaseEntity extends Creature{
+public abstract class BaseEntity extends EntityCreature{
 
     int stayTime = 0;
     int moveTime = 0;
+    int knockback = 0;
     
     Vector3 baseTarget = null;
     Vector3 mainTarget = null;
-
-    int knockback = 0;
 
     List<Block> blocksAround = new ArrayList<>();
 
@@ -41,7 +40,7 @@ public abstract class BaseEntity extends Creature{
 
     public abstract Vector3 updateMove();
 
-    public abstract boolean targetOption(Creature creature, double distance);
+    public abstract boolean targetOption(EntityCreature creature, double distance);
 
     public boolean isFriendly(){
     	return this.friendly;
@@ -71,12 +70,13 @@ public abstract class BaseEntity extends Creature{
         this.wallcheck = value;
     }
 
-    public String getSaveId(){
-        return this.getClass().getSimpleName();
-    }
-
     public double getSpeed(){
         return 1;
+    }
+
+    @Override
+    public String getSaveId(){
+        return this.getClass().getSimpleName();
     }
 
     @Override
@@ -273,38 +273,12 @@ public abstract class BaseEntity extends Creature{
 
         if(this.isWallCheck()){
             for(AxisAlignedBB bb : list){
-                if(
-                    this.boundingBox.maxY >= bb.minY
-                    && this.boundingBox.minY <= bb.maxY
-                    && this.boundingBox.maxX >= bb.minX
-                    && this.boundingBox.minX <= bb.maxX
-                ){
-                    double z1;
-                    if(this.boundingBox.maxZ + dz >= bb.minZ && this.boundingBox.maxZ <= bb.minZ){
-                        if((z1 = bb.minZ - (this.boundingBox.maxZ + dz)) < 0) dz += z1;
-                    }
-                    if(this.boundingBox.minZ + dz <= bb.maxZ && this.boundingBox.minZ >= bb.maxZ){
-                        if((z1 = bb.maxZ - (this.boundingBox.minZ + dz)) > 0) dz += z1;
-                    }
-                }
+                dx = bb.calculateXOffset(this.boundingBox, dx);
             }
             this.boundingBox.offset(0, 0, dz);
 
             for(AxisAlignedBB bb : list){
-                if(
-                    this.boundingBox.maxY >= bb.minY
-                    && this.boundingBox.minY <= bb.maxY
-                    && this.boundingBox.maxZ >= bb.minZ
-                    && this.boundingBox.minZ <= bb.maxZ
-                ){
-                    double x1;
-                    if(this.boundingBox.maxX + dx >= bb.minX && this.boundingBox.maxX <= bb.minX){
-                        if((x1 = bb.minX - (this.boundingBox.maxX + dx)) < 0) dx += x1;
-                    }
-                    if(this.boundingBox.minX + dx <= bb.maxX && this.boundingBox.minX >= bb.maxX){
-                        if((x1 = bb.maxX - (this.boundingBox.minX + dx)) > 0) dx += x1;
-                    }
-                }
+                dz = bb.calculateZOffset(this.boundingBox, dz);
             }
             this.boundingBox.offset(dx, 0, 0);
         }

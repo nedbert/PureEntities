@@ -1,7 +1,7 @@
 package milk.entitymanager.entity;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.Projectile;
+import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityShootBowEvent;
@@ -81,10 +81,11 @@ public class Blaze extends FlyMonster{
             FireBall fireball = (FireBall) k;
             fireball.setExplode(true);
             fireball.setMotion(fireball.getMotion().multiply(f));
-            EntityShootBowEvent ev = new EntityShootBowEvent(this, Item.get(Item.ARROW, 0, 1), fireball, f);
 
+            EntityShootBowEvent ev = new EntityShootBowEvent(this, Item.get(Item.ARROW, 0, 1), fireball, f);
             this.server.getPluginManager().callEvent(ev);
-            Projectile projectile = ev.getProjectile();
+
+            EntityProjectile projectile = ev.getProjectile();
             if(ev.isCancelled()){
                 projectile.kill();
             }else if(projectile != null){

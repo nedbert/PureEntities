@@ -1,9 +1,9 @@
 package milk.entitymanager.entity;
 
+import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.item.Item;
 import cn.nukkit.Player;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.entity.Creature;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -39,7 +39,7 @@ public class Mooshroom extends Animal{
         this.setMaxHealth(10);
     }
 
-    public boolean targetOption(Creature creature, double distance){
+    public boolean targetOption(EntityCreature creature, double distance){
     	if(creature instanceof Player){
             Player player = (Player) creature;
             return player.spawned && player.isAlive() && !player.closed && player.getInventory().getItemInHand().getId() == Item.WHEAT && distance <= 49;

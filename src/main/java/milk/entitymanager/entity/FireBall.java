@@ -1,17 +1,17 @@
 package milk.entitymanager.entity;
 
+import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.CriticalParticle;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.Player;
-import cn.nukkit.entity.Projectile;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Explosion;
 import cn.nukkit.event.entity.ExplosionPrimeEvent;
 import milk.entitymanager.util.Utils;
 
-public class FireBall extends Projectile{
+public class FireBall extends EntityProjectile{
     public static final int NETWORK_ID = 85;
 
     protected boolean critical = false;

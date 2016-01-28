@@ -1,8 +1,8 @@
 package milk.entitymanager.entity;
 
 import cn.nukkit.block.Water;
-import cn.nukkit.entity.Effect;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.entity.data.ShortEntityData;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.format.FullChunk;
@@ -10,8 +10,8 @@ import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.entity.Creature;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.potion.Effect;
 import milk.entitymanager.util.Utils;
 
 public abstract class Monster extends WalkEntity{
@@ -179,6 +179,7 @@ public abstract class Monster extends WalkEntity{
             ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_SUFFOCATION, 1);
             this.attack(ev);
         }
+
         if(this instanceof Enderman){
             if(this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) this.y, NukkitMath.floorDouble(this.z))) instanceof Water){
                 ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_DROWNING, 2);
@@ -206,7 +207,7 @@ public abstract class Monster extends WalkEntity{
     }
 
     @Override
-    public boolean targetOption(Creature creature, double distance){
+    public boolean targetOption(EntityCreature creature, double distance){
         if(creature instanceof Player){
             Player player = (Player) creature;
             return player.spawned && player.isAlive() && !player.closed && player.isSurvival() && distance <= 81;

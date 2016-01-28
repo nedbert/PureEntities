@@ -1,6 +1,7 @@
 package milk.entitymanager.entity;
 
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.item.Item;
@@ -10,7 +11,6 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.FloatTag;
-import cn.nukkit.entity.Projectile;
 import milk.entitymanager.util.Utils;
 
 public class Ghast extends FlyMonster{
@@ -81,7 +81,7 @@ public class Ghast extends FlyMonster{
             EntityShootBowEvent ev = new EntityShootBowEvent(this, Item.get(Item.ARROW, 0, 1), fireball, f);
 
             this.server.getPluginManager().callEvent(ev);
-            Projectile projectile = ev.getProjectile();
+            EntityProjectile projectile = ev.getProjectile();
             if(ev.isCancelled()){
                 projectile.kill();
             }else if(projectile != null){
