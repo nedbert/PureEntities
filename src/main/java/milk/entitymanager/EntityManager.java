@@ -2,6 +2,7 @@ package milk.entitymanager;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.block.Air;
 import cn.nukkit.block.Block;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
@@ -11,6 +12,7 @@ import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.block.BlockBreakEvent;
+import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.entity.EntityDeathEvent;
 import cn.nukkit.event.entity.EntityDespawnEvent;
 import cn.nukkit.event.entity.EntitySpawnEvent;
@@ -21,6 +23,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
@@ -47,44 +50,6 @@ public class EntityManager extends PluginBase implements Listener{
 
     static HashMap<String, Class<? extends Entity>> shortNames = new HashMap<>();
     static HashMap<Integer, Class<? extends Entity>> knownEntities = new HashMap<>();
-
-    public void onLoad(){
-        final int[] count = {0};
-
-        ArrayList<Class<? extends Entity>> clazz2 = new ArrayList<>();
-        clazz2.add(Blaze.class);
-        clazz2.add(CaveSpider.class);
-        clazz2.add(Chicken.class);
-        clazz2.add(Cow.class);
-        clazz2.add(Creeper.class);
-        clazz2.add(Enderman.class);
-        clazz2.add(Ghast.class);
-        clazz2.add(IronGolem.class);
-        clazz2.add(MagmaCube.class);
-        clazz2.add(Mooshroom.class);
-        clazz2.add(Ocelot.class);
-        clazz2.add(Pig.class);
-        clazz2.add(PigZombie.class);
-        clazz2.add(Rabbit.class);
-        clazz2.add(Sheep.class);
-        clazz2.add(Silverfish.class);
-        clazz2.add(Skeleton.class);
-        clazz2.add(Slime.class);
-        clazz2.add(SnowGolem.class);
-        clazz2.add(Spider.class);
-        clazz2.add(Wolf.class);
-        clazz2.add(Zombie.class);
-        clazz2.add(ZombieVillager.class);
-        clazz2.forEach(clazz -> count[0] += registerEntity(clazz) ? 1 : 0);
-
-        Entity.registerEntity(FireBall.class);
-
-        if(count[0] == clazz2.size()){
-            this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]All entities were registered");
-        }else{
-            this.getServer().getLogger().info(TextFormat.RED + "[EntityManager]ERROR, I can't registerd entity");
-        }
-    }
 
     static Entity create(Class<? extends Entity> clazz, FullChunk chunk, CompoundTag nbt, Object... args){
         if(clazz == null){
@@ -198,6 +163,44 @@ public class EntityManager extends PluginBase implements Listener{
         }
     }
 
+    public void onLoad(){
+        final int[] count = {0};
+
+        ArrayList<Class<? extends Entity>> clazz2 = new ArrayList<>();
+        clazz2.add(Blaze.class);
+        clazz2.add(CaveSpider.class);
+        clazz2.add(Chicken.class);
+        clazz2.add(Cow.class);
+        clazz2.add(Creeper.class);
+        clazz2.add(Enderman.class);
+        clazz2.add(Ghast.class);
+        clazz2.add(IronGolem.class);
+        clazz2.add(MagmaCube.class);
+        clazz2.add(Mooshroom.class);
+        clazz2.add(Ocelot.class);
+        clazz2.add(Pig.class);
+        clazz2.add(PigZombie.class);
+        clazz2.add(Rabbit.class);
+        clazz2.add(Sheep.class);
+        clazz2.add(Silverfish.class);
+        clazz2.add(Skeleton.class);
+        clazz2.add(Slime.class);
+        clazz2.add(SnowGolem.class);
+        clazz2.add(Spider.class);
+        clazz2.add(Wolf.class);
+        clazz2.add(Zombie.class);
+        clazz2.add(ZombieVillager.class);
+        clazz2.forEach(clazz -> count[0] += registerEntity(clazz) ? 1 : 0);
+
+        Entity.registerEntity(FireBall.class);
+
+        if(count[0] == clazz2.size()){
+            this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]All entities were registered");
+        }else{
+            this.getServer().getLogger().info(TextFormat.RED + "[EntityManager]ERROR, I can't registerd entity");
+        }
+    }
+
     public void onEnable(){
         this.getDataFolder().mkdirs();
 
@@ -300,7 +303,10 @@ public class EntityManager extends PluginBase implements Listener{
 
     @EventHandler
     public void PlayerInteractEvent(PlayerInteractEvent ev){
-        if(ev.getFace() == 255 || ev.getAction() != PlayerInteractEvent.RIGHT_CLICK_BLOCK) return;
+        if(ev.getFace() == 255 || ev.getAction() != PlayerInteractEvent.RIGHT_CLICK_BLOCK){
+            return;
+        }
+
         Item item = ev.getItem();
         Player player = ev.getPlayer();
         Block pos = ev.getBlock().getSide(ev.getFace());
@@ -316,7 +322,18 @@ public class EntityManager extends PluginBase implements Listener{
                 player.getInventory().setItemInHand(item);
             }
             ev.setCancelled();
-        }else if(item.getId() == Item.MONSTER_SPAWNER){
+        }
+    }
+
+    @EventHandler
+    public void BlockPlaceEvent(BlockPlaceEvent ev){
+        if(ev.isCancelled()){
+            return;
+        }
+
+        Player player = ev.getPlayer();
+        Block block = ev.getBlockReplace();
+        if(block.getId() == Item.MONSTER_SPAWNER){
             LinkedHashMap<String, Object> hashdata = new LinkedHashMap<>();
             hashdata.put("radius", 5);
             hashdata.put("mob-list", new ArrayList<String>(){{
@@ -331,7 +348,22 @@ public class EntityManager extends PluginBase implements Listener{
                 add("PigZombie");
                 add("Enderman");
             }});
-            spawner.put(String.format("%s:%s:%s:%s", (int) pos.x, (int) pos.y, (int) pos.z, pos.getLevel().getFolderName()), hashdata);
+            spawner.put(String.format("%s:%s:%s:%s", (int) block.x, (int) block.y, (int) block.z, block.getLevel().getFolderName()), hashdata);
+        }else if(block.getId() == Item.JACK_O_LANTERN || block.getId() == Item.PUMPKIN){
+            if(
+                block.getSide(Vector3.SIDE_DOWN).getId() == Item.IRON_BLOCK
+                && block.getSide(Vector3.SIDE_DOWN, 2).getId() == Item.IRON_BLOCK
+            ){
+                //TODO: spawn IronGolem
+            }else if(
+                block.getSide(Vector3.SIDE_DOWN).getId() == Item.SNOW_BLOCK
+                && block.getSide(Vector3.SIDE_DOWN, 2).getId() == Item.SNOW_BLOCK
+            ){
+                for(int y = 0; y < 3; y++){
+                    block.getLevel().setBlock(block.add(0, -y, 0), new Air());
+                }
+                EntityManager.create("SnowGolem", block.add(0, -2, 0));
+            }
         }
     }
 

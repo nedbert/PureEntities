@@ -72,9 +72,9 @@ public class Skeleton extends Monster{
                     .add(new FloatTag("", (float) yaw))
                     .add(new FloatTag("", (float) pitch)));
 
-            EntityArrow arrow = (EntityArrow) Entity.createEntity("Arrow", this.chunk, nbt, this);
-            EntityShootBowEvent ev = new EntityShootBowEvent(this, Item.get(Item.ARROW, 0, 1), arrow, f);
+            EntityArrow arrow = (EntityArrow) Entity.createEntity("EntityArrow", this.chunk, nbt, this);
 
+            EntityShootBowEvent ev = new EntityShootBowEvent(this, Item.get(Item.ARROW, 0, 1), arrow, f);
             this.server.getPluginManager().callEvent(ev);
 
             EntityProjectile projectile = ev.getProjectile();
@@ -100,7 +100,7 @@ public class Skeleton extends Monster{
         boolean hasUpdate = super.entityBaseTick(tickDiff);
 
         int time = this.getLevel().getTime() % Level.TIME_FULL;
-        if((time < Level.TIME_NIGHT || time > Level.TIME_SUNRISE) && this.isOnFire()){
+        if((time < Level.TIME_NIGHT || time > Level.TIME_SUNRISE) && !this.isOnFire()){
             this.setOnFire(5);
         }
 

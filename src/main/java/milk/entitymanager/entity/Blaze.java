@@ -45,6 +45,7 @@ public class Blaze extends FlyMonster{
     public void initEntity(){
         super.initEntity();
 
+        this.fireProof = true;
         this.setDamage(new int[]{0, 5, 6, 8});
     }
 

@@ -37,6 +37,7 @@ public class MagmaCube extends Monster{
     public void initEntity(){
         super.initEntity();
 
+        this.fireProof = true;
         this.setDamage(new int[]{0, 3, 4, 6});
     }
 

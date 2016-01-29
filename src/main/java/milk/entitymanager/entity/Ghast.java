@@ -43,6 +43,7 @@ public class Ghast extends FlyMonster{
     public void initEntity(){
         super.initEntity();
 
+        this.fireProof = true;
         this.setMaxHealth(10);
     }
 
