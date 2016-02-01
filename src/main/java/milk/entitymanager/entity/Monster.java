@@ -16,10 +16,10 @@ import milk.entitymanager.util.Utils;
 
 public abstract class Monster extends WalkEntity{
 
-    int attackDelay = 0;
-
     int[] minDamage;
     int[] maxDamage;
+
+    int attackDelay = 0;
 
     public Monster(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
@@ -172,10 +172,7 @@ public abstract class Monster extends WalkEntity{
 
         boolean hasUpdate = this.entityBaseTick2(tickDiff);
 
-        if(this.attackDelay > 0){
-            this.attackDelay -= tickDiff;
-        }
-
+        this.attackDelay += tickDiff;
         if(this instanceof Enderman){
             if(this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) this.y, NukkitMath.floorDouble(this.z))) instanceof Water){
                 this.attack(new EntityDamageEvent(this, EntityDamageEvent.CAUSE_DROWNING, 2));

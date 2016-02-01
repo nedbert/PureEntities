@@ -14,10 +14,10 @@ import milk.entitymanager.util.Utils;
 
 public abstract class FlyMonster extends FlyEntity{
 
-    int attackDelay = 0;
-
     int[] minDamage;
     int[] maxDamage;
+
+    int attackDelay = 0;
 
     public FlyMonster(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
@@ -157,6 +157,7 @@ public abstract class FlyMonster extends FlyEntity{
 
         boolean hasUpdate = this.entityBaseTick2(tickDiff);
 
+        this.attackDelay += tickDiff;
         if(!this.hasEffect(Effect.WATER_BREATHING) && this.isInsideOfWater()){
             hasUpdate = true;
             int airTicks = this.getDataPropertyInt(DATA_AIR) - tickDiff;
