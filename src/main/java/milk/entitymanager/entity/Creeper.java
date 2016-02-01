@@ -35,11 +35,6 @@ public class Creeper extends Monster implements EntityExplosive{
     }
 
     @Override
-    public float getEyeHeight(){
-        return 1.8f;
-    }
-
-    @Override
     public double getSpeed(){
         return 0.9;
     }

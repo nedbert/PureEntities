@@ -19,6 +19,10 @@ public abstract class WalkEntity extends BaseEntity{
     }
 
     void checkTarget(){
+        if(this.isKnockback()){
+            return;
+        }
+
         Vector3 target = this.baseTarget;
         if(!(target instanceof EntityCreature) || !this.targetOption((EntityCreature) target, this.distanceSquared(target))){
             double near = Integer.MAX_VALUE;
@@ -53,44 +57,44 @@ public abstract class WalkEntity extends BaseEntity{
             }
         }
 
-        if(this.baseTarget instanceof EntityCreature && ((EntityCreature) this.baseTarget).isAlive()){
+        if(
+            this.baseTarget instanceof EntityCreature
+            && ((EntityCreature) this.baseTarget).isAlive()
+        ){
             return;
         }
 
         int x, z;
         if(this.stayTime > 0){
-            if(Utils.rand(1, 125) > 4){
+            if(Utils.rand(1, 110) > 5){
                 return;
             }
 
             x = Utils.rand(25, 80);
             z = Utils.rand(25, 80);
             this.baseTarget = this.add(Utils.rand() ? x : -x, Utils.rand(-20, 20) / 10, Utils.rand() ? z : -z);
-        }else if(Utils.rand(1, 320) == 1){
-            this.stayTime = Utils.rand(90, 400);
-
+        }else if(Utils.rand(1, 360) == 1){
             x = Utils.rand(25, 80);
             z = Utils.rand(25, 80);
+            this.stayTime = Utils.rand(90, 400);
             this.baseTarget = this.add(Utils.rand() ? x : -x, Utils.rand(-20, 20) / 10, Utils.rand() ? z : -z);
         }else if(this.moveTime <= 0 || this.baseTarget == null){
-            this.stayTime = 0;
-            this.moveTime = Utils.rand(300, 1200);
-
             x = Utils.rand(25, 80);
             z = Utils.rand(25, 80);
+            this.stayTime = 0;
+            this.moveTime = Utils.rand(300, 1200);
             this.baseTarget = this.add(Utils.rand() ? x : -x, 0, Utils.rand() ? z : -z);
         }
     }
 
-    public Vector3 updateMove(){
+    public Vector3 updateMove(int tickDiff){
         if(!this.isMovement()){
             return null;
         }
         
         if(this.isKnockback()){
-            this.knockback--;
-            this.motionY -= 0.23;
-            this.move(this.motionX, this.motionY, this.motionZ);
+            this.move(this.motionX * tickDiff, this.motionY * tickDiff, this.motionZ * tickDiff);
+            this.motionY -= 0.15;
             this.updateMovement();
             return null;
         }
@@ -113,14 +117,14 @@ public abstract class WalkEntity extends BaseEntity{
             this.pitch = y == 0 ? 0 : Math.toDegrees(-Math.atan2(y, Math.sqrt(x * x + z * z)));
         }
         
-        Vector3 target = this.mainTarget != null ? this.mainTarget : this.baseTarget;
+        Vector3 target = this.baseTarget;
         if(this.stayTime > 0){
-            --this.stayTime;
+            this.stayTime -= tickDiff;
         }else{
             boolean isJump = false;
-            double dx = this.motionX;
-            double dy = this.motionY;
-            double dz = this.motionZ;
+            double dx = this.motionX * tickDiff;
+            double dy = this.motionY * tickDiff;
+            double dz = this.motionZ * tickDiff;
 
             Vector2 be = new Vector2(this.x + dx, this.z + dz);
             this.move(dx, dy, dz);
@@ -129,32 +133,46 @@ public abstract class WalkEntity extends BaseEntity{
             if(be.x != af.x || be.y != af.y){
                 int x = 0;
                 int z = 0;
-                if(be.x - af.x != 0) x += be.x - af.x > 0 ? 1 : -1;
-                if(be.y - af.y != 0) z += be.y - af.y > 0 ? 1 : -1;
+                if(be.x - af.x != 0){
+                    x += be.x - af.x > 0 ? 1 : -1;
+                }
+                if(be.y - af.y != 0){
+                    z += be.y - af.y > 0 ? 1 : -1;
+                }
 
                 Block block = this.level.getBlock((new Vector3(NukkitMath.floorDouble(be.x) + x, this.y, NukkitMath.floorDouble(af.y) + z)).floor());
                 Block block2 = this.level.getBlock((new Vector3(NukkitMath.floorDouble(be.x) + x, this.y + 1, NukkitMath.floorDouble(af.y) + z)).floor());
                 if(!block.canPassThrough()){
                     AxisAlignedBB bb = block2.getBoundingBox();
-                    if(block2.canPassThrough() || (bb == null || bb.maxY - this.y <= 1)){
+                    if(
+                        this.motionY > -0.32
+                        && (block2.canPassThrough() || (bb == null || bb.maxY - this.y <= 1))
+                    ){
                         isJump = true;
-                        this.motionY = 0.22;
-                    }else{
-                        if(this.level.getBlock(block.add(-x, 0, -z)).getId() == Item.LADDER){
-                            isJump = true;
-                            this.motionY = 0.22;
+                        if(this.motionY >= 0.3){
+                            this.motionY += this.getGravity();
+                        }else{
+                            this.motionY = 0.3;
                         }
+                    }else if(this.level.getBlock(block.add(-x, 0, -z)).getId() == Item.LADDER){
+                        isJump = true;
+                        this.motionY = 0.15;
                     }
                 }
+
                 if(!isJump){
-                    this.moveTime -= 80;
+                    this.moveTime -= 90 * tickDiff;
                 }
             }
 
             if(this.onGround && !isJump){
                 this.motionY = 0;
             }else if(!isJump){
-                this.motionY -= 0.22;
+                if(this.motionY > -0.32){
+                    this.motionY = -0.32;
+                }else{
+                    this.motionY -= this.getGravity();
+                }
             }
         }
         this.updateMovement();

@@ -44,9 +44,8 @@ public class IronGolem extends Monster{
 
         this.setFriendly(true);
 
-        this.setDamage(new int[]{0, 0, 0, 0});
+        this.setDamage(new int[]{0, 21, 21, 21});
         this.setMinDamage(new int[]{0, 7, 7, 7});
-        this.setMaxDamage(new int[]{0, 21, 21, 21});
     }
 
     public String getName(){

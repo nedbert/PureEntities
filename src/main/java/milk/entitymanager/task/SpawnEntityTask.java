@@ -19,11 +19,6 @@ public class SpawnEntityTask implements Runnable{
 
     @Override
     public void run(){
-        EntityManager owner = this.owner;
-        if(EntityManager.getEntities().size() >= (owner.getData("entity.maximum", 120))){
-            return;
-        }
-
         int[] rand;
         try{
             String[] k = owner.getData("spawn.rand", "1/4").split("/");

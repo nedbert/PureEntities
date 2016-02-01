@@ -2,6 +2,7 @@ package milk.entitymanager.entity;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.Vector2;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.Player;
 import cn.nukkit.entity.EntityCreature;
@@ -15,7 +16,7 @@ public abstract class FlyEntity extends BaseEntity{
     }
 
     void checkTarget(){
-    	if(this.getViewers().isEmpty()){
+        if(this.isKnockback()){
             return;
         }
 
@@ -44,6 +45,7 @@ public abstract class FlyEntity extends BaseEntity{
                 this.baseTarget = creature;
             }
         }
+
         if(
             this.baseTarget instanceof EntityCreature
             && ((EntityCreature) this.baseTarget).isAlive()
@@ -52,47 +54,51 @@ public abstract class FlyEntity extends BaseEntity{
         }
 
         int x, y, z;
+        int maxY = Math.max(this.getLevel().getHighestBlockAt((int) this.x, (int) this.z) + 15, 120);
         if(this.stayTime > 0){
-            if(Utils.rand(1, 125) > 4) return;
+            if(Utils.rand(1, 125) > 4){
+                return;
+            }
+
             x = Utils.rand(25, 80);
             z = Utils.rand(25, 80);
-            if(this.y > this.getLevel().getHighestBlockAt((int) this.x, (int) this.z) + 10){
-            	y = Utils.rand(-10, -7);
+            if(this.y > maxY){
+            	y = Utils.rand(-12, -4);
             }else{
-            	y = Utils.rand(-2, 2);
+            	y = Utils.rand(-10, 10);
             }
             this.baseTarget = this.add(Utils.rand() ? x : -x, y, Utils.rand() ? z : -z);
         }else if(Utils.rand(1, 420) == 1){
-            this.stayTime = Utils.rand(95, 420);
             x = Utils.rand(25, 80);
             z = Utils.rand(25, 80);
-            if(this.y > this.getLevel().getHighestBlockAt((int) this.x, (int) this.z) + 10){
-            	y = Utils.rand(-10, -7);
+            if(this.y > maxY){
+                y = Utils.rand(-12, -4);
             }else{
-            	y = Utils.rand(-2, 2);
+                y = Utils.rand(-10, 10);
             }
+            this.stayTime = Utils.rand(95, 420);
             this.baseTarget = this.add(Utils.rand() ? x : -x, y, Utils.rand() ? z : -z);
         }else if(this.moveTime <= 0 || !(this.baseTarget instanceof Vector3)){
-            this.moveTime = Utils.rand(100, 1000);
             x = Utils.rand(25, 80);
             z = Utils.rand(25, 80);
-            if(this.y > this.getLevel().getHighestBlockAt((int) this.x, (int) this.z) + 10){
-            	y = Utils.rand(-10, -7);
+            if(this.y > maxY){
+                y = Utils.rand(-12, -4);
             }else{
-            	y = Utils.rand(-2, 2);
+                y = Utils.rand(-10, 10);
             }
+            this.stayTime = 0;
+            this.moveTime = Utils.rand(100, 1000);
             this.baseTarget = this.add(Utils.rand() ? x : -x, y, Utils.rand() ? z : -z);
         }
     }
 
     @Override
-    public Vector3 updateMove(){
+    public Vector3 updateMove(int tickDiff){
         if(!this.isMovement()){
             return null;
         }
 
         if(this.isKnockback()){
-            this.knockback--;
             this.move(this.motionX, this.motionY, this.motionZ);
             this.updateMovement();
             return null;
@@ -110,22 +116,28 @@ public abstract class FlyEntity extends BaseEntity{
             }else{
                 double diff = Math.abs(x) + Math.abs(z);
                 this.motionX = this.getSpeed() * 0.15 * (x / diff);
-                this.motionY = this.getSpeed() * 0.15 * (y / diff);
+                this.motionY = this.getSpeed() * 0.27 * (y / diff);
                 this.motionZ = this.getSpeed() * 0.15 * (z / diff);
             }
             this.yaw = (-Math.atan2(this.motionX, this.motionZ) * 180 / Math.PI);
             this.pitch = y == 0 ? 0 : Math.toDegrees(-Math.atan2(y, Math.sqrt(x * x + z * z)));
         }
 
-        Vector3 target = this.mainTarget != null ? this.mainTarget : this.baseTarget;
+        Vector3 target = this.baseTarget;
         if(this.stayTime > 0){
-            --this.stayTime;
+            this.stayTime -= tickDiff;
         }else{
-            double dx = this.motionX;
-            double dy = this.motionY;
-            double dz = this.motionZ;
+            double dx = this.motionX * tickDiff;
+            double dy = this.motionY * tickDiff;
+            double dz = this.motionZ * tickDiff;
 
+            Vector2 be = new Vector2(this.x + dx, this.z + dz);
             this.move(dx, dy, dz);
+            Vector2 af = new Vector2(this.x, this.z);
+
+            if((be.x != af.x || be.y != af.y)){
+                this.moveTime -= 90 * tickDiff;
+            }
         }
         this.updateMovement();
         return target;

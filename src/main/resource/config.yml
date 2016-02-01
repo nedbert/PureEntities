@@ -1,5 +1,4 @@
 entity:
-  maximum: 120
   explode: false
 spawn:
   rand: "1/4"

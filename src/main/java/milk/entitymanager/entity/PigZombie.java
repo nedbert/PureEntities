@@ -69,7 +69,7 @@ public class PigZombie extends Monster{
 
     @Override
     public boolean targetOption(EntityCreature creature, double distance){
-        return super.targetOption(creature, distance) && this.isAngry();
+        return this.isAngry() && super.targetOption(creature, distance);
     }
 
     @Override

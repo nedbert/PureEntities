@@ -137,10 +137,11 @@ public abstract class Monster extends WalkEntity{
             return true;
         }
 
-        --this.moveTime;
-        ++this.attackDelay;
+        int tickDiff = currentTick - this.lastUpdate;
+        this.lastUpdate = currentTick;
+        this.entityBaseTick(tickDiff);
 
-        Vector3 target = this.updateMove();
+        Vector3 target = this.updateMove(tickDiff);
         if(this.isFriendly()){
         	if(!(target instanceof Player)){
         		if(target instanceof Entity){
@@ -162,8 +163,6 @@ public abstract class Monster extends WalkEntity{
                 this.moveTime = 0;
             }
         }
-
-        this.entityBaseTick();
         return true;
     }
 
@@ -172,33 +171,27 @@ public abstract class Monster extends WalkEntity{
         //Timings.timerEntityBaseTick.startTiming();
 
         boolean hasUpdate = this.entityBaseTick2(tickDiff);
-        EntityDamageEvent ev;
-        
-        if(this.isInsideOfSolid()){
-            hasUpdate = true;
-            ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_SUFFOCATION, 1);
-            this.attack(ev);
+
+        if(this.attackDelay > 0){
+            this.attackDelay -= tickDiff;
         }
 
         if(this instanceof Enderman){
             if(this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) this.y, NukkitMath.floorDouble(this.z))) instanceof Water){
-                ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_DROWNING, 2);
-
-                this.attack(ev);
+                this.attack(new EntityDamageEvent(this, EntityDamageEvent.CAUSE_DROWNING, 2));
                 this.move(Utils.rand(-20, 20), Utils.rand(-20, 20), Utils.rand(-20, 20));
             }
         }else{
             if(!this.hasEffect(Effect.WATER_BREATHING) && this.isInsideOfWater()){
                 hasUpdate = true;
-                int airTicks = this.getDataPropertyShort(DATA_AIR).getData() - tickDiff;
+                int airTicks = this.getDataPropertyShort(DATA_AIR) - tickDiff;
                 if(airTicks <= -20){
                     airTicks = 0;
-                    ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_DROWNING, 2);
-                    this.attack(ev);
+                    this.attack(new EntityDamageEvent(this, EntityDamageEvent.CAUSE_DROWNING, 2));
                 }
-                this.setDataProperty(DATA_AIR, new ShortEntityData(airTicks));
+                this.setDataProperty(new ShortEntityData(DATA_AIR, airTicks));
             }else{
-                this.setDataProperty(DATA_AIR, new ShortEntityData(300));
+                this.setDataProperty(new ShortEntityData(DATA_AIR, 300));
             }
         }
 

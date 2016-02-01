@@ -43,11 +43,6 @@ public class Skeleton extends Monster{
         return 1.62f;
     }
 
-    protected void initEntity(){
-        super.initEntity();
-
-    }
-
     public String getName(){
         return "Skeleton";
     }
@@ -101,7 +96,7 @@ public class Skeleton extends Monster{
 
         int time = this.getLevel().getTime() % Level.TIME_FULL;
         if((time < Level.TIME_NIGHT || time > Level.TIME_SUNRISE) && !this.isOnFire()){
-            this.setOnFire(5);
+            this.setOnFire(100);
         }
 
         //Timings.timerEntityBaseTick.stopTiming();

@@ -14,8 +14,6 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.entity.EntityDeathEvent;
-import cn.nukkit.event.entity.EntityDespawnEvent;
-import cn.nukkit.event.entity.EntitySpawnEvent;
 import cn.nukkit.event.entity.ExplosionPrimeEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.item.Item;
@@ -45,8 +43,6 @@ public class EntityManager extends PluginBase implements Listener{
     static LinkedHashMap<String, Object> data;
     public static LinkedHashMap<String, Object> drops;
     public static LinkedHashMap<String, Object> spawner;
-
-    static HashMap<Long, BaseEntity> entities = new HashMap<>();
 
     static HashMap<String, Class<? extends Entity>> shortNames = new HashMap<>();
     static HashMap<Integer, Class<? extends Entity>> knownEntities = new HashMap<>();
@@ -140,10 +136,6 @@ public class EntityManager extends PluginBase implements Listener{
         }catch(Exception e){
             return false;
         }
-    }
-
-    public static Map<Long, BaseEntity> getEntities(){
-        return entities;
     }
 
     public static void clear(){
@@ -285,23 +277,6 @@ public class EntityManager extends PluginBase implements Listener{
     }
 
     @EventHandler
-    public void EntitySpawnEvent(EntitySpawnEvent ev){
-        Entity entity = ev.getEntity();
-        if(entity instanceof BaseEntity && !entity.closed){
-            BaseEntity ent = (BaseEntity) entity;
-            entities.put(ent.getId(), ent);
-        }
-    }
-
-    @EventHandler
-    public void EntityDespawnEvent(EntityDespawnEvent ev){
-        Entity entity = ev.getEntity();
-        if(entity instanceof BaseEntity){
-            entities.remove(entity.getId());
-        }
-    }
-
-    @EventHandler
     public void PlayerInteractEvent(PlayerInteractEvent ev){
         if(ev.getFace() == 255 || ev.getAction() != PlayerInteractEvent.RIGHT_CLICK_BLOCK){
             return;
@@ -331,7 +306,6 @@ public class EntityManager extends PluginBase implements Listener{
             return;
         }
 
-        Player player = ev.getPlayer();
         Block block = ev.getBlockReplace();
         if(block.getId() == Item.MONSTER_SPAWNER){
             LinkedHashMap<String, Object> hashdata = new LinkedHashMap<>();

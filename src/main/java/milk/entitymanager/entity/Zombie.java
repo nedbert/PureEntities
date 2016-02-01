@@ -74,8 +74,7 @@ public class Zombie extends Monster{
     public void attackEntity(Entity player){
         if(this.attackDelay > 10 && this.distanceSquared(player) < 2){
             this.attackDelay = 0;
-            EntityDamageEvent ev = new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_ENTITY_ATTACK, (float) this.getDamage());
-            player.attack(ev);
+            player.attack(new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_ENTITY_ATTACK, (float) this.getDamage()));
         }
     }
 
@@ -87,7 +86,7 @@ public class Zombie extends Monster{
 
         int time = this.getLevel().getTime() % Level.TIME_FULL;
         if((time < Level.TIME_NIGHT || time > Level.TIME_SUNRISE) && !this.isOnFire()){
-            this.setOnFire(5);
+            this.setOnFire(100);
         }
 
         //Timings.timerEntityBaseTick.stopTiming();

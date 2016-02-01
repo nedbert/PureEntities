@@ -2,10 +2,13 @@ package milk.entitymanager.entity;
 
 import cn.nukkit.entity.EntityAgeable;
 import cn.nukkit.entity.data.ByteEntityData;
+import cn.nukkit.entity.data.ShortEntityData;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.Player;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.potion.Effect;
 
 public abstract class Animal extends WalkEntity implements EntityAgeable{
 
@@ -23,13 +26,35 @@ public abstract class Animal extends WalkEntity implements EntityAgeable{
         super.initEntity();
 
         if(this.getDataProperty(DATA_AGEABLE_FLAGS) == null){
-            this.setDataProperty(DATA_AGEABLE_FLAGS, new ByteEntityData((byte) 0));
+            this.setDataProperty(new ByteEntityData(DATA_AGEABLE_FLAGS, (byte) 0));
         }
     }
 
     @Override
     public boolean isBaby(){
         return this.getDataFlag(DATA_AGEABLE_FLAGS, DATA_FLAG_BABY);
+    }
+
+    @Override
+    public boolean entityBaseTick(int tickDiff){
+        //Timings.timerEntityBaseTick.startTiming();
+
+        boolean hasUpdate = this.entityBaseTick2(tickDiff);
+
+        if(!this.hasEffect(Effect.WATER_BREATHING) && this.isInsideOfWater()){
+            hasUpdate = true;
+            int airTicks = this.getDataPropertyShort(DATA_AIR) - tickDiff;
+            if(airTicks <= -20){
+                airTicks = 0;
+                this.attack(new EntityDamageEvent(this, EntityDamageEvent.CAUSE_DROWNING, 2));
+            }
+            this.setDataProperty(new ShortEntityData(DATA_AIR, airTicks));
+        }else{
+            this.setDataProperty(new ShortEntityData(DATA_AIR, 300));
+        }
+
+        //Timings.timerEntityBaseTick.stopTiming();
+        return hasUpdate;
     }
 
     @Override
@@ -42,11 +67,13 @@ public abstract class Animal extends WalkEntity implements EntityAgeable{
             return true;
         }
 
-        --this.moveTime;
+        int tickDiff = currentTick - this.lastUpdate;
+        this.lastUpdate = currentTick;
+        this.entityBaseTick(tickDiff);
 
-        Vector3 target = this.updateMove();
+        Vector3 target = this.updateMove(tickDiff);
         if(target instanceof Player){
-            if(this.distance(target) <= 2){
+            if(this.distanceSquared(target) <= 2){
                 this.pitch = 22;
                 this.x = this.lastX;
                 this.y = this.lastY;
@@ -57,8 +84,6 @@ public abstract class Animal extends WalkEntity implements EntityAgeable{
                 this.moveTime = 0;
             }
         }
-
-        this.entityBaseTick();
         return true;
     }
 

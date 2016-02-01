@@ -67,7 +67,7 @@ public class Ocelot extends Monster{
     public boolean targetOption(EntityCreature creature, double distance){
     	if(creature instanceof Player){
             Player player = (Player) creature;
-            return (player.spawned && player.isAlive() && !player.closed && player.getInventory().getItemInHand().getId() == Item.RAW_FISH && distance <= 49) || this.isAngry();
+            return this.isAngry() || (player.spawned && player.isAlive() && !player.closed && player.getInventory().getItemInHand().getId() == Item.RAW_FISH && distance <= 49);
         }
     	return super.targetOption(creature, distance);
     }
@@ -90,6 +90,10 @@ public class Ocelot extends Monster{
     }
 
     public void attackEntity(Entity player){
+        if(player instanceof Player && !this.isAngry()){
+            return;
+        }
+
         if(this.attackDelay > 10 && this.distanceSquared(player) < 1.44){
             this.attackDelay = 0;
             player.attack(new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_ENTITY_ATTACK, (float) this.getDamage()));

@@ -61,7 +61,7 @@ public class Ghast extends FlyMonster{
             CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
                     .add(new DoubleTag("", this.x + (-Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * 0.5)))
-                    .add(new DoubleTag("", this.getEyeHeight()))
+                    .add(new DoubleTag("", this.y + this.getHeight() - 0.18))
                     .add(new DoubleTag("", this.z +(Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * 0.5))))
                 .putList(new ListTag<DoubleTag>("Motion")
                     .add(new DoubleTag("", -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * f))

@@ -136,10 +136,11 @@ public abstract class FlyMonster extends FlyEntity{
             return true;
         }
 
-        --this.moveTime;
-        ++this.attackDelay;
+        int tickDiff = currentTick - this.lastUpdate;
+        this.lastUpdate = currentTick;
+        this.entityBaseTick(tickDiff);
 
-        Vector3 target = this.updateMove();
+        Vector3 target = this.updateMove(tickDiff);
         if(target instanceof Entity){
             this.attackEntity((Entity) target);
         }else if(
@@ -148,38 +149,24 @@ public abstract class FlyMonster extends FlyEntity{
         ){
             this.moveTime = 0;
         }
-
-        this.entityBaseTick();
         return true;
     }
 
     public boolean entityBaseTick(int tickDiff){
         //Timings.timerEntityBaseTick.startTiming();
 
-        if(!this.closed){
-            return false;
-        }
-
         boolean hasUpdate = this.entityBaseTick2(tickDiff);
-        EntityDamageEvent ev;
-
-        if(this.isInsideOfSolid()){
-            hasUpdate = true;
-            ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_SUFFOCATION, 1);
-            this.attack(ev);
-        }
 
         if(!this.hasEffect(Effect.WATER_BREATHING) && this.isInsideOfWater()){
             hasUpdate = true;
-            int airTicks = this.getDataPropertyInt(DATA_AIR).getData() - tickDiff;
+            int airTicks = this.getDataPropertyInt(DATA_AIR) - tickDiff;
             if(airTicks <= -20){
                 airTicks = 0;
-                ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_DROWNING, 2);
-                this.attack(ev);
+                this.attack(new EntityDamageEvent(this, EntityDamageEvent.CAUSE_DROWNING, 2));
             }
-            this.setDataProperty(DATA_AIR, new ShortEntityData(airTicks));
+            this.setDataProperty(new ShortEntityData(DATA_AIR, airTicks));
         }else{
-            this.setDataProperty(DATA_AIR, new ShortEntityData(300));
+            this.setDataProperty(new ShortEntityData(DATA_AIR, 300));
         }
 
         //Timings.timerEntityBaseTick.stopTiming();

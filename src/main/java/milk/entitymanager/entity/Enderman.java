@@ -30,11 +30,6 @@ public class Enderman extends Monster{
     }
 
     @Override
-    public float getEyeHeight(){
-        return 2.62f;
-    }
-
-    @Override
     public double getSpeed(){
         return 1.21;
     }

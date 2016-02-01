@@ -22,7 +22,7 @@ public class Pig extends Animal implements EntityRideable{
 
     @Override
     public float getWidth(){
-        return 1.6f;
+        return 1.45f;
     }
 
     @Override

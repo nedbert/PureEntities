@@ -23,10 +23,8 @@ public abstract class BaseEntity extends EntityCreature{
 
     int stayTime = 0;
     int moveTime = 0;
-    int knockback = 0;
     
     Vector3 baseTarget = null;
-    Vector3 mainTarget = null;
 
     List<Block> blocksAround = new ArrayList<>();
 
@@ -38,7 +36,7 @@ public abstract class BaseEntity extends EntityCreature{
         super(chunk, nbt);
     }
 
-    public abstract Vector3 updateMove();
+    public abstract Vector3 updateMove(int tickDiff);
 
     public abstract boolean targetOption(EntityCreature creature, double distance);
 
@@ -51,7 +49,7 @@ public abstract class BaseEntity extends EntityCreature{
     }
 
     public boolean isKnockback(){
-        return this.knockback > 0;
+        return this.attackTime > 0;
     }
 
     public boolean isWallCheck(){
@@ -75,18 +73,13 @@ public abstract class BaseEntity extends EntityCreature{
     }
 
     @Override
-    public String getSaveId(){
-        return this.getClass().getSimpleName();
-    }
-
-    @Override
     protected void initEntity(){
         super.initEntity();
 
         if(this.namedTag.contains("Movement")){
             this.setMovement(this.namedTag.getBoolean("Movement"));
         }
-        this.setDataProperty(DATA_NO_AI, new ByteEntityData((byte) 1));
+        this.setDataProperty(new ByteEntityData(DATA_NO_AI, (byte) 1));
     }
 
     public void saveNBT(){
@@ -181,18 +174,19 @@ public abstract class BaseEntity extends EntityCreature{
 
         boolean hasUpdate = false;
 
-        if(this.y <= -16 && this.isAlive()){
-            EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_VOID, 10);
-            this.attack(ev);
+        if(this.isInsideOfSolid()){
             hasUpdate = true;
+            this.attack(new EntityDamageEvent(this, EntityDamageEvent.CAUSE_SUFFOCATION, 1));
+        }
+
+        if(this.y <= -16 && this.isAlive()){
+            hasUpdate = true;
+            this.attack(new EntityDamageEvent(this, EntityDamageEvent.CAUSE_VOID, 10));
         }
 
         if(this.fireTicks > 0){
             if(this.fireProof){
                 this.fireTicks -= 4 * tickDiff;
-                if(this.fireTicks < 0){
-                    this.fireTicks = 0;
-                }
             }else{
                 if(!this.hasEffect(Effect.FIRE_RESISTANCE) && (this.fireTicks % 20) == 0 || tickDiff > 20){
                     EntityDamageEvent ev = new EntityDamageEvent(this, EntityDamageEvent.CAUSE_FIRE_TICK, 1);
@@ -209,8 +203,12 @@ public abstract class BaseEntity extends EntityCreature{
             }
         }
 
+        if(this.moveTime > 0){
+            this.moveTime -= tickDiff;
+        }
+
         if(this.attackTime > 0){
-            this.attackTime = 0;
+            this.attackTime -= tickDiff;
         }
 
         if(this.noDamageTicks > 0){
@@ -227,8 +225,18 @@ public abstract class BaseEntity extends EntityCreature{
     }
 
     @Override
+    public boolean isInsideOfSolid() {
+        Block block = this.level.getBlock(this.temporalVector.setComponents(NukkitMath.floorDouble(this.x), NukkitMath.floorDouble(this.y + this.getHeight() - 0.18f), NukkitMath.floorDouble(this.z)));
+        AxisAlignedBB bb = block.getBoundingBox();
+        return bb != null && block.isSolid() && !block.isTransparent() && bb.intersectsWith(this.getBoundingBox());
+
+    }
+
+    @Override
     public void attack(EntityDamageEvent source){
-        if(this.isKnockback()) return;
+        if(this.isKnockback()){
+            return;
+        }
 
         super.attack(source);
 
@@ -236,8 +244,9 @@ public abstract class BaseEntity extends EntityCreature{
             return;
         }
 
+        this.moveTime = 0;
         this.stayTime = 0;
-        this.knockback = 11;
+        this.baseTarget = null;
 
         Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
         Vector3 motion = new Vector3(this.x - damager.x, this.y - damager.y, this.z - damager.z).normalize();
@@ -246,12 +255,12 @@ public abstract class BaseEntity extends EntityCreature{
         if(this instanceof FlyEntity){
             this.motionY = motion.y * 0.19;
         }else{
-            this.motionY = 0.58;
+            this.motionY = 0.5;
         }
     }
 
     @Override
-    public void knockBack(Entity attacker, float damage, double x, double z, float base){
+    public void knockBack(Entity damager, double damage, double x, double z, double base){
 
     }
 
@@ -263,8 +272,6 @@ public abstract class BaseEntity extends EntityCreature{
         double movY = dy;
         double movZ = dz;
 
-
-        //TODO: AABB 충돌 관련 문제 해결
         AxisAlignedBB[] list = this.level.getCollisionCubes(this, this.level.getTickRate() > 1 ? this.boundingBox.getOffsetBoundingBox(dx, dy, dz) : this.boundingBox.addCoord(dx, dy, dz));
         for(AxisAlignedBB bb : list){
             dy = bb.calculateYOffset(this.boundingBox, dy);
@@ -275,12 +282,12 @@ public abstract class BaseEntity extends EntityCreature{
             for(AxisAlignedBB bb : list){
                 dx = bb.calculateXOffset(this.boundingBox, dx);
             }
-            this.boundingBox.offset(0, 0, dz);
+            this.boundingBox.offset(dx, 0, 0);
 
             for(AxisAlignedBB bb : list){
                 dz = bb.calculateZOffset(this.boundingBox, dz);
             }
-            this.boundingBox.offset(dx, 0, 0);
+            this.boundingBox.offset(0, 0, dz);
         }
 
         this.setComponents(this.x + dx, this.y + dy, this.z + dz);
