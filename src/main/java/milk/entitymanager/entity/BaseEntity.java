@@ -15,18 +15,19 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.potion.Effect;
+import milk.entitymanager.entity.monster.Monster;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BaseEntity extends EntityCreature{
 
-    int stayTime = 0;
-    int moveTime = 0;
-    
-    Vector3 baseTarget = null;
+    protected int stayTime = 0;
+    protected int moveTime = 0;
 
-    List<Block> blocksAround = new ArrayList<>();
+    protected Vector3 baseTarget = null;
+
+    protected List<Block> blocksAround = new ArrayList<>();
 
     private boolean movement = true;
     private boolean friendly = false;
@@ -37,8 +38,6 @@ public abstract class BaseEntity extends EntityCreature{
     }
 
     public abstract Vector3 updateMove(int tickDiff);
-
-    public abstract boolean targetOption(EntityCreature creature, double distance);
 
     public boolean isFriendly(){
     	return this.friendly;
@@ -155,7 +154,8 @@ public abstract class BaseEntity extends EntityCreature{
         return this.blocksAround;
     }
 
-    public boolean entityBaseTick2(int tickDiff){
+    @Override
+    public boolean entityBaseTick(int tickDiff){
         this.blocksAround = null;
         this.justCreated = false;
 
@@ -252,7 +252,7 @@ public abstract class BaseEntity extends EntityCreature{
         Vector3 motion = new Vector3(this.x - damager.x, this.y - damager.y, this.z - damager.z).normalize();
         this.motionX = motion.x * 0.19;
         this.motionZ = motion.z * 0.19;
-        if(this instanceof FlyEntity){
+        if(this instanceof FlyingEntity){
             this.motionY = motion.y * 0.19;
         }else{
             this.motionY = 0.5;
@@ -298,6 +298,17 @@ public abstract class BaseEntity extends EntityCreature{
 
         //Timings.entityMoveTimer.stopTiming();
         return true;
+    }
+
+    public boolean targetOption(EntityCreature creature, double distance){
+        if(this instanceof Monster){
+            if(creature instanceof Player){
+                Player player = (Player) creature;
+                return player.spawned && player.isAlive() && !player.closed && player.isSurvival() && distance <= 81;
+            }
+            return creature.isAlive() && !creature.closed && distance <= 81;
+        }
+        return false;
     }
 
 }

@@ -30,6 +30,13 @@ import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.TextFormat;
 import milk.entitymanager.entity.*;
+import milk.entitymanager.entity.animal.flying.FlyingAnimal;
+import milk.entitymanager.entity.animal.walking.*;
+import milk.entitymanager.entity.monster.Monster;
+import milk.entitymanager.entity.monster.walking.*;
+import milk.entitymanager.entity.projectile.FireBall;
+import milk.entitymanager.entity.monster.flying.Blaze;
+import milk.entitymanager.entity.monster.flying.Ghast;
 import milk.entitymanager.task.AutoClearTask;
 import milk.entitymanager.task.SpawnEntityTask;
 import milk.entitymanager.util.Utils;
@@ -83,7 +90,7 @@ public class EntityManager extends PluginBase implements Listener{
     public static Entity create(Object type, Position source, Object... args){
         Class<? extends Entity> clazz = null;
 
-        FullChunk chunk = source.getLevel().getChunk(((int) source.x) >> 4, ((int) source.z) >> 4, true);
+        FullChunk chunk = source.getLevel().getChunk((int) source.x >> 4, (int) source.z >> 4, true);
         if(chunk == null) return null;
         if(!chunk.isGenerated()) chunk.setGenerated();
         if(!chunk.isPopulated()) chunk.setPopulated();
@@ -167,7 +174,7 @@ public class EntityManager extends PluginBase implements Listener{
         clazz2.add(Enderman.class);
         clazz2.add(Ghast.class);
         clazz2.add(IronGolem.class);
-        clazz2.add(MagmaCube.class);
+        //clazz2.add(MagmaCube.class);
         clazz2.add(Mooshroom.class);
         clazz2.add(Ocelot.class);
         clazz2.add(Pig.class);
@@ -176,7 +183,7 @@ public class EntityManager extends PluginBase implements Listener{
         clazz2.add(Sheep.class);
         clazz2.add(Silverfish.class);
         clazz2.add(Skeleton.class);
-        clazz2.add(Slime.class);
+        //clazz2.add(Slime.class);
         clazz2.add(SnowGolem.class);
         clazz2.add(Spider.class);
         clazz2.add(Wolf.class);
@@ -336,7 +343,7 @@ public class EntityManager extends PluginBase implements Listener{
                 for(int y = 0; y < 3; y++){
                     block.getLevel().setBlock(block.add(0, -y, 0), new Air());
                 }
-                EntityManager.create("SnowGolem", block.add(0, -2, 0));
+                EntityManager.create("SnowGolem", block.add(0.5, -2, 0.5));
             }
         }
     }
@@ -356,7 +363,7 @@ public class EntityManager extends PluginBase implements Listener{
             || ev.getBlock().getId() == Block.STONE_BRICK_STAIRS
         ){
             if(ev.getBlock().getLightLevel() < 12 && Utils.rand(1,3) < 2){
-                Silverfish entity = (Silverfish) EntityManager.create("Silverfish", pos);
+                Silverfish entity = (Silverfish) EntityManager.create("Silverfish", pos.add(0.5, 0, 0.5));
                 if(entity != null){
                     entity.spawnToAll();
                 }
@@ -440,15 +447,20 @@ public class EntityManager extends PluginBase implements Listener{
                 int projectile = 0;
                 int other = 0;
                 Level lv;
-                if(sub.length > 1){ //sub[1]
+                if(sub.length > 1){
                     lv = this.getServer().getLevelByName(sub[1]);
                 }else{
                     lv = i instanceof Player ? ((Player) i).getLevel() : this.getServer().getDefaultLevel();
                 }
                 for(Entity ent : lv.getEntities()){
-                    if(ent instanceof Monster){
+                    if(
+                        ent instanceof Monster
+                    ){
                         mob++;
-                    }else if(ent instanceof Animal){
+                    }else if(
+                        ent instanceof WalkingAnimal
+                        || ent instanceof FlyingAnimal
+                    ){
                         animal++;
                     }else if(ent instanceof EntityItem){
                         item++;
