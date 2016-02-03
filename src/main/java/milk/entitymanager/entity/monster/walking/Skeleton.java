@@ -7,16 +7,17 @@ import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
-import cn.nukkit.item.Bow;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBow;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Location;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.sound.LaunchSound;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.DoubleTag;
-import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.network.protocol.MobEquipmentPacket;
+import milk.entitymanager.EntityManager;
+import milk.entitymanager.entity.monster.WalkingMonster;
 import milk.entitymanager.util.Utils;
 
 public class Skeleton extends WalkingMonster{
@@ -58,20 +59,25 @@ public class Skeleton extends WalkingMonster{
             double f = 1.2;
             double yaw = this.yaw + Utils.rand(-220, 220) / 10;
             double pitch = this.pitch + Utils.rand(-120, 120) / 10;
-            CompoundTag nbt = new CompoundTag()
-                .putList(new ListTag<DoubleTag>("Pos")
-                    .add(new DoubleTag("", this.x + (-Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * 0.5)))
-                    .add(new DoubleTag("", this.getEyeHeight()))
-                    .add(new DoubleTag("", this.z +(Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * 0.5))))
-                .putList(new ListTag<DoubleTag>("Motion")
-                    .add(new DoubleTag("", -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * f))
-                    .add(new DoubleTag("", -Math.sin(pitch / 180 * Math.PI) * f))
-                    .add(new DoubleTag("", Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * f)))
-                .putList(new ListTag<FloatTag>("Rotation")
-                    .add(new FloatTag("", (float) yaw))
-                    .add(new FloatTag("", (float) pitch)));
+            Location pos = new Location(
+                this.x - Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * 0.5,
+                this.y + this.getHeight() - 0.18,
+                this.z + Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * 0.5,
+                yaw,
+                pitch,
+                this.level
+            );
+            Entity k = EntityManager.create("EntityArrow", pos, this);
+            if(!(k instanceof EntityArrow)){
+                return;
+            }
 
-            EntityArrow arrow = (EntityArrow) createEntity("EntityArrow", this.chunk, nbt, this);
+            EntityArrow arrow = (EntityArrow) k;
+            arrow.setMotion(new Vector3(
+                -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * f * f,
+                -Math.sin(pitch / 180 * Math.PI) * f * f,
+                Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * f * f
+            ));
 
             EntityShootBowEvent ev = new EntityShootBowEvent(this, Item.get(Item.ARROW, 0, 1), arrow, f);
             this.server.getPluginManager().callEvent(ev);
@@ -98,7 +104,7 @@ public class Skeleton extends WalkingMonster{
 
         MobEquipmentPacket pk = new MobEquipmentPacket();
         pk.eid = this.getId();
-        pk.item = new Bow();
+        pk.item = new ItemBow();
         pk.slot = 10;
         pk.selectedSlot = 10;
         player.dataPacket(pk);
@@ -111,7 +117,11 @@ public class Skeleton extends WalkingMonster{
         boolean hasUpdate = super.entityBaseTick(tickDiff);
 
         int time = this.getLevel().getTime() % Level.TIME_FULL;
-        if((time < Level.TIME_NIGHT || time > Level.TIME_SUNRISE) && !this.isOnFire()){
+        if(
+            !this.isOnFire()
+            && !this.level.isRaining()
+            && (time < Level.TIME_NIGHT || time > Level.TIME_SUNRISE)
+        ){
             this.setOnFire(100);
         }
 

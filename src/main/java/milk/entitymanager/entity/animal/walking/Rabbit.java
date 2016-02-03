@@ -5,6 +5,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.Player;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import milk.entitymanager.entity.animal.WalkingAnimal;
 
 public class Rabbit extends WalkingAnimal{
     public static final int NETWORK_ID = 18;

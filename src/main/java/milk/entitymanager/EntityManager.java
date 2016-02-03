@@ -2,7 +2,7 @@ package milk.entitymanager;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.block.Air;
+import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.Block;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
@@ -30,11 +30,13 @@ import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.TextFormat;
 import milk.entitymanager.entity.*;
-import milk.entitymanager.entity.animal.flying.FlyingAnimal;
+import milk.entitymanager.entity.animal.Animal;
+import milk.entitymanager.entity.animal.WalkingAnimal;
+import milk.entitymanager.entity.animal.FlyingAnimal;
 import milk.entitymanager.entity.animal.walking.*;
 import milk.entitymanager.entity.monster.Monster;
 import milk.entitymanager.entity.monster.walking.*;
-import milk.entitymanager.entity.projectile.FireBall;
+import milk.entitymanager.entity.projectile.EntityFireBall;
 import milk.entitymanager.entity.monster.flying.Blaze;
 import milk.entitymanager.entity.monster.flying.Ghast;
 import milk.entitymanager.task.AutoClearTask;
@@ -191,7 +193,7 @@ public class EntityManager extends PluginBase implements Listener{
         clazz2.add(ZombieVillager.class);
         clazz2.forEach(clazz -> count[0] += registerEntity(clazz) ? 1 : 0);
 
-        Entity.registerEntity(FireBall.class);
+        Entity.registerEntity(EntityFireBall.class);
 
         if(count[0] == clazz2.size()){
             this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]All entities were registered");
@@ -341,7 +343,7 @@ public class EntityManager extends PluginBase implements Listener{
                 && block.getSide(Vector3.SIDE_DOWN, 2).getId() == Item.SNOW_BLOCK
             ){
                 for(int y = 0; y < 3; y++){
-                    block.getLevel().setBlock(block.add(0, -y, 0), new Air());
+                    block.getLevel().setBlock(block.add(0, -y, 0), new BlockAir());
                 }
                 EntityManager.create("SnowGolem", block.add(0.5, -2, 0.5));
             }
@@ -453,14 +455,9 @@ public class EntityManager extends PluginBase implements Listener{
                     lv = i instanceof Player ? ((Player) i).getLevel() : this.getServer().getDefaultLevel();
                 }
                 for(Entity ent : lv.getEntities()){
-                    if(
-                        ent instanceof Monster
-                    ){
+                    if(ent instanceof Monster){
                         mob++;
-                    }else if(
-                        ent instanceof WalkingAnimal
-                        || ent instanceof FlyingAnimal
-                    ){
+                    }else if(ent instanceof Animal){
                         animal++;
                     }else if(ent instanceof EntityItem){
                         item++;

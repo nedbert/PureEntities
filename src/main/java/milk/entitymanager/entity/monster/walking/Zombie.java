@@ -1,15 +1,18 @@
 package milk.entitymanager.entity.monster.walking;
 
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityAgeable;
+import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import milk.entitymanager.entity.monster.WalkingMonster;
 import milk.entitymanager.util.Utils;
 
-public class Zombie extends WalkingMonster{
+public class Zombie extends WalkingMonster implements EntityAgeable{
     public static final int NETWORK_ID = 32;
 
     public Zombie(FullChunk chunk, CompoundTag nbt){
@@ -50,7 +53,15 @@ public class Zombie extends WalkingMonster{
     protected void initEntity(){
         super.initEntity();
 
+        if(this.getDataProperty(DATA_AGEABLE_FLAGS) == null){
+            this.setDataProperty(new ByteEntityData(DATA_AGEABLE_FLAGS, (byte) 0));
+        }
         this.setDamage(new int[]{0, 2, 3, 4});
+    }
+
+    @Override
+    public boolean isBaby(){
+        return this.getDataFlag(DATA_AGEABLE_FLAGS, DATA_FLAG_BABY);
     }
 
     @Override
@@ -85,7 +96,11 @@ public class Zombie extends WalkingMonster{
         boolean hasUpdate = super.entityBaseTick(tickDiff);
 
         int time = this.getLevel().getTime() % Level.TIME_FULL;
-        if((time < Level.TIME_NIGHT || time > Level.TIME_SUNRISE) && !this.isOnFire()){
+        if(
+            !this.isOnFire()
+            && !this.level.isRaining()
+            && (time < Level.TIME_NIGHT || time > Level.TIME_SUNRISE)
+        ){
             this.setOnFire(100);
         }
 

@@ -6,6 +6,7 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import milk.entitymanager.entity.monster.WalkingMonster;
 
 public class Enderman extends WalkingMonster{
     public static final int NETWORK_ID = 38;

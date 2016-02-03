@@ -7,6 +7,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import milk.entitymanager.entity.monster.WalkingMonster;
 
 public class Wolf extends WalkingMonster{
     public static final int NETWORK_ID = 14;
@@ -87,9 +88,7 @@ public class Wolf extends WalkingMonster{
     public void attackEntity(Entity player){
         if(this.attackDelay > 10 && this.distanceSquared(player) < 1.6){
             this.attackDelay = 0;
-
-            EntityDamageEvent ev = new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_ENTITY_ATTACK, (float) this.getDamage());
-            player.attack(ev);
+            player.attack(new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_ENTITY_ATTACK, (float) this.getDamage()));
         }
     }
 

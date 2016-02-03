@@ -78,7 +78,6 @@ public abstract class BaseEntity extends EntityCreature{
         if(this.namedTag.contains("Movement")){
             this.setMovement(this.namedTag.getBoolean("Movement"));
         }
-        this.setDataProperty(new ByteEntityData(DATA_NO_AI, (byte) 1));
     }
 
     public void saveNBT(){
@@ -122,9 +121,8 @@ public abstract class BaseEntity extends EntityCreature{
             this.lastZ = this.z;
             this.lastYaw = this.yaw;
             this.lastPitch = this.pitch;
-
-            this.level.addEntityMovement(this.chunk.getX(), this.chunk.getZ(), this.id, this.x, this.y, this.z, this.yaw, this.pitch);
         }
+        this.level.addEntityMovement(this.chunk.getX(), this.chunk.getZ(), this.id, this.x, this.y, this.z, this.yaw, this.pitch);
     }
 
     @Override

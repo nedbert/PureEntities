@@ -9,6 +9,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.Player;
 import cn.nukkit.nbt.tag.CompoundTag;
+import milk.entitymanager.entity.monster.WalkingMonster;
 import milk.entitymanager.util.Utils;
 
 public class IronGolem extends WalkingMonster{

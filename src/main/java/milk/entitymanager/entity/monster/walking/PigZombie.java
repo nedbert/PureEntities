@@ -1,12 +1,16 @@
 package milk.entitymanager.entity.monster.walking;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityCreature;
+import cn.nukkit.item.ItemSwordGold;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.network.protocol.MobEquipmentPacket;
+import milk.entitymanager.entity.monster.WalkingMonster;
 import milk.entitymanager.util.Utils;
 
 public class PigZombie extends WalkingMonster{
@@ -94,6 +98,18 @@ public class PigZombie extends WalkingMonster{
         if(!ev.isCancelled()){
             this.setAngry(1000);
         }
+    }
+
+    @Override
+    public void spawnTo(Player player){
+        super.spawnTo(player);
+
+        MobEquipmentPacket pk = new MobEquipmentPacket();
+        pk.eid = this.getId();
+        pk.item = new ItemSwordGold();
+        pk.slot = 10;
+        pk.selectedSlot = 10;
+        player.dataPacket(pk);
     }
 
     @Override

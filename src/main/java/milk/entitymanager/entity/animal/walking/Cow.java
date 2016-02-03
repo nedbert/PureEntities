@@ -6,6 +6,7 @@ import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import milk.entitymanager.entity.animal.WalkingAnimal;
 import milk.entitymanager.util.Utils;
 
 public class Cow extends WalkingAnimal{

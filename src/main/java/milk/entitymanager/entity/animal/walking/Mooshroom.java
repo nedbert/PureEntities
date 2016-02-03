@@ -6,6 +6,7 @@ import cn.nukkit.Player;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import milk.entitymanager.entity.animal.WalkingAnimal;
 
 public class Mooshroom extends WalkingAnimal{
     public static final int NETWORK_ID = 16;

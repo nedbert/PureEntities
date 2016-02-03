@@ -6,6 +6,7 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import milk.entitymanager.entity.monster.WalkingMonster;
 
 public class Silverfish extends WalkingMonster{
     public static final int NETWORK_ID = 39;
@@ -51,8 +52,7 @@ public class Silverfish extends WalkingMonster{
     public void attackEntity(Entity player){
         if(this.attackDelay > 10 && this.distanceSquared(player) < 1){
             this.attackDelay = 0;
-            EntityDamageEvent ev = new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_ENTITY_ATTACK, this.getDamage());
-            player.attack(ev);
+            player.attack(new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_ENTITY_ATTACK, this.getDamage()));
         }
     }
 

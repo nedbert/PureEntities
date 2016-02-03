@@ -1,17 +1,16 @@
 package milk.entitymanager.entity.monster.flying;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.projectile.EntityProjectile;
-import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Location;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.sound.LaunchSound;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.DoubleTag;
-import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.nbt.tag.FloatTag;
-import milk.entitymanager.entity.projectile.FireBall;
+import milk.entitymanager.EntityManager;
+import milk.entitymanager.entity.monster.FlyingMonster;
+import milk.entitymanager.entity.projectile.EntityFireBall;
 import milk.entitymanager.util.Utils;
 
 public class Ghast extends FlyingMonster{
@@ -59,42 +58,34 @@ public class Ghast extends FlyingMonster{
             double f = 2;
             double yaw = this.yaw + Utils.rand(-220, 220) / 10;
             double pitch = this.pitch + Utils.rand(-120, 120) / 10;
-            CompoundTag nbt = new CompoundTag()
-                .putList(new ListTag<DoubleTag>("Pos")
-                    .add(new DoubleTag("", this.x + (-Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * 0.5)))
-                    .add(new DoubleTag("", this.y + this.getHeight() - 0.18))
-                    .add(new DoubleTag("", this.z +(Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * 0.5))))
-                .putList(new ListTag<DoubleTag>("Motion")
-                    .add(new DoubleTag("", -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * f))
-                    .add(new DoubleTag("", -Math.sin(pitch / 180 * Math.PI) * f))
-                    .add(new DoubleTag("", Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * f)))
-                .putList(new ListTag<FloatTag>("Rotation")
-                    .add(new FloatTag("", (float) yaw))
-                    .add(new FloatTag("", (float) pitch)));
-
-            Entity k = createEntity("FireBall", this.chunk, nbt, this);
-            if(!(k instanceof FireBall)){
+            Location pos = new Location(
+                this.x - Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * 0.5,
+                this.y + this.getHeight() - 0.18,
+                this.z + Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * 0.5,
+                yaw,
+                pitch,
+                this.level
+            );
+            Entity k = EntityManager.create("EntityFireBall", pos, this);
+            if(!(k instanceof EntityFireBall)){
                 return;
             }
 
-            FireBall fireball = (FireBall) k;
+            EntityFireBall fireball = (EntityFireBall) k;
             fireball.setExplode(true);
-            fireball.setMotion(fireball.getMotion().multiply(f));
-            EntityShootBowEvent ev = new EntityShootBowEvent(this, Item.get(Item.ARROW, 0, 1), fireball, f);
+            fireball.setMotion(new Vector3(
+                -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * f * f,
+                -Math.sin(pitch / 180 * Math.PI) * f * f,
+                Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * f * f
+            ));
 
-            this.server.getPluginManager().callEvent(ev);
-            EntityProjectile projectile = ev.getProjectile();
-            if(ev.isCancelled()){
-                projectile.kill();
-            }else if(projectile != null){
-                ProjectileLaunchEvent launch = new ProjectileLaunchEvent(projectile);
-                this.server.getPluginManager().callEvent(launch);
-                if(launch.isCancelled()){
-                    projectile.kill();
-                }else{
-                    projectile.spawnToAll();
-                    this.level.addSound(new LaunchSound(this), this.getViewers().values());
-                }
+            ProjectileLaunchEvent launch = new ProjectileLaunchEvent(fireball);
+            this.server.getPluginManager().callEvent(launch);
+            if(launch.isCancelled()){
+                fireball.kill();
+            }else{
+                fireball.spawnToAll();
+                this.level.addSound(new LaunchSound(this), this.getViewers().values());
             }
         }
     }

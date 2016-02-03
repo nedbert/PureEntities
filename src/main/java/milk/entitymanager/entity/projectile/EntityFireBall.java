@@ -11,7 +11,7 @@ import cn.nukkit.level.Explosion;
 import cn.nukkit.event.entity.ExplosionPrimeEvent;
 import milk.entitymanager.util.Utils;
 
-public class FireBall extends EntityProjectile{
+public class EntityFireBall extends EntityProjectile{
     public static final int NETWORK_ID = 85;
 
     protected boolean critical = false;
@@ -47,12 +47,13 @@ public class FireBall extends EntityProjectile{
         return 4;
     }
 
-    public FireBall(FullChunk chunk, CompoundTag nbt, Entity shootingEntity){
+    public EntityFireBall(FullChunk chunk, CompoundTag nbt, Entity shootingEntity){
         this(chunk, nbt, shootingEntity, false);
     }
 
-    public FireBall(FullChunk chunk, CompoundTag nbt, Entity shootingEntity, boolean critical){
+    public EntityFireBall(FullChunk chunk, CompoundTag nbt, Entity shootingEntity, boolean critical){
         super(chunk, nbt, shootingEntity);
+
         this.critical = critical;
     }
     
@@ -99,13 +100,12 @@ public class FireBall extends EntityProjectile{
         }
 
         //this.timings.stopTiming();
-
         return hasUpdate;
     }
 
     public void spawnTo(Player player){
         AddEntityPacket pk = new AddEntityPacket();
-        pk.type = FireBall.NETWORK_ID;
+        pk.type = EntityFireBall.NETWORK_ID;
         pk.eid = this.getId();
         pk.x = (float) this.x;
         pk.y = (float) this.y;

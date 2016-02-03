@@ -5,6 +5,7 @@ import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import milk.entitymanager.entity.animal.WalkingAnimal;
 
 public class Ocelot extends WalkingAnimal{
     public static final int NETWORK_ID = 22;

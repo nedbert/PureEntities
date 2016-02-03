@@ -15,6 +15,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.Player;
 import milk.entitymanager.EntityManager;
+import milk.entitymanager.entity.monster.WalkingMonster;
 import milk.entitymanager.util.Utils;
 
 public class SnowGolem extends WalkingMonster{
@@ -77,13 +78,17 @@ public class SnowGolem extends WalkingMonster{
                 pitch,
                 this.level
             );
-
             Entity k = EntityManager.create("EntitySnowball", location, this);
             if(k == null){
                 return;
             }
 
             EntitySnowball snowball = (EntitySnowball) k;
+            snowball.setMotion(new Vector3(
+                -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * f * f,
+                -Math.sin(pitch / 180 * Math.PI) * f * f,
+                Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * f * f
+            ));
 
             Vector3 motion = new Vector3(
                 -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * f * f,

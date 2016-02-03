@@ -10,7 +10,7 @@ import cn.nukkit.math.Vector2;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.nbt.tag.CompoundTag;
-import milk.entitymanager.entity.animal.walking.WalkingAnimal;
+import milk.entitymanager.entity.animal.WalkingAnimal;
 import milk.entitymanager.entity.monster.walking.PigZombie;
 import milk.entitymanager.util.Utils;
 
@@ -29,27 +29,30 @@ public abstract class WalkingEntity extends BaseEntity{
         if(!(target instanceof EntityCreature) || !this.targetOption((EntityCreature) target, this.distanceSquared(target))){
             double near = Integer.MAX_VALUE;
 
-            for(Entity ent : this.getLevel().getEntities()){
-                if(!(ent instanceof EntityCreature) || ent instanceof WalkingAnimal || ent == this){
+            for(Entity entity : this.getLevel().getEntities()){
+                if(entity == this || !(entity instanceof EntityCreature) || entity instanceof WalkingAnimal){
                     continue;
                 }
 
-                EntityCreature creature = (EntityCreature) ent;
+                EntityCreature creature = (EntityCreature) entity;
                 if(
-                    ent instanceof PigZombie
+                    entity instanceof PigZombie
                     && this instanceof PigZombie
-                    && !((PigZombie) ent).isAngry()
+                    && !((PigZombie) entity).isAngry()
                     && ((PigZombie) this).isAngry()
                 ){
-                    ((PigZombie) ent).setAngry(1000);
+                    ((PigZombie) entity).setAngry(1000);
                 }
 
-                if(creature instanceof BaseEntity && ((BaseEntity) creature).isFriendly() == this.isFriendly()){
+                if(
+                    creature instanceof BaseEntity
+                    && ((BaseEntity) creature).isFriendly() == this.isFriendly()
+                ){
                     continue;
                 }
 
-                double distance;
-                if((distance = this.distanceSquared(creature)) > near || !this.targetOption(creature, distance)){
+                double distance = this.distanceSquared(creature);
+                if(distance > near || !this.targetOption(creature, distance)){
                     continue;
                 }
                 near = distance;
@@ -68,14 +71,14 @@ public abstract class WalkingEntity extends BaseEntity{
 
         int x, z;
         if(this.stayTime > 0){
-            if(Utils.rand(1, 110) > 5){
+            if(Utils.rand(1, 100) > 5){
                 return;
             }
 
             x = Utils.rand(10, 30);
             z = Utils.rand(10, 30);
             this.baseTarget = this.add(Utils.rand() ? x : -x, Utils.rand(-20, 20) / 10, Utils.rand() ? z : -z);
-        }else if(Utils.rand(1, 360) == 1){
+        }else if(Utils.rand(1, 370) == 1){
             x = Utils.rand(10, 30);
             z = Utils.rand(10, 30);
             this.stayTime = Utils.rand(90, 400);
@@ -95,8 +98,8 @@ public abstract class WalkingEntity extends BaseEntity{
         }
         
         if(this.isKnockback()){
-            this.move(this.motionX * tickDiff, this.motionY * tickDiff, this.motionZ * tickDiff);
-            this.motionY -= 0.15;
+            this.move(this.motionX * tickDiff, this.motionY, this.motionZ * tickDiff);
+            this.motionY -= 0.15 * tickDiff;
             this.updateMovement();
             return null;
         }
@@ -122,6 +125,21 @@ public abstract class WalkingEntity extends BaseEntity{
         Vector3 target = this.baseTarget;
         if(this.stayTime > 0){
             this.stayTime -= tickDiff;
+
+            double dx = this.motionX;
+            double dy = this.motionY * tickDiff;
+            double dz = this.motionZ;
+            this.move(dx, dy, dz);
+
+            if(this.onGround){
+                this.motionY = 0;
+            }else{
+                if(this.motionY > -this.getGravity() * 4){
+                    this.motionY = -this.getGravity() * 4;
+                }else{
+                    this.motionY -= this.getGravity();
+                }
+            }
         }else{
             boolean isJump = false;
             double dx = this.motionX * tickDiff;
@@ -142,7 +160,7 @@ public abstract class WalkingEntity extends BaseEntity{
                     z = be.y > af.y ? 1 : -1;
                 }
 
-                Vector3 vec = new Vector3(NukkitMath.floorDouble(be.x), this.y, NukkitMath.floorDouble(af.y));
+                Vector3 vec = new Vector3(NukkitMath.floorDouble(be.x), this.y, NukkitMath.floorDouble(be.y));
                 Block block = this.level.getBlock(vec.add(x, 0, z));
                 Block block2 = this.level.getBlock(vec.add(x, 1, z));
                 if(!block.canPassThrough()){

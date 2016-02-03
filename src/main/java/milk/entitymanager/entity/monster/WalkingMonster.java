@@ -1,25 +1,28 @@
-package milk.entitymanager.entity.monster.flying;
+package milk.entitymanager.entity.monster;
 
+import cn.nukkit.block.BlockWater;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.ShortEntityData;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.potion.Effect;
-import milk.entitymanager.entity.FlyingEntity;
-import milk.entitymanager.entity.monster.Monster;
+import milk.entitymanager.entity.WalkingEntity;
+import milk.entitymanager.entity.monster.walking.Enderman;
 import milk.entitymanager.util.Utils;
 
-public abstract class FlyingMonster extends FlyingEntity implements Monster{
+public abstract class WalkingMonster extends WalkingEntity implements Monster{
 
-    int[] minDamage;
-    int[] maxDamage;
+    protected int[] minDamage;
+    protected int[] maxDamage;
 
-    int attackDelay = 0;
+    protected int attackDelay = 0;
 
-    public FlyingMonster(FullChunk chunk, CompoundTag nbt){
+    public WalkingMonster(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
     }
 
@@ -119,11 +122,10 @@ public abstract class FlyingMonster extends FlyingEntity implements Monster{
         }
     }
 
-    @Override
     public boolean onUpdate(int currentTick){
         if(this.server.getDifficulty() < 1){
             this.close();
-            return true;
+            return false;
         }
 
         if(!this.isAlive()){
@@ -139,33 +141,54 @@ public abstract class FlyingMonster extends FlyingEntity implements Monster{
         this.entityBaseTick(tickDiff);
 
         Vector3 target = this.updateMove(tickDiff);
-        if(target instanceof Entity){
-            this.attackEntity((Entity) target);
-        }else if(
-            target != null &&
-            (Math.pow(this.x - target.x, 2) + Math.pow(this.z - target.z, 2)) <= 1
-        ){
-            this.moveTime = 0;
+        if(this.isFriendly()){
+        	if(!(target instanceof Player)){
+        		if(target instanceof Entity){
+        			this.attackEntity((Entity) target);
+        		}else if(
+                    target != null
+                    && (Math.pow(this.x - target.x, 2) + Math.pow(this.z - target.z, 2)) <= 1
+                ){
+                    this.moveTime = 0;
+        		}
+        	}
+        }else{
+		    if(target instanceof Entity){
+		        this.attackEntity((Entity) target);
+		    }else if(
+                target != null
+                && (Math.pow(this.x - target.x, 2) + Math.pow(this.z - target.z, 2)) <= 1
+            ){
+                this.moveTime = 0;
+            }
         }
         return true;
     }
 
+    @Override
     public boolean entityBaseTick(int tickDiff){
         //Timings.timerEntityBaseTick.startTiming();
 
         boolean hasUpdate = super.entityBaseTick(tickDiff);
 
         this.attackDelay += tickDiff;
-        if(!this.hasEffect(Effect.WATER_BREATHING) && this.isInsideOfWater()){
-            hasUpdate = true;
-            int airTicks = this.getDataPropertyInt(DATA_AIR) - tickDiff;
-            if(airTicks <= -20){
-                airTicks = 0;
+        if(this instanceof Enderman){
+            if(this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) this.y, NukkitMath.floorDouble(this.z))) instanceof BlockWater){
                 this.attack(new EntityDamageEvent(this, EntityDamageEvent.CAUSE_DROWNING, 2));
+                this.move(Utils.rand(-20, 20), Utils.rand(-20, 20), Utils.rand(-20, 20));
             }
-            this.setDataProperty(new ShortEntityData(DATA_AIR, airTicks));
         }else{
-            this.setDataProperty(new ShortEntityData(DATA_AIR, 300));
+            if(!this.hasEffect(Effect.WATER_BREATHING) && this.isInsideOfWater()){
+                hasUpdate = true;
+                int airTicks = this.getDataPropertyShort(DATA_AIR) - tickDiff;
+                if(airTicks <= -20){
+                    airTicks = 0;
+                    this.attack(new EntityDamageEvent(this, EntityDamageEvent.CAUSE_DROWNING, 2));
+                }
+                this.setDataProperty(new ShortEntityData(DATA_AIR, airTicks));
+            }else{
+                this.setDataProperty(new ShortEntityData(DATA_AIR, 300));
+            }
         }
 
         //Timings.timerEntityBaseTick.stopTiming();

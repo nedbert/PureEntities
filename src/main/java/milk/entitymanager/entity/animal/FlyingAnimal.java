@@ -1,26 +1,20 @@
-package milk.entitymanager.entity.animal.walking;
+package milk.entitymanager.entity.animal;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.EntityAgeable;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.entity.data.ShortEntityData;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.Player;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.potion.Effect;
-import milk.entitymanager.entity.WalkingEntity;
-import milk.entitymanager.entity.animal.Animal;
+import milk.entitymanager.entity.FlyingEntity;
 
-public abstract class WalkingAnimal extends WalkingEntity implements Animal{
+public abstract class FlyingAnimal extends FlyingEntity implements EntityAgeable{
 
-    public WalkingAnimal(FullChunk chunk, CompoundTag nbt){
+    public FlyingAnimal(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
-    }
-
-    @Override
-    public double getSpeed(){
-        return 0.8;
     }
 
     @Override

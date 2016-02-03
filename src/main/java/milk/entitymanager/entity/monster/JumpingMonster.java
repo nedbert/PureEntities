@@ -1,4 +1,4 @@
-package milk.entitymanager.entity.monster.jumping;
+package milk.entitymanager.entity.monster;
 
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
@@ -9,15 +9,14 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.potion.Effect;
 import milk.entitymanager.entity.JumpingEntity;
-import milk.entitymanager.entity.monster.Monster;
 import milk.entitymanager.util.Utils;
 
 public abstract class JumpingMonster extends JumpingEntity implements Monster{
 
-    int[] minDamage;
-    int[] maxDamage;
+    protected int[] minDamage;
+    protected int[] maxDamage;
 
-    int attackDelay = 0;
+    protected int attackDelay = 0;
 
     public JumpingMonster(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
@@ -123,7 +122,7 @@ public abstract class JumpingMonster extends JumpingEntity implements Monster{
     public boolean onUpdate(int currentTick){
         if(this.server.getDifficulty() < 1){
             this.close();
-            return true;
+            return false;
         }
 
         if(!this.isAlive()){
@@ -143,8 +142,8 @@ public abstract class JumpingMonster extends JumpingEntity implements Monster{
             this.attackEntity((Entity) target);
         }else if(
             target != null &&
-                (Math.pow(this.x - target.x, 2) + Math.pow(this.z - target.z, 2)) <= 1
-            ){
+            (Math.pow(this.x - target.x, 2) + Math.pow(this.z - target.z, 2)) <= 1
+        ){
             this.moveTime = 0;
         }
         return true;
