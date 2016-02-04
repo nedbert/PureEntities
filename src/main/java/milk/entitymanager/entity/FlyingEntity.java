@@ -124,12 +124,12 @@ public abstract class FlyingEntity extends BaseEntity{
                 double diff = Math.abs(x) + Math.abs(z);
                 if(this instanceof Blaze){
                     if(this.baseTarget instanceof EntityCreature){
-                        this.motionX = this.getSpeed() * 0.15 * (x / diff);
-                        this.motionZ = this.getSpeed() * 0.15 * (z / diff);
-                    }else{
                         this.motionX = 0;
                         this.motionZ = 0;
-                        this.motionY = 0;
+                        this.motionY = 0;//this.getGravity() * 4;
+                    }else{
+                        this.motionX = this.getSpeed() * 0.15 * (x / diff);
+                        this.motionZ = this.getSpeed() * 0.15 * (z / diff);
                     }
                 }else{
                     this.motionX = this.getSpeed() * 0.15 * (x / diff);

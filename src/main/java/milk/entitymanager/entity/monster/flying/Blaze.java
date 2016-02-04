@@ -39,7 +39,7 @@ public class Blaze extends FlyingMonster{
 
     @Override
     public float getGravity(){
-        return 0.05f;
+        return 0.04f;
     }
 
     @Override
@@ -51,7 +51,6 @@ public class Blaze extends FlyingMonster{
         super.initEntity();
 
         this.fireProof = true;
-        this.setDamage(new int[]{0, 5, 6, 8});
     }
 
     public String getName(){
