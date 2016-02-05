@@ -1,14 +1,16 @@
 package milk.entitymanager.entity.monster.jumping;
 
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.item.Item;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import milk.entitymanager.entity.animal.WalkingAnimal;
+import milk.entitymanager.entity.monster.WalkingMonster;
 import milk.entitymanager.util.Utils;
 
-public class Slime extends WalkingAnimal{
+public class Slime extends WalkingMonster{
     public static final int NETWORK_ID = 37;
 
     public Slime(FullChunk chunk, CompoundTag nbt){
@@ -53,7 +55,13 @@ public class Slime extends WalkingAnimal{
     }
 
     @Override
+    public void attackEntity(Entity player){
+        //TODO
+    }
+
+    @Override
     public boolean targetOption(EntityCreature creature, double distance){
+        //TODO
     	return false;
     }
 
@@ -64,5 +72,4 @@ public class Slime extends WalkingAnimal{
         }
         return new Item[0];
     }
-
 }
