@@ -7,6 +7,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.EventHandler;
@@ -31,8 +32,6 @@ import cn.nukkit.utils.Config;
 import cn.nukkit.utils.TextFormat;
 import milk.entitymanager.entity.*;
 import milk.entitymanager.entity.animal.Animal;
-import milk.entitymanager.entity.animal.WalkingAnimal;
-import milk.entitymanager.entity.animal.FlyingAnimal;
 import milk.entitymanager.entity.animal.walking.*;
 import milk.entitymanager.entity.monster.Monster;
 import milk.entitymanager.entity.monster.walking.*;
@@ -44,7 +43,7 @@ import milk.entitymanager.task.SpawnEntityTask;
 import milk.entitymanager.util.Utils;
 
 import java.io.File;
-import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.*;
 
 public class EntityManager extends PluginBase implements Listener{
@@ -53,49 +52,15 @@ public class EntityManager extends PluginBase implements Listener{
     public static LinkedHashMap<String, Object> drops;
     public static LinkedHashMap<String, Object> spawner;
 
-    static HashMap<String, Class<? extends Entity>> shortNames = new HashMap<>();
-    static HashMap<Integer, Class<? extends Entity>> knownEntities = new HashMap<>();
-
-    static Entity create(Class<? extends Entity> clazz, FullChunk chunk, CompoundTag nbt, Object... args){
-        if(clazz == null){
-            return null;
-        }
-
-        Entity entity = null;
-        for(Constructor constructor : clazz.getConstructors()){
-            if(entity != null){
-                break;
-            }
-
-            int count = (args == null || args.length == 0) ? 2 : 2 + args.length;
-            if(constructor.getParameterCount() != count){
-                continue;
-            }
-
-            try{
-                if(count == 2){
-                    entity = (Entity) constructor.newInstance(chunk, nbt);
-                }else{
-                    Object[] objects = new Object[args.length + 2];
-
-                    objects[0] = chunk;
-                    objects[1] = nbt;
-                    System.arraycopy(args, 0, objects, 2, args.length);
-                    entity = (Entity) constructor.newInstance(objects);
-                }
-            }catch(Exception ignore){}
-        }
-
-        return entity;
-    }
-
     public static Entity create(Object type, Position source, Object... args){
-        Class<? extends Entity> clazz = null;
 
         FullChunk chunk = source.getLevel().getChunk((int) source.x >> 4, (int) source.z >> 4, true);
-        if(chunk == null) return null;
-        if(!chunk.isGenerated()) chunk.setGenerated();
-        if(!chunk.isPopulated()) chunk.setPopulated();
+        if(!chunk.isGenerated()){
+            chunk.setGenerated();
+        }
+        if(!chunk.isPopulated()){
+            chunk.setPopulated();
+        }
 
         CompoundTag nbt = new CompoundTag()
             .putList(new ListTag<DoubleTag>("Pos")
@@ -110,41 +75,12 @@ public class EntityManager extends PluginBase implements Listener{
                 .add(new FloatTag("", source instanceof Location ? (float) ((Location) source).yaw : 0))
                 .add(new FloatTag("", source instanceof Location ? (float) ((Location) source).pitch : 0)));
 
-        if(type instanceof String && shortNames.containsKey(type)){
-            clazz = shortNames.get(type);
-        }else if(type instanceof Integer && knownEntities.containsKey(type)){
-            clazz = knownEntities.get(type);
+        if(type instanceof String){
+            return Entity.createEntity((String) type, chunk, nbt, args);
+        }else if(type instanceof Integer){
+            return Entity.createEntity((int) type, chunk, nbt, args);
         }
-
-        if(clazz == null){
-            if(type instanceof String){
-                return Entity.createEntity((String) type, chunk, nbt, args);
-            }else if(type instanceof Integer){
-                return Entity.createEntity((int) type, chunk, nbt, args);
-            }
-        }
-
-        return create(clazz, chunk, nbt, args);
-    }
-
-    public static boolean registerEntity(Class<? extends Entity> clazz){
-        if(clazz == null){
-            return false;
-        }
-
-        Entity.registerEntity(clazz);
-        try{
-            int networkId = clazz.getField("NETWORK_ID").getInt(null);
-            if(networkId != -1){
-                knownEntities.put(networkId, clazz);
-            }else{
-                return false;
-            }
-            shortNames.put(clazz.getSimpleName(), clazz);
-            return true;
-        }catch(Exception e){
-            return false;
-        }
+        return null;
     }
 
     public static void clear(){
@@ -165,8 +101,6 @@ public class EntityManager extends PluginBase implements Listener{
     }
 
     public void onLoad(){
-        final int[] count = {0};
-
         ArrayList<Class<? extends Entity>> clazz2 = new ArrayList<>();
         clazz2.add(Blaze.class);
         clazz2.add(CaveSpider.class);
@@ -191,15 +125,10 @@ public class EntityManager extends PluginBase implements Listener{
         clazz2.add(Wolf.class);
         clazz2.add(Zombie.class);
         clazz2.add(ZombieVillager.class);
-        clazz2.forEach(clazz -> count[0] += registerEntity(clazz) ? 1 : 0);
+        clazz2.add(EntityFireBall.class);
+        clazz2.forEach(Entity::registerEntity);
 
-        Entity.registerEntity(EntityFireBall.class);
-
-        if(count[0] == clazz2.size()){
-            this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]All entities were registered");
-        }else{
-            this.getServer().getLogger().info(TextFormat.RED + "[EntityManager]ERROR, I can't registerd entity");
-        }
+        this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]All entities were registered");
     }
 
     public void onEnable(){
@@ -213,9 +142,9 @@ public class EntityManager extends PluginBase implements Listener{
         File dropFile = new File(this.getDataFolder(), "drops.yml");
         File spawnFile = new File(this.getDataFolder(), "spawner.yml");
 
-        EntityManager.data = (LinkedHashMap<String, Object>) new Config(conFile, Config.YAML).getAll();
-        EntityManager.drops = (LinkedHashMap<String, Object>) new Config(dropFile, Config.YAML).getAll();
-        EntityManager.spawner = (LinkedHashMap<String, Object>) new Config(spawnFile, Config.YAML).getAll();
+        data = (LinkedHashMap<String, Object>) new Config(conFile, Config.YAML).getAll();
+        drops = (LinkedHashMap<String, Object>) new Config(dropFile, Config.YAML).getAll();
+        spawner = (LinkedHashMap<String, Object>) new Config(spawnFile, Config.YAML).getAll();
 
         /*Drops Example
         //TYPE_ID
@@ -227,10 +156,25 @@ public class EntityManager extends PluginBase implements Listener{
           [266, 0, "0,8"]
         */
 
-        knownEntities.forEach((id, clazz) -> {
-            Item item = Item.get(Item.SPAWN_EGG, id);
-            if(!Item.isCreativeItem(item)) Item.addCreativeItem(item);
-        });
+        try{
+            Field field = Entity.class.getDeclaredField("knownEntities");
+            field.setAccessible(true);
+            Map<Integer, Class<? extends Entity>> knownEntities = (Map<Integer, Class<? extends Entity>>) field.get(null);
+            knownEntities.forEach((id, clazz) -> {
+                if(
+                    id == IronGolem.NETWORK_ID
+                    || id == SnowGolem.NETWORK_ID
+                    || id == ZombieVillager.NETWORK_ID
+                    || !clazz.isInstance(EntityCreature.class)
+                ){
+                    return;
+                }
+                Item item = Item.get(Item.SPAWN_EGG, id);
+                if(!Item.isCreativeItem(item)) Item.addCreativeItem(item);
+            });
+        }catch(Exception e){
+            e.printStackTrace();
+        }
 
         this.getServer().getPluginManager().registerEvents(this, this);
         this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]Plugin has been enabled");
@@ -243,11 +187,11 @@ public class EntityManager extends PluginBase implements Listener{
 
     public void onDisable(){
         Config con = new Config(new File(this.getDataFolder(), "spawner.yml"), Config.YAML);
-        con.setAll(EntityManager.spawner);
+        con.setAll(spawner);
         con.save();
 
         Config con2 = new Config(new File(this.getDataFolder(), "drops.yml"), Config.YAML);
-        con2.setAll(EntityManager.drops);
+        con2.setAll(drops);
         con2.save();
 
         this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]Plugin has been disable");
@@ -345,7 +289,7 @@ public class EntityManager extends PluginBase implements Listener{
                 for(int y = 0; y < 3; y++){
                     block.getLevel().setBlock(block.add(0, -y, 0), new BlockAir());
                 }
-                EntityManager.create("SnowGolem", block.add(0.5, -2, 0.5));
+                create("SnowGolem", block.add(0.5, -2, 0.5));
             }
         }
     }
@@ -365,7 +309,7 @@ public class EntityManager extends PluginBase implements Listener{
             || ev.getBlock().getId() == Block.STONE_BRICK_STAIRS
         ){
             if(ev.getBlock().getLightLevel() < 12 && Utils.rand(1,3) < 2){
-                Silverfish entity = (Silverfish) EntityManager.create("Silverfish", pos.add(0.5, 0, 0.5));
+                Silverfish entity = (Silverfish) create("Silverfish", pos.add(0.5, 0, 0.5));
                 if(entity != null){
                     entity.spawnToAll();
                 }
@@ -489,7 +433,7 @@ public class EntityManager extends PluginBase implements Listener{
                     type1 = Integer.parseInt(type2);
                 }catch(Exception ignore){}
 
-                if((type1 == -1 || !knownEntities.containsKey(type1)) && !shortNames.containsKey(type2)){
+                if(type1 == -1 || type2.length() < 1){
                     output += "존재하지 않는 엔티티 이름이에요";
                     //output += "Entity's name is incorrect";
                     break;
@@ -520,8 +464,8 @@ public class EntityManager extends PluginBase implements Listener{
                 }
 
                 Entity ent;
-                if((ent = EntityManager.create(type1, pos)) == null){
-                    if((ent = EntityManager.create(type2, pos)) == null){
+                if((ent = create(type1, pos)) == null){
+                    if((ent = create(type2, pos)) == null){
                         output += "엔티티를 소환하는도중 에러가 발생했습니다";
                         break;
                     }

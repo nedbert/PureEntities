@@ -22,7 +22,6 @@ import java.util.List;
 
 public abstract class BaseEntity extends EntityCreature{
 
-    protected int stayTime = 0;
     protected int moveTime = 0;
 
     protected Vector3 baseTarget = null;
@@ -78,6 +77,7 @@ public abstract class BaseEntity extends EntityCreature{
         if(this.namedTag.contains("Movement")){
             this.setMovement(this.namedTag.getBoolean("Movement"));
         }
+        this.setDataProperty(new ByteEntityData(DATA_NO_AI, (byte) 1));
     }
 
     public void saveNBT(){
@@ -242,10 +242,6 @@ public abstract class BaseEntity extends EntityCreature{
             return;
         }
 
-        this.moveTime = 0;
-        this.stayTime = 0;
-        this.baseTarget = null;
-
         Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
         Vector3 motion = new Vector3(this.x - damager.x, this.y - damager.y, this.z - damager.z).normalize();
         this.motionX = motion.x * 0.19;
@@ -271,11 +267,6 @@ public abstract class BaseEntity extends EntityCreature{
         double movZ = dz;
 
         AxisAlignedBB[] list = this.level.getCollisionCubes(this, this.level.getTickRate() > 1 ? this.boundingBox.getOffsetBoundingBox(dx, dy, dz) : this.boundingBox.addCoord(dx, dy, dz));
-        for(AxisAlignedBB bb : list){
-            dy = bb.calculateYOffset(this.boundingBox, dy);
-        }
-        this.boundingBox.offset(0, dy, 0);
-
         if(this.isWallCheck()){
             for(AxisAlignedBB bb : list){
                 dx = bb.calculateXOffset(this.boundingBox, dx);
@@ -287,6 +278,10 @@ public abstract class BaseEntity extends EntityCreature{
             }
             this.boundingBox.offset(0, 0, dz);
         }
+        for(AxisAlignedBB bb : list){
+            dy = bb.calculateYOffset(this.boundingBox, dy);
+        }
+        this.boundingBox.offset(0, dy, 0);
 
         this.setComponents(this.x + dx, this.y + dy, this.z + dz);
         this.checkChunks();

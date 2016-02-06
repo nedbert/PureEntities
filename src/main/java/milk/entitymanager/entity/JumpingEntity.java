@@ -42,7 +42,7 @@ public abstract class JumpingEntity extends BaseEntity{
                 }
                 near = distance;
 
-                this.stayTime = 0;
+                this.moveTime = 0;
                 this.baseTarget = creature;
             }
         }
@@ -54,24 +54,9 @@ public abstract class JumpingEntity extends BaseEntity{
             return;
         }
 
-        int x, z;
-        if(this.stayTime > 0){
-            if(Utils.rand(1, 100) > 5){
-                return;
-            }
-
-            x = Utils.rand(10, 30);
-            z = Utils.rand(10, 30);
-            this.baseTarget = this.add(Utils.rand() ? x : -x, Utils.rand(-20, 20) / 10, Utils.rand() ? z : -z);
-        }else if(Utils.rand(1, 370) == 1){
-            x = Utils.rand(10, 30);
-            z = Utils.rand(10, 30);
-            this.stayTime = Utils.rand(90, 400);
-            this.baseTarget = this.add(Utils.rand() ? x : -x, Utils.rand(-20, 20) / 10, Utils.rand() ? z : -z);
-        }else if(this.moveTime <= 0 || this.baseTarget == null){
-            x = Utils.rand(20, 100);
-            z = Utils.rand(20, 100);
-            this.stayTime = 0;
+        if(this.moveTime <= 0 || this.baseTarget == null){
+            int x = Utils.rand(20, 100);
+            int z = Utils.rand(20, 100);
             this.moveTime = Utils.rand(300, 1200);
             this.baseTarget = this.add(Utils.rand() ? x : -x, 0, Utils.rand() ? z : -z);
         }
@@ -96,7 +81,7 @@ public abstract class JumpingEntity extends BaseEntity{
             double x = this.baseTarget.x - this.x;
             double y = this.baseTarget.y - this.y;
             double z = this.baseTarget.z - this.z;
-            if(this.stayTime > 0 || x * x + z * z < 0.7){
+            if(x * x + z * z < 0.7){
                 this.motionX = 0;
                 this.motionZ = 0;
             }else{
