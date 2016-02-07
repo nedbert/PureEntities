@@ -6,9 +6,9 @@ import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.Block;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.EntityCreature;
+import cn.nukkit.entity.*;
 import cn.nukkit.entity.item.EntityItem;
+import cn.nukkit.entity.item.EntityPainting;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
@@ -126,7 +126,23 @@ public class EntityManager extends PluginBase implements Listener{
         clazz2.add(Zombie.class);
         clazz2.add(ZombieVillager.class);
         clazz2.add(EntityFireBall.class);
-        clazz2.forEach(Entity::registerEntity);
+        clazz2.forEach(clazz -> {
+            try{
+                Entity.registerEntity(clazz);
+                int id = clazz.getField("NETWORK_ID").getInt(null);
+                if(
+                    id == IronGolem.NETWORK_ID
+                    || id == SnowGolem.NETWORK_ID
+                    || id == ZombieVillager.NETWORK_ID
+                ){
+                    return;
+                }
+                Item item = Item.get(Item.SPAWN_EGG, id);
+                if(!Item.isCreativeItem(item)){
+                    Item.addCreativeItem(item);
+                }
+            }catch(Exception ignore){}
+        });
 
         this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]All entities were registered");
     }
@@ -155,27 +171,6 @@ public class EntityManager extends PluginBase implements Listener{
         36:
           [266, 0, "0,8"]
         */
-
-        try{
-            Field field = Entity.class.getDeclaredField("knownEntities");
-            field.setAccessible(true);
-            Map<Integer, Class<? extends Entity>> knownEntities = (Map<Integer, Class<? extends Entity>>) field.get(null);
-            knownEntities.forEach((id, clazz) -> {
-                if(
-                    id == IronGolem.NETWORK_ID
-                    || id == SnowGolem.NETWORK_ID
-                    || id == ZombieVillager.NETWORK_ID
-                ){
-                    return;
-                }
-                Item item = Item.get(Item.SPAWN_EGG, id);
-                if(!Item.isCreativeItem(item)){
-                    Item.addCreativeItem(item);
-                }
-            });
-        }catch(Exception e){
-            e.printStackTrace();
-        }
 
         this.getServer().getPluginManager().registerEvents(this, this);
         this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]Plugin has been enabled");
@@ -388,10 +383,10 @@ public class EntityManager extends PluginBase implements Listener{
                     //i.sendMessage(TextFormat.RED + "You do not have permission to use this command");
                     return true;
                 }
-                int mob = 0;
-                int animal = 0;
+                int human = 0;
+                int living = 0;
                 int item = 0;
-                int projectile = 0;
+                int hanging = 0;
                 int other = 0;
                 Level lv;
                 if(sub.length > 1){
@@ -400,26 +395,26 @@ public class EntityManager extends PluginBase implements Listener{
                     lv = i instanceof Player ? ((Player) i).getLevel() : this.getServer().getDefaultLevel();
                 }
                 for(Entity ent : lv.getEntities()){
-                    if(ent instanceof Monster){
-                        mob++;
-                    }else if(ent instanceof Animal){
-                        animal++;
+                    if(ent instanceof EntityHuman){
+                        human++;
+                    }else if(ent instanceof EntityLiving){
+                        living++;
                     }else if(ent instanceof EntityItem){
                         item++;
-                    }else if(ent instanceof EntityProjectile){
-                        projectile++;
-                    }else if(!(ent instanceof Player)){
+                    }else if(ent instanceof EntityHanging){
+                        hanging++;
+                    }else{
                         other++;
                     }
                 }
                 String k = "--- 월드 " + lv.getName() + " 에 있는 모든 엔티티---\n";
                 //String k = "--- All entities in Level " + level.getName() + " ---\n";
-                k += TextFormat.YELLOW + "Monster: %s\n";
-                k += TextFormat.YELLOW + "Animal: %s\n";
-                k += TextFormat.YELLOW + "Items: %s\n";
-                k += TextFormat.YELLOW + "Projectiles: %s\n";
-                k += TextFormat.YELLOW + "Others: %s\n";
-                output = String.format(k, mob, animal, item, projectile, other);
+                k += TextFormat.YELLOW + "Human: %s\n";
+                k += TextFormat.YELLOW + "Living: %s\n";
+                k += TextFormat.YELLOW + "Item: %s\n";
+                k += TextFormat.YELLOW + "Hanging: %s\n";
+                k += TextFormat.YELLOW + "Other: %s\n";
+                output = String.format(k, human, living, item, hanging, other);
                 break;
             case "create":
                 if(!i.hasPermission("entitymanager.command.create")){
