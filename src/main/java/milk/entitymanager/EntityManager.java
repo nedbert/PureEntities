@@ -165,12 +165,13 @@ public class EntityManager extends PluginBase implements Listener{
                     id == IronGolem.NETWORK_ID
                     || id == SnowGolem.NETWORK_ID
                     || id == ZombieVillager.NETWORK_ID
-                    || !clazz.isInstance(EntityCreature.class)
                 ){
                     return;
                 }
                 Item item = Item.get(Item.SPAWN_EGG, id);
-                if(!Item.isCreativeItem(item)) Item.addCreativeItem(item);
+                if(!Item.isCreativeItem(item)){
+                    Item.addCreativeItem(item);
+                }
             });
         }catch(Exception e){
             e.printStackTrace();
@@ -325,11 +326,11 @@ public class EntityManager extends PluginBase implements Listener{
     @EventHandler
     public void EntityDeathEvent(EntityDeathEvent ev){
         Entity entity = ev.getEntity();
-        if(!(entity instanceof BaseEntity) || drops.containsKey(entity.NETWORK_ID + "")){
+        if(!(entity instanceof BaseEntity) || drops.containsKey(entity.getNetworkId() + "")){
             return;
         }
 
-        if(!(drops.get(entity.NETWORK_ID + "") instanceof List)){
+        if(!(drops.get(entity.getNetworkId() + "") instanceof List)){
             return;
         }
 
