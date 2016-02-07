@@ -8,7 +8,6 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.entity.*;
 import cn.nukkit.entity.item.EntityItem;
-import cn.nukkit.entity.item.EntityPainting;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
@@ -31,9 +30,7 @@ import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.TextFormat;
 import milk.entitymanager.entity.*;
-import milk.entitymanager.entity.animal.Animal;
 import milk.entitymanager.entity.animal.walking.*;
-import milk.entitymanager.entity.monster.Monster;
 import milk.entitymanager.entity.monster.walking.*;
 import milk.entitymanager.entity.projectile.EntityFireBall;
 import milk.entitymanager.entity.monster.flying.Blaze;
@@ -43,7 +40,6 @@ import milk.entitymanager.task.SpawnEntityTask;
 import milk.entitymanager.util.Utils;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.util.*;
 
 public class EntityManager extends PluginBase implements Listener{
@@ -148,17 +144,11 @@ public class EntityManager extends PluginBase implements Listener{
     }
 
     public void onEnable(){
-        this.getDataFolder().mkdirs();
-
-        File conFile = new File(this.getDataFolder(), "config.yml");
-        if(!conFile.exists()){
-            this.saveResource("config.yml");
-        }
-
+        this.saveDefaultConfig();
         File dropFile = new File(this.getDataFolder(), "drops.yml");
         File spawnFile = new File(this.getDataFolder(), "spawner.yml");
 
-        data = (LinkedHashMap<String, Object>) new Config(conFile, Config.YAML).getAll();
+        data = (LinkedHashMap<String, Object>) this.getConfig().getAll();
         drops = (LinkedHashMap<String, Object>) new Config(dropFile, Config.YAML).getAll();
         spawner = (LinkedHashMap<String, Object>) new Config(spawnFile, Config.YAML).getAll();
 
@@ -193,6 +183,7 @@ public class EntityManager extends PluginBase implements Listener{
         this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]Plugin has been disable");
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T getData(String key, T defaultValue){
         try{
             String[] vars = key.split(".");
@@ -320,14 +311,14 @@ public class EntityManager extends PluginBase implements Listener{
 
     @EventHandler
     public void EntityDeathEvent(EntityDeathEvent ev){
-        Entity entity = ev.getEntity();
+        /*Entity entity = ev.getEntity();
         if(!(entity instanceof BaseEntity) || drops.containsKey(entity.getNetworkId() + "")){
             return;
         }
 
         if(!(drops.get(entity.getNetworkId() + "") instanceof List)){
             return;
-        }
+        }*/
 
         //TODO: Change drop item
         /*List drops = (List) EntityManager.drops.get(entity.NETWORK_ID);
@@ -387,6 +378,7 @@ public class EntityManager extends PluginBase implements Listener{
                 int living = 0;
                 int item = 0;
                 int hanging = 0;
+                int projectile = 0;
                 int other = 0;
                 Level lv;
                 if(sub.length > 1){
@@ -403,6 +395,8 @@ public class EntityManager extends PluginBase implements Listener{
                         item++;
                     }else if(ent instanceof EntityHanging){
                         hanging++;
+                    }else if(ent instanceof EntityProjectile){
+                        projectile++;
                     }else{
                         other++;
                     }
@@ -413,8 +407,9 @@ public class EntityManager extends PluginBase implements Listener{
                 k += TextFormat.YELLOW + "Living: %s\n";
                 k += TextFormat.YELLOW + "Item: %s\n";
                 k += TextFormat.YELLOW + "Hanging: %s\n";
+                k += TextFormat.YELLOW + "Projectile: %s\n";
                 k += TextFormat.YELLOW + "Other: %s\n";
-                output = String.format(k, human, living, item, hanging, other);
+                output = String.format(k, human, living, item, hanging, projectile, other);
                 break;
             case "create":
                 if(!i.hasPermission("entitymanager.command.create")){
