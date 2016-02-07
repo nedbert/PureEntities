@@ -130,6 +130,7 @@ public class EntityManager extends PluginBase implements Listener{
                     id == IronGolem.NETWORK_ID
                     || id == SnowGolem.NETWORK_ID
                     || id == ZombieVillager.NETWORK_ID
+                    || id == EntityFireBall.NETWORK_ID
                 ){
                     return;
                 }
@@ -311,6 +312,7 @@ public class EntityManager extends PluginBase implements Listener{
 
     @EventHandler
     public void EntityDeathEvent(EntityDeathEvent ev){
+        //TODO: Change drop item
         /*Entity entity = ev.getEntity();
         if(!(entity instanceof BaseEntity) || drops.containsKey(entity.getNetworkId() + "")){
             return;
@@ -318,10 +320,9 @@ public class EntityManager extends PluginBase implements Listener{
 
         if(!(drops.get(entity.getNetworkId() + "") instanceof List)){
             return;
-        }*/
+        }
 
-        //TODO: Change drop item
-        /*List drops = (List) EntityManager.drops.get(entity.NETWORK_ID);
+        List drops = (List) EntityManager.drops.get(entity.NETWORK_ID);
         drops.forEach(k -> {
             if(!(k instanceof List)){
                 return;
