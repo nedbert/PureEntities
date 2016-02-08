@@ -71,7 +71,6 @@ autoclear:
     * public static BaseEntity create(int type, Position pos, Object... args)
     * public static BaseEntity create(String type, Position pos, Object... args)
   * BaseEntity
-    * public boolean isCreated()
     * public boolean isMovement()
     * public boolean isFriendly()
     * public boolean isWallCheck()

@@ -149,7 +149,7 @@ public class EntityManager extends PluginBase implements Listener{
         if(this.getConfig().exists("spawn")){
             this.saveResource("config.yml", true);
             this.reloadConfig();
-            this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]\"config.yml\"파일이 새로 업데이트 되었습니다.(파일을 다시 확인후 서버를 열어주세요)");
+            this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]\"config.yml\"파일이 새로 업데이트 되었습니다.(파일을 확인후 서버를 다시 열어주세요)");
         }
         File dropFile = new File(this.getDataFolder(), "drops.yml");
         File spawnFile = new File(this.getDataFolder(), "spawner.yml");
