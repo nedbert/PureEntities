@@ -29,16 +29,22 @@ See documentation page for details.
 ``` yml
 entity:
   explode: false #엔티티 폭발 여부
-spawn:
-  rand: "1/4" #엔티티 스폰 확률
-  tick: 100 #엔티티 스폰 주기
+spawner:
+  turn-on: true #스포너 기능 활성화 여부
+  rand: "1/4" #엔티티 소환 확률
+  tick: 100 #스폰 주기
 autospawn:
-  turn-on: true #자동 스폰 여부
-  radius: 25 #스폰될 위치 반경
+  turn-on: true #자동 소환 활성화 여부
+  rand: "1/4" #엔티티 스폰 확률
+  radius: 25 #몹이 스폰될 최대 반경
+  tick: 100 #스폰 주기
+  entities:
+    animal: [Cow, Pig, Sheep, Chicken, Slime, Wolf, Ocelot, Rabbit] #소환될 동물 목록
+    monster: [Zombie, Creeper, Skeleton, Spider, PigZombie, Enderman] #소환될 몬스터 목록
 autoclear:
   turn-on: true #엔티티 자동 제거 여부
   tick: 6000 #엔티티 제거 주기
-  entities: [Projectile, DroppedItem] #제거할 엔티티들
+  entities: [Projectile, DroppedItem] #제거될 엔티티 목록
 ```
   * spawner.yml
     * TODO
