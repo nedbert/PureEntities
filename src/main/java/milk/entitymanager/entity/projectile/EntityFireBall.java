@@ -105,7 +105,7 @@ public class EntityFireBall extends EntityProjectile{
 
     public void spawnTo(Player player){
         AddEntityPacket pk = new AddEntityPacket();
-        pk.type = EntityFireBall.NETWORK_ID;
+        pk.type = NETWORK_ID;
         pk.eid = this.getId();
         pk.x = (float) this.x;
         pk.y = (float) this.y;

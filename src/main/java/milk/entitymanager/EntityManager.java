@@ -35,8 +35,8 @@ import milk.entitymanager.entity.monster.walking.*;
 import milk.entitymanager.entity.projectile.EntityFireBall;
 import milk.entitymanager.entity.monster.flying.Blaze;
 import milk.entitymanager.entity.monster.flying.Ghast;
-import milk.entitymanager.task.AutoClearTask;
-import milk.entitymanager.task.SpawnEntityTask;
+import milk.entitymanager.task.AutoSpawnTask;
+import milk.entitymanager.task.EntitySpawnerTask;
 import milk.entitymanager.util.Utils;
 
 import java.io.File;
@@ -44,12 +44,12 @@ import java.util.*;
 
 public class EntityManager extends PluginBase implements Listener{
 
-    static LinkedHashMap<String, Object> data;
     public static LinkedHashMap<String, Object> drops;
     public static LinkedHashMap<String, Object> spawner;
 
-    public static Entity create(Object type, Position source, Object... args){
+    private static LinkedHashMap<String, Object> data;
 
+    public static Entity create(Object type, Position source, Object... args){
         FullChunk chunk = source.getLevel().getChunk((int) source.x >> 4, (int) source.z >> 4, true);
         if(!chunk.isGenerated()){
             chunk.setGenerated();
@@ -146,6 +146,11 @@ public class EntityManager extends PluginBase implements Listener{
 
     public void onEnable(){
         this.saveDefaultConfig();
+        if(this.getConfig().exists("spawn")){
+            this.saveResource("config.yml", true);
+            this.reloadConfig();
+            this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]\"config.yml\"파일이 새로 업데이트 되었습니다.(파일을 다시 확인후 서버를 열어주세요)");
+        }
         File dropFile = new File(this.getDataFolder(), "drops.yml");
         File spawnFile = new File(this.getDataFolder(), "spawner.yml");
 
@@ -165,21 +170,35 @@ public class EntityManager extends PluginBase implements Listener{
 
         this.getServer().getPluginManager().registerEvents(this, this);
         this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]Plugin has been enabled");
-        this.getServer().getScheduler().scheduleRepeatingTask(new SpawnEntityTask(this), this.getData("spawn.tick", 100));
 
-        if(this.getData("autoclear.turn-on", true)){
-            this.getServer().getScheduler().scheduleRepeatingTask(new AutoClearTask(), this.getData("autoclear.tick", 6000));
+        if(this.getData("spawner.turn-on", true)){
+            this.getServer().getScheduler().scheduleRepeatingTask(new EntitySpawnerTask(), this.getData("spawner.tick", 100));
         }
+        if(this.getData("autospawn.turn-on", true)){
+            this.getServer().getScheduler().scheduleRepeatingTask(new AutoSpawnTask(), this.getData("autospawn.tick", 100));
+        }
+        //TODO: This isn't implement yet
+        /*if(this.getData("autoclear.turn-on", true)){
+            this.getServer().getScheduler().scheduleRepeatingTask(new AutoClearTask(), this.getData("autoclear.tick", 6000));
+        }*/
     }
 
     public void onDisable(){
         Config con = new Config(new File(this.getDataFolder(), "spawner.yml"), Config.YAML);
         con.setAll(spawner);
-        con.save();
+        if(con.save()){
+            this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]\"spawner.yml\"파일을 성공적으로 저장했습니다");
+        }else{
+            this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]\"spawner.yml\"파일을 저장하는데에 실패했습니다");
+        }
 
         Config con2 = new Config(new File(this.getDataFolder(), "drops.yml"), Config.YAML);
         con2.setAll(drops);
-        con2.save();
+        if(con2.save()){
+            this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]\"drops.yml\"파일을 성공적으로 저장했습니다");
+        }else{
+            this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]\"drops.yml\"파일을 저장하는데에 실패했습니다");
+        }
 
         this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]Plugin has been disable");
     }
