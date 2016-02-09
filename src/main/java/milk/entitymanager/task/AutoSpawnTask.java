@@ -2,6 +2,7 @@ package milk.entitymanager.task;
 
 import cn.nukkit.Server;
 import cn.nukkit.level.Position;
+import cn.nukkit.math.NukkitMath;
 import milk.entitymanager.EntityManager;
 import milk.entitymanager.util.Utils;
 
@@ -43,9 +44,8 @@ public class AutoSpawnTask implements Runnable{
             }
 
             int radius = owner.getData("autospawn.radius", 25);
-            Position pos = new Position((int) player.x + 0.5, 0, (int) player.z + 0.5, player.level);
-            pos.y = player.level.getHighestBlockAt((int) (pos.x += Utils.rand(-radius, radius)), (int) (pos.z += Utils.rand(-radius, radius))) + 1;
-
+            Position pos = new Position((int) player.x + 0.5 + Utils.rand(-radius, radius), 0, (int) player.z + 0.5 + Utils.rand(-radius, radius), player.level);
+            pos.y = pos.level.getHighestBlockAt(NukkitMath.floorDouble(pos.x), NukkitMath.floorDouble(pos.z)) + 1;
             EntityManager.create(list.get(Utils.rand(0, list.size() - 1)), pos);
         });
     }

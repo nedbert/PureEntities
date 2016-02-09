@@ -77,12 +77,17 @@ public abstract class BaseEntity extends EntityCreature{
         if(this.namedTag.contains("Movement")){
             this.setMovement(this.namedTag.getBoolean("Movement"));
         }
+
+        if(this.namedTag.contains("WallCheck")){
+            this.setWallCheck(this.namedTag.getBoolean("WallCheck"));
+        }
         this.setDataProperty(new ByteEntityData(DATA_NO_AI, (byte) 1));
     }
 
     public void saveNBT(){
         super.saveNBT();
         this.namedTag.putBoolean("Movement", this.isMovement());
+        this.namedTag.putBoolean("WallCheck", this.isWallCheck());
     }
 
     @Override

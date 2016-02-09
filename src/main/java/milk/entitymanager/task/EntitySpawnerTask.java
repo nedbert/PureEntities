@@ -2,6 +2,7 @@ package milk.entitymanager.task;
 
 import cn.nukkit.Server;
 import cn.nukkit.level.Position;
+import cn.nukkit.math.NukkitMath;
 import milk.entitymanager.EntityManager;
 import milk.entitymanager.util.Utils;
 
@@ -32,11 +33,9 @@ public class EntitySpawnerTask implements Runnable{
             int radius = (int) data.get("radius");
 
             String[] vec = key.split(":");
-            Position pos = new Position(Integer.parseInt(vec[0]), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]));
+            Position pos = new Position(Integer.parseInt(vec[0]) + 0.5 + Utils.rand(-radius, radius), Integer.parseInt(vec[1]), Integer.parseInt(vec[2]) + 0.5 + Utils.rand(-radius, radius));
             pos.level = Server.getInstance().getLevelByName(vec[3]);
-            pos.x += Utils.rand(-radius, radius);
-            pos.z += Utils.rand(-radius, radius);
-            pos.y = pos.getLevel().getHighestBlockAt((int) pos.x, (int) pos.z);
+            pos.y = pos.level.getHighestBlockAt(NukkitMath.floorDouble(pos.x), NukkitMath.floorDouble(pos.z)) + 1;
 
             if(!(data.get("mob-list") instanceof List)){
                 return;
