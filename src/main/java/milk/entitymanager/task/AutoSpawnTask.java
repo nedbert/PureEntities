@@ -24,13 +24,8 @@ public class AutoSpawnTask implements Runnable{
                 return;
             }
 
-            LinkedHashMap data = owner.getData("autospawn.entities", new LinkedHashMap<>());
-            int radius = owner.getData("autospawn.radius", 25);
-            Position pos = new Position((int) player.x + 0.5, 0, (int) player.z + 0.5, player.level);
-            pos.y = player.level.getHighestBlockAt((int) (pos.x += Utils.rand(-radius, radius)), (int) (pos.z += Utils.rand(-radius, radius))) + 1;
-
-
             List list;
+            LinkedHashMap data = owner.getData("autospawn.entities", new LinkedHashMap<>());
             if(Utils.rand()){
                 if(!(data.get("animal") instanceof List)){
                     return;
@@ -42,6 +37,15 @@ public class AutoSpawnTask implements Runnable{
                 }
                 list = (List) data.get("monster");
             }
+
+            if(list.size() < 1){
+                return;
+            }
+
+            int radius = owner.getData("autospawn.radius", 25);
+            Position pos = new Position((int) player.x + 0.5, 0, (int) player.z + 0.5, player.level);
+            pos.y = player.level.getHighestBlockAt((int) (pos.x += Utils.rand(-radius, radius)), (int) (pos.z += Utils.rand(-radius, radius))) + 1;
+
             EntityManager.create(list.get(Utils.rand(0, list.size() - 1)), pos);
         });
     }

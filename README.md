@@ -49,7 +49,7 @@ autoclear:
   * spawner.yml
     * TODO
   * drops.yml
-    * TODO
+    * This isn't implemented yet
   
 ### Commands(명령어)
   * /entitymanager
