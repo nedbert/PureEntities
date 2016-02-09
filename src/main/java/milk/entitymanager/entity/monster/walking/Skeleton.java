@@ -43,11 +43,6 @@ public class Skeleton extends WalkingMonster{
     }
 
     @Override
-    public float getEyeHeight(){
-        return 1.62f;
-    }
-
-    @Override
     public String getName(){
         return "Skeleton";
     }

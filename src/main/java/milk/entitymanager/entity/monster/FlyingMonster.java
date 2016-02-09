@@ -38,7 +38,6 @@ public abstract class FlyingMonster extends FlyingEntity implements Monster{
         if(difficulty == null || difficulty > 3 || difficulty < 0){
             difficulty = Server.getInstance().getDifficulty();
         }
-
         return this.minDamage[difficulty];
     }
 
@@ -50,7 +49,6 @@ public abstract class FlyingMonster extends FlyingEntity implements Monster{
         if(difficulty == null || difficulty > 3 || difficulty < 0){
             difficulty = Server.getInstance().getDifficulty();
         }
-
         return this.maxDamage[difficulty];
     }
 
@@ -83,7 +81,9 @@ public abstract class FlyingMonster extends FlyingEntity implements Monster{
     }
 
     public void setMinDamage(int[] damage){
-        if(damage.length < 4) return;
+        if(damage.length < 4){
+            return;
+        }
 
         for(int i = 0; i < 4; i++){
             this.setDamage(Math.min(damage[i], this.getMaxDamage(i)), i);
@@ -101,7 +101,9 @@ public abstract class FlyingMonster extends FlyingEntity implements Monster{
     }
 
     public void setMaxDamage(int[] damage){
-        if(damage.length < 4) return;
+        if(damage.length < 4){
+            return;
+        }
 
         for(int i = 0; i < 4; i++){
             this.setMaxDamage(Math.max(damage[i], this.getMinDamage(i)), i);

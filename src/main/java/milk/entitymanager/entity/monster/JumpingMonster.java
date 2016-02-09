@@ -38,7 +38,6 @@ public abstract class JumpingMonster extends JumpingEntity implements Monster{
         if(difficulty == null || difficulty > 3 || difficulty < 0){
             difficulty = Server.getInstance().getDifficulty();
         }
-
         return this.minDamage[difficulty];
     }
 
@@ -50,7 +49,6 @@ public abstract class JumpingMonster extends JumpingEntity implements Monster{
         if(difficulty == null || difficulty > 3 || difficulty < 0){
             difficulty = Server.getInstance().getDifficulty();
         }
-
         return this.maxDamage[difficulty];
     }
 
@@ -66,7 +64,9 @@ public abstract class JumpingMonster extends JumpingEntity implements Monster{
     }
 
     public void setDamage(int[] damage){
-        if(damage.length < 4) return;
+        if(damage.length < 4){
+            return;
+        }
 
         if(minDamage == null || minDamage.length < 4){
             minDamage = new int[]{0, 0, 0, 0};
@@ -83,7 +83,9 @@ public abstract class JumpingMonster extends JumpingEntity implements Monster{
     }
 
     public void setMinDamage(int[] damage){
-        if(damage.length < 4) return;
+        if(damage.length < 4){
+            return;
+        }
 
         for(int i = 0; i < 4; i++){
             this.setDamage(Math.min(damage[i], this.getMaxDamage(i)), i);

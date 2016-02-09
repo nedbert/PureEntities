@@ -49,9 +49,10 @@ public class Slime extends WalkingMonster{
 
     @Override
     public void initEntity(){
-        this.setMaxHealth(4);
-
         super.initEntity();
+
+        this.setMaxHealth(4);
+        this.setDamage(new int[]{0, 2, 2, 3});
     }
 
     @Override

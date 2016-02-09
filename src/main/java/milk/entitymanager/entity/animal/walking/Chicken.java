@@ -31,16 +31,19 @@ public class Chicken extends WalkingAnimal{
         return 0.75f;
     }
 
+    @Override
     public String getName(){
         return "Chicken";
     }
 
+    @Override
     public void initEntity(){
         super.initEntity();
 
         this.setMaxHealth(4);
     }
 
+    @Override
     public boolean targetOption(EntityCreature creature, double distance){
     	if(creature instanceof Player){
             Player player = (Player) creature;
@@ -49,14 +52,15 @@ public class Chicken extends WalkingAnimal{
     	return false;
     }
 
+    @Override
     public Item[] getDrops(){
         if(this.lastDamageCause instanceof EntityDamageByEntityEvent){
             switch(Utils.rand(0, 2)){
-                case 0 :
+                case 0:
                     return new Item[]{Item.get(Item.RAW_CHICKEN, 0, 1)};
-                case 1 :
+                case 1:
                     return new Item[]{Item.get(Item.EGG, 0, 1)};
-                case 2 :
+                case 2:
                     return new Item[]{Item.get(Item.FEATHER, 0, 1)};
             }
         }

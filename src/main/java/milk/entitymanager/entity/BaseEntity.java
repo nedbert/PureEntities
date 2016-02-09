@@ -232,7 +232,6 @@ public abstract class BaseEntity extends EntityCreature{
         Block block = this.level.getBlock(this.temporalVector.setComponents(NukkitMath.floorDouble(this.x), NukkitMath.floorDouble(this.y + this.getHeight() - 0.18f), NukkitMath.floorDouble(this.z)));
         AxisAlignedBB bb = block.getBoundingBox();
         return bb != null && block.isSolid() && !block.isTransparent() && bb.intersectsWith(this.getBoundingBox());
-
     }
 
     @Override

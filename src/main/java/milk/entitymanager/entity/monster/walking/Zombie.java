@@ -35,11 +35,6 @@ public class Zombie extends WalkingMonster implements EntityAgeable{
     }
 
     @Override
-    public float getEyeHeight(){
-        return 1.62f;
-    }
-
-    @Override
     public double getSpeed(){
         return 1.1;
     }
@@ -69,11 +64,11 @@ public class Zombie extends WalkingMonster implements EntityAgeable{
         super.setHealth(health);
 
         if(this.isAlive()){
-            if(20 * 3 / 4 < this.getHealth()){
+            if(15 < this.getHealth()){
                 this.setDamage(new int[]{0, 2, 3, 4});
-            }else if(20 / 2 < this.getHealth()){
+            }else if(10 < this.getHealth()){
                 this.setDamage(new int[]{0, 3, 4, 6});
-            }else if(20 / 4 < this.getHealth()){
+            }else if(5 < this.getHealth()){
                 this.setDamage(new int[]{0, 3, 5, 7});
             }else{
                 this.setDamage(new int[]{0, 4, 6, 9});

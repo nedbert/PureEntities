@@ -32,11 +32,6 @@ public class ZombieVillager extends WalkingMonster{
     }
 
     @Override
-    public float getEyeHeight(){
-        return 1.62f;
-    }
-
-    @Override
     public double getSpeed(){
         return 1.1;
     }

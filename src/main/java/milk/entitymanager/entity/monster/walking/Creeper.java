@@ -1,4 +1,4 @@
-package milk.entitymanager.entity.animal.walking;
+package milk.entitymanager.entity.monster.walking;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityExplosive;
@@ -14,7 +14,7 @@ import milk.entitymanager.util.Utils;
 public class Creeper extends WalkingMonster implements EntityExplosive{
     public static final int NETWORK_ID = 33;
 
-    int bombTime = 0;
+    private int bombTime = 0;
 
     public Creeper(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
@@ -80,22 +80,19 @@ public class Creeper extends WalkingMonster implements EntityExplosive{
             if(this.bombTime > 0){
                 this.bombTime -= Math.min(2, this.bombTime);
             }
-        }else{
-            this.bombTime++;
-            if(this.bombTime >= Utils.rand(55, 70)){
-                this.explode();
-            }
+        }else if(this.bombTime++ >= Utils.rand(55, 70)){
+            this.explode();
         }
     }
 
     public Item[] getDrops(){
         if(this.lastDamageCause instanceof EntityDamageByEntityEvent){
             switch(Utils.rand(0, 2)){
-                case 0 :
+                case 0:
                     return new Item[]{Item.get(Item.FLINT, 0, 1)};
-                case 1 :
+                case 1:
                     return new Item[]{Item.get(Item.GUNPOWDER, 0, 1)};
-                case 2 :
+                case 2:
                     return new Item[]{Item.get(Item.REDSTONE_DUST, 0, 1)};
             }
         }

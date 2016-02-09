@@ -45,6 +45,7 @@ public class Ghast extends FlyingMonster{
 
         this.fireProof = true;
         this.setMaxHealth(10);
+        this.setDamage(new int[]{0, 0, 0, 0});
     }
 
     public String getName(){

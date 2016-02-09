@@ -23,7 +23,7 @@ public class Cow extends WalkingAnimal{
 
     @Override
     public float getWidth(){
-        return 1.6f;
+        return 1.45f;
     }
 
     @Override
@@ -52,9 +52,9 @@ public class Cow extends WalkingAnimal{
     public Item[] getDrops(){
         if(this.lastDamageCause instanceof EntityDamageByEntityEvent){
             switch(Utils.rand(0, 1)){
-                case 0 :
+                case 0:
                     return new Item[]{Item.get(Item.RAW_BEEF, 0, 1)};
-                case 1 :
+                case 1:
                     return new Item[]{Item.get(Item.LEATHER, 0, 1)};
             }
         }

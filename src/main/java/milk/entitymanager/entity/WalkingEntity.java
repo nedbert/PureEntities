@@ -36,15 +36,6 @@ public abstract class WalkingEntity extends BaseEntity{
 
                 EntityCreature creature = (EntityCreature) entity;
                 if(
-                    entity instanceof PigZombie
-                    && this instanceof PigZombie
-                    && !((PigZombie) entity).isAngry()
-                    && ((PigZombie) this).isAngry()
-                ){
-                    ((PigZombie) entity).setAngry(1000);
-                }
-
-                if(
                     creature instanceof BaseEntity
                     && ((BaseEntity) creature).isFriendly() == this.isFriendly()
                 ){
@@ -52,6 +43,14 @@ public abstract class WalkingEntity extends BaseEntity{
                 }
 
                 double distance = this.distanceSquared(creature);
+                if(
+                    distance <= 100
+                    && this instanceof PigZombie && ((PigZombie) this).isAngry()
+                    && entity instanceof PigZombie && !((PigZombie) entity).isAngry()
+                ){
+                    ((PigZombie) entity).setAngry(1000);
+                }
+
                 if(distance > near || !this.targetOption(creature, distance)){
                     continue;
                 }

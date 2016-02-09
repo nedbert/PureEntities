@@ -51,18 +51,18 @@ public class PigZombie extends WalkingMonster{
     protected void initEntity(){
         super.initEntity();
 
-        this.fireProof = true;
         if(this.namedTag.contains("Angry")){
             this.angry = this.namedTag.getInt("Angry");
         }
 
+        this.fireProof = true;
         this.setDamage(new int[]{0, 5, 9, 13});
     }
 
     @Override
     public void saveNBT(){
-        this.namedTag.putInt("Angry", this.angry);
         super.saveNBT();
+        this.namedTag.putInt("Angry", this.angry);
     }
 
     @Override

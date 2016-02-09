@@ -36,7 +36,7 @@ public class IronGolem extends WalkingMonster{
 
     @Override
     public double getSpeed(){
-        return 0.9;
+        return 0.8;
     }
 
     @Override
@@ -57,9 +57,8 @@ public class IronGolem extends WalkingMonster{
         if(this.attackDelay > 10 && this.distanceSquared(player) < 4){
             this.attackDelay = 0;
 
-            EntityDamageEvent ev = new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_ENTITY_ATTACK, this.getDamage());
-            player.attack(ev);
             player.setMotion(new Vector3(0, 0.7, 0));
+            player.attack(new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_ENTITY_ATTACK, this.getDamage()));
         }
     }
 

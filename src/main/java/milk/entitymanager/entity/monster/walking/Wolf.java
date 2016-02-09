@@ -42,13 +42,12 @@ public class Wolf extends WalkingMonster{
     protected void initEntity(){
         super.initEntity();
 
-        this.fireProof = true;
-        this.setMaxHealth(8);
-
         if(this.namedTag.contains("Angry")){
             this.angry = this.namedTag.getInt("Angry");
         }
 
+        this.setMaxHealth(8);
+        this.fireProof = true;
         this.setDamage(new int[]{0, 3, 4, 6});
     }
 

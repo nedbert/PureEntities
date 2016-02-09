@@ -22,7 +22,7 @@ public class Mooshroom extends WalkingAnimal{
 
     @Override
     public float getWidth(){
-        return 1.6f;
+        return 1.45f;
     }
 
     @Override

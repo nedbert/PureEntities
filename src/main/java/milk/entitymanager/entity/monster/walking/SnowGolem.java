@@ -32,17 +32,12 @@ public class SnowGolem extends WalkingMonster{
 
     @Override
     public float getWidth(){
-        return 0.65f;
+        return 0.6f;
     }
 
     @Override
     public float getHeight(){
-        return 2.1f;
-    }
-
-    @Override
-    public float getEyeHeight(){
-        return 1.92f;
+        return 1.8f;
     }
 
     @Override

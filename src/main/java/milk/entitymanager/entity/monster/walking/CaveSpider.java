@@ -28,7 +28,7 @@ public class CaveSpider extends WalkingMonster{
 
     @Override
     public float getHeight(){
-        return 0.75f;
+        return 0.8f;
     }
 
     @Override

@@ -51,6 +51,7 @@ public class Blaze extends FlyingMonster{
         super.initEntity();
 
         this.fireProof = true;
+        this.setDamage(new int[]{0, 0, 0, 0});
     }
 
     public String getName(){

@@ -23,12 +23,12 @@ public class Spider extends WalkingMonster{
 
     @Override
     public float getWidth(){
-        return 1.5f;
+        return 1.3f;
     }
 
     @Override
     public float getHeight(){
-        return 1.2f;
+        return 1.12f;
     }
 
     @Override
