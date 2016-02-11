@@ -6,6 +6,7 @@ import cn.nukkit.math.NukkitMath;
 import milk.entitymanager.EntityManager;
 import milk.entitymanager.util.Utils;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -26,17 +27,25 @@ public class AutoSpawnTask implements Runnable{
             }
 
             List list;
-            LinkedHashMap data = owner.getData("autospawn.entities", new LinkedHashMap<>());
             if(Utils.rand()){
-                if(!(data.get("animal") instanceof List)){
-                    return;
-                }
-                list = (List) data.get("animal");
+                list = owner.getData("autospawn.entities.animal", new ArrayList<String>(){{
+                    add("Cow");
+                    add("Pig");
+                    add("Sheep");
+                    add("Chicken");
+                    add("Slime");
+                    add("Ocelot");
+                    add("Rabbit");
+                }});
             }else{
-                if(!(data.get("monster") instanceof List)){
-                    return;
-                }
-                list = (List) data.get("monster");
+                list = owner.getData("autospawn.entities.monster", new ArrayList<String>(){{
+                    add("Zombie");
+                    add("Creeper");
+                    add("Skeleton");
+                    add("Spider");
+                    add("PigZombie");
+                    add("Enderman");
+                }});
             }
 
             if(list.size() < 1){
