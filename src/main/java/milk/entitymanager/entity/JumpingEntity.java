@@ -11,7 +11,7 @@ public abstract class JumpingEntity extends BaseEntity{
         super(chunk, nbt);
     }
 
-    void checkTarget(){
+    protected void checkTarget(){
         //TODO
     }
 

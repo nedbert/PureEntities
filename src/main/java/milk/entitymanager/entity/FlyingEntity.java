@@ -19,7 +19,7 @@ public abstract class FlyingEntity extends BaseEntity{
         super(chunk, nbt);
     }
 
-    void checkTarget(){
+    protected void checkTarget(){
         if(this.isKnockback()){
             return;
         }
@@ -34,10 +34,7 @@ public abstract class FlyingEntity extends BaseEntity{
                 }
 
                 EntityCreature creature = (EntityCreature) entity;
-                if(
-                    creature instanceof BaseEntity
-                    && ((BaseEntity) creature).isFriendly() == this.isFriendly()
-                ){
+                if(creature instanceof BaseEntity && ((BaseEntity) creature).isFriendly() == this.isFriendly()){
                     continue;
                 }
 
@@ -52,10 +49,7 @@ public abstract class FlyingEntity extends BaseEntity{
             }
         }
 
-        if(
-            this.baseTarget instanceof EntityCreature
-            && ((EntityCreature) this.baseTarget).isAlive()
-        ){
+        if(this.baseTarget instanceof EntityCreature && ((EntityCreature) this.baseTarget).isAlive()){
             return;
         }
 

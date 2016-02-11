@@ -20,7 +20,7 @@ public abstract class WalkingEntity extends BaseEntity{
         super(chunk, nbt);
     }
 
-    void checkTarget(){
+    protected void checkTarget(){
         if(this.isKnockback()){
             return;
         }
@@ -35,22 +35,11 @@ public abstract class WalkingEntity extends BaseEntity{
                 }
 
                 EntityCreature creature = (EntityCreature) entity;
-                if(
-                    creature instanceof BaseEntity
-                    && ((BaseEntity) creature).isFriendly() == this.isFriendly()
-                ){
+                if(creature instanceof BaseEntity && ((BaseEntity) creature).isFriendly() == this.isFriendly()){
                     continue;
                 }
 
                 double distance = this.distanceSquared(creature);
-                if(
-                    distance <= 100
-                    && this instanceof PigZombie && ((PigZombie) this).isAngry()
-                    && entity instanceof PigZombie && !((PigZombie) entity).isAngry()
-                ){
-                    ((PigZombie) entity).setAngry(1000);
-                }
-
                 if(distance > near || !this.targetOption(creature, distance)){
                     continue;
                 }
@@ -61,10 +50,7 @@ public abstract class WalkingEntity extends BaseEntity{
             }
         }
 
-        if(
-            this.baseTarget instanceof EntityCreature
-            && ((EntityCreature) this.baseTarget).isAlive()
-        ){
+        if(this.baseTarget instanceof EntityCreature && ((EntityCreature) this.baseTarget).isAlive()){
             return;
         }
 

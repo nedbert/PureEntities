@@ -92,10 +92,7 @@ public abstract class BaseEntity extends EntityCreature{
 
     @Override
     public void spawnTo(Player player){
-        if(
-            !this.hasSpawned.containsKey(player.getLoaderId())
-            && player.usedChunks.containsKey(Level.chunkHash(this.chunk.getX(), this.chunk.getZ()))
-        ){
+        if(!this.hasSpawned.containsKey(player.getLoaderId()) && player.usedChunks.containsKey(Level.chunkHash(this.chunk.getX(), this.chunk.getZ()))){
             AddEntityPacket pk = new AddEntityPacket();
             pk.eid = this.getId();
             pk.type = this.getNetworkId();
@@ -128,6 +125,17 @@ public abstract class BaseEntity extends EntityCreature{
             this.lastPitch = this.pitch;
         }
         this.level.addEntityMovement(this.chunk.getX(), this.chunk.getZ(), this.id, this.x, this.y, this.z, this.yaw, this.pitch);
+    }
+
+    public boolean targetOption(EntityCreature creature, double distance){
+        if(this instanceof Monster){
+            if(creature instanceof Player){
+                Player player = (Player) creature;
+                return player.spawned && player.isAlive() && !player.closed && player.isSurvival() && distance <= 81;
+            }
+            return creature.isAlive() && !creature.closed && distance <= 81;
+        }
+        return false;
     }
 
     @Override
@@ -295,17 +303,6 @@ public abstract class BaseEntity extends EntityCreature{
 
         //Timings.entityMoveTimer.stopTiming();
         return true;
-    }
-
-    public boolean targetOption(EntityCreature creature, double distance){
-        if(this instanceof Monster){
-            if(creature instanceof Player){
-                Player player = (Player) creature;
-                return player.spawned && player.isAlive() && !player.closed && player.isSurvival() && distance <= 81;
-            }
-            return creature.isAlive() && !creature.closed && distance <= 81;
-        }
-        return false;
     }
 
 }
