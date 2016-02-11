@@ -68,55 +68,6 @@ public class PigZombie extends WalkingMonster{
         this.namedTag.putInt("Angry", this.angry);
     }
 
-    protected void checkTarget(){
-        if(this.isKnockback()){
-            return;
-        }
-
-        Vector3 target = this.baseTarget;
-        if(!(target instanceof EntityCreature) || !this.targetOption((EntityCreature) target, this.distanceSquared(target))){
-            double near = Integer.MAX_VALUE;
-
-            for(Entity entity : this.getLevel().getEntities()){
-                if(entity == this || !(entity instanceof EntityCreature) || entity instanceof WalkingAnimal){
-                    continue;
-                }
-
-                EntityCreature creature = (EntityCreature) entity;
-                if(creature instanceof BaseEntity && ((BaseEntity) creature).isFriendly() == this.isFriendly()){
-                    continue;
-                }
-
-                double distance = this.distanceSquared(creature);
-                if(
-                    distance <= 100 && this.isAngry()
-                    && entity instanceof PigZombie && !((PigZombie) entity).isAngry()
-                ){
-                    ((PigZombie) entity).setAngry(1000);
-                }
-
-                if(distance > near || !this.targetOption(creature, distance)){
-                    continue;
-                }
-                near = distance;
-
-                this.moveTime = 0;
-                this.baseTarget = creature;
-            }
-        }
-
-        if(this.baseTarget instanceof EntityCreature && ((EntityCreature) this.baseTarget).isAlive()){
-            return;
-        }
-
-        if(this.moveTime <= 0 || this.baseTarget == null){
-            int x = Utils.rand(20, 100);
-            int z = Utils.rand(20, 100);
-            this.moveTime = Utils.rand(300, 1200);
-            this.baseTarget = this.add(Utils.rand() ? x : -x, 0, Utils.rand() ? z : -z);
-        }
-    }
-
     @Override
     public String getName(){
         return "PigZombie";
@@ -124,6 +75,12 @@ public class PigZombie extends WalkingMonster{
 
     @Override
     public boolean targetOption(EntityCreature creature, double distance){
+        if(
+            distance <= 100 && this.isAngry()
+            && creature instanceof PigZombie && !((PigZombie) creature).isAngry()
+        ){
+            ((PigZombie) creature).setAngry(1000);
+        }
         return this.isAngry() && super.targetOption(creature, distance);
     }
 
