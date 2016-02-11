@@ -34,7 +34,7 @@ public abstract class JumpingEntity extends BaseEntity{
             double x = this.baseTarget.x - this.x;
             double y = this.baseTarget.y - this.y;
             double z = this.baseTarget.z - this.z;
-            if(x * x + z * z < 0.7){
+            if(this.distanceSquared(this.baseTarget) <= this.getWidth() / 2 + 0.05){
                 this.motionX = 0;
                 this.motionZ = 0;
             }else{
