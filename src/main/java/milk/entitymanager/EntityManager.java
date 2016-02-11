@@ -35,6 +35,7 @@ import milk.entitymanager.entity.monster.walking.*;
 import milk.entitymanager.entity.projectile.EntityFireBall;
 import milk.entitymanager.entity.monster.flying.Blaze;
 import milk.entitymanager.entity.monster.flying.Ghast;
+import milk.entitymanager.task.AutoClearTask;
 import milk.entitymanager.task.AutoSpawnTask;
 import milk.entitymanager.task.EntitySpawnerTask;
 import milk.entitymanager.util.Utils;
@@ -177,10 +178,9 @@ public class EntityManager extends PluginBase implements Listener{
         if(this.getData("autospawn.turn-on", true)){
             this.getServer().getScheduler().scheduleRepeatingTask(new AutoSpawnTask(), this.getData("autospawn.tick", 100));
         }
-        //TODO: This isn't implement yet
-        /*if(this.getData("autoclear.turn-on", true)){
+        if(this.getData("autoclear.turn-on", true)){
             this.getServer().getScheduler().scheduleRepeatingTask(new AutoClearTask(), this.getData("autoclear.tick", 6000));
-        }*/
+        }
     }
 
     public void onDisable(){
