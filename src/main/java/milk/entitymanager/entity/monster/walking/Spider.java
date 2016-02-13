@@ -1,10 +1,17 @@
 package milk.entitymanager.entity.monster.walking;
 
+import cn.nukkit.Player;
+import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.NukkitMath;
+import cn.nukkit.math.Vector2;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import milk.entitymanager.entity.monster.WalkingMonster;
 import milk.entitymanager.util.Utils;
@@ -51,6 +58,131 @@ public class Spider extends WalkingMonster{
     @Override
     public String getName(){
         return "Spider";
+    }
+
+    @Override
+    public boolean onUpdate(int currentTick){
+        if(this.server.getDifficulty() < 1){
+            this.close();
+            return false;
+        }
+
+        if(!this.isAlive()){
+            if(++this.deadTicks >= 23){
+                this.close();
+                return false;
+            }
+            return true;
+        }
+
+        int tickDiff = currentTick - this.lastUpdate;
+        this.lastUpdate = currentTick;
+        this.entityBaseTick(tickDiff);
+
+        if(!this.isMovement()){
+            return true;
+        }
+
+        if(this.isKnockback()){
+            this.move(this.motionX * tickDiff, this.motionY, this.motionZ * tickDiff);
+            this.motionY -= 0.15 * tickDiff;
+            this.updateMovement();
+            return true;
+        }
+
+        Vector3 before = this.baseTarget;
+        this.checkTarget();
+        if(this.baseTarget instanceof EntityCreature || before != this.baseTarget){
+            double x = this.baseTarget.x - this.x;
+            double y = this.baseTarget.y - this.y;
+            double z = this.baseTarget.z - this.z;
+            if(this.distance(this.baseTarget) <= 2.3){
+                Vector3 target = this.baseTarget;
+                if(this.isFriendly()){
+                    if(!(target instanceof Player)){
+                        if(target instanceof Entity){
+                            this.attackEntity((Entity) target);
+                        }else if(target != null && (Math.pow(this.x - target.x, 2) + Math.pow(this.z - target.z, 2)) <= 1){
+                            this.moveTime = 0;
+                        }
+                    }
+                }else{
+                    if(target instanceof Entity){
+                        this.attackEntity((Entity) target);
+                    }else if(target != null && (Math.pow(this.x - target.x, 2) + Math.pow(this.z - target.z, 2)) <= 1){
+                        this.moveTime = 0;
+                    }
+                }
+            }else{
+                double diff = Math.abs(x) + Math.abs(z);
+                this.motionX = this.getSpeed() * 0.15 * (x / diff);
+                this.motionZ = this.getSpeed() * 0.15 * (z / diff);
+            }
+            this.yaw = -Math.atan2(this.motionX, this.motionZ) * 180 / Math.PI;
+            this.pitch = y == 0 ? 0 : Math.toDegrees(-Math.atan2(y, Math.sqrt(x * x + z * z)));
+        }
+
+        boolean isJump = false;
+        double dx = this.motionX * tickDiff;
+        double dy = this.motionY * tickDiff;
+        double dz = this.motionZ * tickDiff;
+
+        Vector2 be = new Vector2(this.x + dx, this.z + dz);
+        this.move(dx, dy, dz);
+        Vector2 af = new Vector2(this.x, this.z);
+
+        if(be.x != af.x || be.y != af.y){
+            int x = 0;
+            int z = 0;
+            if(be.x - af.x != 0){
+                x = be.x > af.x ? 1 : -1;
+            }
+            if(be.y - af.y != 0){
+                z = be.y > af.y ? 1 : -1;
+            }
+
+            Vector3 vec = new Vector3(NukkitMath.floorDouble(be.x), this.y, NukkitMath.floorDouble(be.y));
+            Block block = this.level.getBlock(vec.add(x, 0, z));
+            Block block2 = this.level.getBlock(vec.add(x, 1, z));
+            if(!block.canPassThrough()){
+                AxisAlignedBB bb = block2.getBoundingBox();
+                if(
+                    this.motionY > -this.getGravity() * 4
+                        && (block2.canPassThrough() || (bb == null || bb.maxY - this.y <= 1))
+                    ){
+                    isJump = true;
+                    if(this.motionY >= 0.3){
+                        this.motionY += this.getGravity();
+                    }else{
+                        this.motionY = 0.3;
+                    }
+                }else if(this.level.getBlock(vec).getId() == Item.LADDER){
+                    isJump = true;
+                    this.motionY = 0.15;
+                }
+            }
+
+            if(!isJump){
+                this.moveTime -= 90 * tickDiff;
+            }
+        }
+
+        if(this.onGround && !isJump){
+            this.motionY = 0;
+        }else if(!isJump){
+            if(this.motionY > -this.getGravity() * 4){
+                this.motionY = -this.getGravity() * 4;
+            }else{
+                this.motionY -= this.getGravity();
+            }
+        }
+        this.updateMovement();
+        return true;
+    }
+
+    @Override
+    public Vector3 updateMove(int tickDiff){
+        return null;
     }
 
     @Override
