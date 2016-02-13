@@ -2,6 +2,8 @@ package milk.entitymanager.entity.monster.walking;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockFence;
+import cn.nukkit.block.BlockFenceGate;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -148,15 +150,15 @@ public class Spider extends WalkingMonster{
                 AxisAlignedBB bb = block2.getBoundingBox();
                 if(
                     this.motionY > -this.getGravity() * 4
-                        && (block2.canPassThrough() || (bb == null || bb.maxY - this.y <= 1))
-                    ){
+                    && (block2.canPassThrough() || (bb == null || bb.maxY - this.y <= 1))
+                ){
                     isJump = true;
                     if(this.motionY >= 0.3){
                         this.motionY += this.getGravity();
                     }else{
                         this.motionY = 0.3;
                     }
-                }else if(this.level.getBlock(vec).getId() == Item.LADDER){
+                }else{
                     isJump = true;
                     this.motionY = 0.15;
                 }
