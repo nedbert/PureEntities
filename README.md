@@ -88,11 +88,11 @@ autoclear:
     * public double getDamage();
     * public double getDamage(int difficulty)
     * 
-    * public double getMinDamage();
-    * public double getMinDamage(int difficulty);
+    * public double getMinDamage()
+    * public double getMinDamage(int difficulty)
     * 
-    * public double getMaxDamage();
-    * public double getMaxDamage(int difficulty);
+    * public double getMaxDamage()
+    * public double getMaxDamage(int difficulty)
     * 
     * public void setDamage(double damage)
     * public void setDamage(double[] damage)
