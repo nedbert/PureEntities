@@ -74,7 +74,7 @@ public class Blaze extends FlyingMonster{
                 pitch,
                 this.level
             );
-            Entity k = EntityManager.create("EntityFireBall", pos, this);
+            Entity k = EntityManager.create("FireBall", pos, this);
             if(!(k instanceof EntityFireBall)){
                 return;
             }

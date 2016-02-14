@@ -62,7 +62,7 @@ public class Skeleton extends WalkingMonster{
                 pitch,
                 this.level
             );
-            Entity k = EntityManager.create("EntityArrow", pos, this);
+            Entity k = EntityManager.create("Arrow", pos, this);
             if(!(k instanceof EntityArrow)){
                 return;
             }

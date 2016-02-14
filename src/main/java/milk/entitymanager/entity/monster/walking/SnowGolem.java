@@ -73,7 +73,7 @@ public class SnowGolem extends WalkingMonster{
                 pitch,
                 this.level
             );
-            Entity k = EntityManager.create("EntitySnowball", location, this);
+            Entity k = EntityManager.create("Snowball", location, this);
             if(k == null){
                 return;
             }

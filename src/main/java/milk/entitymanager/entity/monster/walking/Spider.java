@@ -99,11 +99,11 @@ public class Spider extends WalkingMonster{
             double y = this.baseTarget.y - this.y;
             double z = this.baseTarget.z - this.z;
 
-            double distance = this.distance(this.baseTarget);
+            Vector3 target = this.baseTarget;
+            double distance = Math.sqrt(Math.pow(this.x - target.x, 2) + Math.pow(this.z - target.z, 2));
             if(distance <= 2){
-                Vector3 target = this.baseTarget;
                 if(target instanceof EntityCreature){
-                    if(distance <= this.getWidth() / 2 + 0.05){
+                    if(distance <= (this.getWidth() + 0.0d) / 2 + 0.05){
                         if(this.attackDelay < 10){
                             double diff = Math.abs(x) + Math.abs(z);
                             this.motionX = this.getSpeed() * 0.1 * (x / diff);
@@ -116,12 +116,12 @@ public class Spider extends WalkingMonster{
                     }else{
                         double diff = Math.abs(x) + Math.abs(z);
                         if(!this.isFriendly()){
-                            this.motionY = 0.2;
+                            this.motionY = 0.15;
                         }
                         this.motionX = this.getSpeed() * 0.15 * (x / diff);
                         this.motionZ = this.getSpeed() * 0.15 * (z / diff);
                     }
-                }else if(target != null && (Math.pow(this.x - target.x, 2) + Math.pow(this.z - target.z, 2)) <= 1){
+                }else if(Math.pow(this.x - target.x, 2) + Math.pow(this.z - target.z, 2) <= 1){
                     this.moveTime = 0;
                 }
             }else{

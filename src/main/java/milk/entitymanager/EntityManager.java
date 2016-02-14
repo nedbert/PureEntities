@@ -75,7 +75,7 @@ public class EntityManager extends PluginBase implements Listener{
         if(type instanceof String){
             return Entity.createEntity((String) type, chunk, nbt, args);
         }else if(type instanceof Integer){
-            return Entity.createEntity((int) type, chunk, nbt, args);
+            return Entity.createEntity(String.valueOf(type), chunk, nbt, args);
         }
         return null;
     }
@@ -122,7 +122,6 @@ public class EntityManager extends PluginBase implements Listener{
         clazz2.add(Wolf.class);
         clazz2.add(Zombie.class);
         clazz2.add(ZombieVillager.class);
-        clazz2.add(EntityFireBall.class);
         clazz2.forEach(clazz -> {
             try{
                 Entity.registerEntity(clazz.getSimpleName(), clazz);
@@ -131,7 +130,6 @@ public class EntityManager extends PluginBase implements Listener{
                     id == IronGolem.NETWORK_ID
                     || id == SnowGolem.NETWORK_ID
                     || id == ZombieVillager.NETWORK_ID
-                    || id == EntityFireBall.NETWORK_ID
                 ){
                     return;
                 }
@@ -141,6 +139,7 @@ public class EntityManager extends PluginBase implements Listener{
                 }
             }catch(Exception ignore){}
         });
+        Entity.registerEntity("FireBall", EntityFireBall.class);
 
         this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]All entities were registered");
     }
@@ -184,20 +183,20 @@ public class EntityManager extends PluginBase implements Listener{
     }
 
     public void onDisable(){
-        Config con = new Config(new File(this.getDataFolder(), "spawner.yml"), Config.YAML);
-        con.setAll(spawner);
-        if(con.save()){
-            this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]\"spawner.yml\"파일을 성공적으로 저장했습니다");
-        }else{
-            this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]\"spawner.yml\"파일을 저장하는데에 실패했습니다");
-        }
-
         Config con2 = new Config(new File(this.getDataFolder(), "drops.yml"), Config.YAML);
         con2.setAll(drops);
         if(con2.save()){
             this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]\"drops.yml\"파일을 성공적으로 저장했습니다");
         }else{
             this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]\"drops.yml\"파일을 저장하는데에 실패했습니다");
+        }
+
+        Config con = new Config(new File(this.getDataFolder(), "spawner.yml"), Config.YAML);
+        con.setAll(spawner);
+        if(con.save()){
+            this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]\"spawner.yml\"파일을 성공적으로 저장했습니다");
+        }else{
+            this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]\"spawner.yml\"파일을 저장하는데에 실패했습니다");
         }
 
         this.getServer().getLogger().info(TextFormat.GOLD + "[EntityManager]Plugin has been disable");
@@ -219,7 +218,6 @@ public class EntityManager extends PluginBase implements Listener{
             if(!(data.get(base) instanceof Map)){
                 return (T) data.get(base);
             }
-
             Object nbase = data.get(base);
 
             int index = 0;
@@ -330,9 +328,9 @@ public class EntityManager extends PluginBase implements Listener{
     }
 
     @EventHandler
+    @SuppressWarnings("unchecked")
     public void EntityDeathEvent(EntityDeathEvent ev){
-        //TODO: Change drop item
-        /*Entity entity = ev.getEntity();
+        Entity entity = ev.getEntity();
         if(!(entity instanceof BaseEntity) || drops.containsKey(entity.getNetworkId() + "")){
             return;
         }
@@ -341,32 +339,27 @@ public class EntityManager extends PluginBase implements Listener{
             return;
         }
 
-        List drops = (List) EntityManager.drops.get(entity.NETWORK_ID);
+        ArrayList<Item> items = new ArrayList<>();
+        List<Object> drops = (List) EntityManager.drops.get(entity.getNetworkId());
         drops.forEach(k -> {
             if(!(k instanceof List)){
                 return;
             }
 
-            List data = (List) k;
+            List<String> data = (List) k;
             if(data.size() < 3){
                 return;
             }
+
+            String[] cs = data.get(2).split(",");
+            try{
+                int[] count = new int[]{Integer.parseInt(cs[0]), Integer.parseInt(cs[1])};
+                Item item = Item.get(Integer.parseInt(data.get(0)), Integer.parseInt(data.get(1)));
+                item.setCount(Utils.rand(count[0], count[1]));
+                items.add(item);
+            }catch(Exception ignore){}
         });
-        foreach( as key => data){
-            if(!isset(data[0]) || !isset(data[1]) || !isset(data[2])){
-                unset(drops[entity.NETWORK_ID][key]);
-                continue;
-            }
-            count = explode(",", data[2]);
-            if(min(...count) !== count[0]){
-                unset(drops[entity.NETWORK_ID][key]);
-                continue;
-            }
-            item = Item.get(data[0], data[1]);
-            item.setCount(max(Utils.rand(...count), 0));
-            drops[] = item;
-        }
-        ev.setDrops(drops);*/
+        ev.setDrops(items.toArray(new Item[items.size()]));
     }
 
     public boolean onCommand(CommandSender i, Command cmd, String label, String[] sub){

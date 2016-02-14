@@ -11,7 +11,6 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.nbt.tag.CompoundTag;
 import milk.entitymanager.entity.animal.WalkingAnimal;
-import milk.entitymanager.entity.monster.walking.PigZombie;
 import milk.entitymanager.util.Utils;
 
 public abstract class WalkingEntity extends BaseEntity{
@@ -80,7 +79,7 @@ public abstract class WalkingEntity extends BaseEntity{
             double x = this.baseTarget.x - this.x;
             double y = this.baseTarget.y - this.y;
             double z = this.baseTarget.z - this.z;
-            if(this.distance(this.baseTarget) <= this.getWidth() / 2 + 0.05){
+            if(this.distance(this.baseTarget) <= (this.getWidth() + 0.0d) / 2 + 0.05){
                 this.motionX = 0;
                 this.motionZ = 0;
             }else{
