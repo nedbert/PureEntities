@@ -125,7 +125,7 @@ public class EntityManager extends PluginBase implements Listener{
         clazz2.add(EntityFireBall.class);
         clazz2.forEach(clazz -> {
             try{
-                Entity.registerEntity(clazz);
+                Entity.registerEntity(clazz.getSimpleName(), clazz);
                 int id = clazz.getField("NETWORK_ID").getInt(null);
                 if(
                     id == IronGolem.NETWORK_ID
