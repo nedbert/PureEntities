@@ -331,16 +331,16 @@ public class EntityManager extends PluginBase implements Listener{
     @SuppressWarnings("unchecked")
     public void EntityDeathEvent(EntityDeathEvent ev){
         Entity entity = ev.getEntity();
-        if(!(entity instanceof BaseEntity) || drops.containsKey(entity.getNetworkId() + "")){
+        if(!(entity instanceof BaseEntity) || drops.containsKey(entity.getClass().getSimpleName())){
             return;
         }
 
-        if(!(drops.get(entity.getNetworkId() + "") instanceof List)){
+        if(!(drops.get(entity.getClass().getSimpleName()) instanceof List)){
             return;
         }
 
         ArrayList<Item> items = new ArrayList<>();
-        List<Object> drops = (List) EntityManager.drops.get(entity.getNetworkId());
+        List<Object> drops = (List) EntityManager.drops.get(entity.getClass().getSimpleName());
         drops.forEach(k -> {
             if(!(k instanceof List)){
                 return;
