@@ -159,12 +159,11 @@ public class EntityManager extends PluginBase implements Listener{
         spawner = (LinkedHashMap<String, Object>) new Config(spawnFile, Config.YAML).getAll();
 
         /*Drops Example
-        //TYPE_ID
-        32:
+        "Zombie":
           #id  meta count
           [288, 0, "1,10"],
           [392, 0, "1,10"]
-        36:
+        "PigZombie":
           [266, 0, "0,8"]
         */
 
@@ -331,28 +330,29 @@ public class EntityManager extends PluginBase implements Listener{
     @SuppressWarnings("unchecked")
     public void EntityDeathEvent(EntityDeathEvent ev){
         Entity entity = ev.getEntity();
-        if(!(entity instanceof BaseEntity) || drops.containsKey(entity.getClass().getSimpleName())){
+        Class<? extends Entity> clazz = entity.getClass();
+        if(drops.containsKey(clazz.getSimpleName())){
             return;
         }
 
-        if(!(drops.get(entity.getClass().getSimpleName()) instanceof List)){
+        if(!(drops.get(clazz.getSimpleName()) instanceof List)){
             return;
         }
 
         ArrayList<Item> items = new ArrayList<>();
-        List<Object> drops = (List) EntityManager.drops.get(entity.getClass().getSimpleName());
+        List<Object> drops = (List) EntityManager.drops.get(clazz.getSimpleName());
         drops.forEach(k -> {
-            if(!(k instanceof List)){
-                return;
-            }
-
-            List<String> data = (List) k;
-            if(data.size() < 3){
-                return;
-            }
-
-            String[] cs = data.get(2).split(",");
             try{
+                if(!(k instanceof List)){
+                    return;
+                }
+
+                List<String> data = (List) k;
+                if(data.size() < 3){
+                    return;
+                }
+
+                String[] cs = data.get(2).split(",");
                 int[] count = new int[]{Integer.parseInt(cs[0]), Integer.parseInt(cs[1])};
                 Item item = Item.get(Integer.parseInt(data.get(0)), Integer.parseInt(data.get(1)));
                 item.setCount(Utils.rand(count[0], count[1]));
