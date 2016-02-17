@@ -379,7 +379,8 @@ public class EntityManager extends PluginBase implements Listener{
                 }
 
                 clear(new Class[]{BaseEntity.class, EntityProjectile.class, EntityItem.class}, level);
-                output += "All spawned entities were removed";
+                output += "소환된 모든 엔티티를 제거했습니다";
+                //output += "All spawned entities were removed";
                 break;
             case "check":
                 if(!i.hasPermission("entitymanager.command.check")){

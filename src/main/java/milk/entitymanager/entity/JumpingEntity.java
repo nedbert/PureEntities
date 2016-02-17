@@ -40,7 +40,7 @@ public abstract class JumpingEntity extends BaseEntity{
             }else{
                 //TODO
             }
-            this.yaw = -Math.atan2(this.motionX, this.motionZ) * 180 / Math.PI;
+            this.yaw = Math.toDegrees(-Math.atan2(this.motionX, this.motionZ));
             this.pitch = y == 0 ? 0 : Math.toDegrees(-Math.atan2(y, Math.sqrt(x * x + z * z)));
         }
         return null;

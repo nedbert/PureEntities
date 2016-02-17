@@ -127,7 +127,7 @@ public class Creeper extends WalkingMonster implements EntityExplosive{
                 this.motionX = this.getSpeed() * 0.15 * (x / diff);
                 this.motionZ = this.getSpeed() * 0.15 * (z / diff);
             }
-            this.yaw = -Math.atan2(this.motionX, this.motionZ) * 180 / Math.PI;
+            this.yaw = Math.toDegrees(-Math.atan2(this.motionX, this.motionZ));
             this.pitch = y == 0 ? 0 : Math.toDegrees(-Math.atan2(y, Math.sqrt(x * x + z * z)));
         }
 
