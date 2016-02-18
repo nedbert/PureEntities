@@ -7,11 +7,10 @@ Author(제작자): **[SW-Team](https://github.com/SW-Team)**
 **[NOTICE] This plug-in is not perfect, the entity may move abnormally (It was written in Java8)**
   
 PureEntities is a plugin for managing entities, literally.  
-Most entities are moving around, and jumps if needed.  
+The plugin provides Mob AIs like walking, auto-jumping, etc.  
   
 PureEntities also has simple API for developers,  
 such as **clear()** or **create()**.  
-  
 See documentation page for details.  
   
 **[알림] 이 플러그인은 완벽하지 않으며 엔티티가 비정상적으로 움직일 수 있습니다 (Java8로 작성되었습니다)**  
@@ -21,10 +20,12 @@ See documentation page for details.
 
 엔티티매니저는 또한 개발자 여러분을 위해  
 **clear()** 또는 **create()** 와 같은 간단한 API가 제공됩니다.  
-  
 자세한 사항은 아래를 보시기 바랍니다  
   
-### Method(메소드)
+### Methods(메소드)
+  * PureEntities
+    * public static BaseEntity create(int type, Position pos, Object... args)
+    * public static BaseEntity create(String type, Position pos, Object... args)
   * BaseEntity
     * public boolean isMovement()
     * public boolean isFriendly()
@@ -50,7 +51,7 @@ See documentation page for details.
     * public boolean isAngry()
     * public void setAngry(int angry)
 
-### Method Examples(메소드 예시)
+### API Examples(API 예시)
 ``` java
 //Entity Method
 this.getServer().getDefaultLevel().getEntities().forEach((id, baseEntity) -> {
@@ -66,4 +67,7 @@ this.getServer().getDefaultLevel().getEntities().forEach((id, baseEntity) -> {
         mob.setMinDamage(10);
     }
 });
+
+EntityArrow arrow = (EntityArrow) PureEntities.create("Arrow", position, player, true);
+Zombie arrow = (Zombie) PureEntities.create("Zombie", position);
 ```
