@@ -10,7 +10,7 @@ PureEntities is a plugin for managing entities, literally.
 The plugin provides Mob AIs like walking, auto-jumping, etc.  
   
 PureEntities also has simple API for developers,  
-such as **clear()** or **create()**.  
+such as **isMovement()** or **isWallCheck()**.  
 See documentation page for details.  
   
 **[알림] 이 플러그인은 완벽하지 않으며 엔티티가 비정상적으로 움직일 수 있습니다 (Java8로 작성되었습니다)**  
@@ -19,7 +19,7 @@ See documentation page for details.
 많은 엔티티들은 주위를 돌아다니거나 뛰어다닙니다.  
 
 엔티티매니저는 또한 개발자 여러분을 위해  
-**clear()** 또는 **create()** 와 같은 간단한 API가 제공됩니다.  
+**isMovement()** 또는 **isWallCheck()** 와 같은 간단한 API가 제공됩니다.  
 자세한 사항은 아래를 보시기 바랍니다  
   
 ### Methods(메소드)
@@ -55,9 +55,9 @@ See documentation page for details.
 ``` java
 //Entity Method
 this.getServer().getDefaultLevel().getEntities().forEach((id, baseEntity) -> {
-    if(!baseEntity.isMovement()){
-        baseEntity.setMovement(true);
-    }
+    baseEntity.setWallCheck(false);
+    baseEntity.setMovement(!baseEntity.isMovement());
+
     if(baseEntity instanceof Monster){
         Monster mob = (Monster) baseEntity;
 
