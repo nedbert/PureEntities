@@ -1,15 +1,5 @@
 package milk.pureentities.entity.monster.walking;
 
-/**
- _______ .__   __. .___________. __  .___________.____    ____ .___  ___.      ___      .__   __.      ___       _______  _______ .______
- |   ____||  \ |  | |           ||  | |           |\   \  /   / |   \/   |     /   \     |  \ |  |     /   \     /  _____||   ____||   _  \
- |  |__   |   \|  | `---|  |----`|  | `---|  |----` \   \/   /  |  \  /  |    /  ^  \    |   \|  |    /  ^  \   |  |  __  |  |__   |  |_)  |
- |   __|  |  . `  |     |  |     |  |     |  |       \_    _/   |  |\/|  |   /  /_\  \   |  . `  |   /  /_\  \  |  | |_ | |   __|  |      /
- |  |____ |  |\   |     |  |     |  |     |  |         |  |     |  |  |  |  /  _____  \  |  |\   |  /  _____  \ |  |__| | |  |____ |  |\  \.
- |_______||__| \__|     |__|     |__|     |__|         |__|     |__|  |__| /__/     \__\ |__| \__| /__/     \__\ \______| |_______|| _| `._|
-
- */
-
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityCreature;
@@ -62,6 +52,21 @@ public class Creeper extends WalkingMonster implements EntityExplosive{
     }
 
     @Override
+    public void explode(){
+        ExplosionPrimeEvent ev = new ExplosionPrimeEvent(this, 2.8);
+        this.server.getPluginManager().callEvent(ev);
+
+        if(!ev.isCancelled()){
+            Explosion explosion = new Explosion(this, (float) ev.getForce(), this);
+            if(ev.isBlockBreaking()){
+                explosion.explodeA();
+            }
+            explosion.explodeB();
+        }
+        this.close();
+    }
+
+    @Override
     public boolean onUpdate(int currentTick){
         if(this.server.getDifficulty() < 1){
             this.close();
@@ -79,13 +84,6 @@ public class Creeper extends WalkingMonster implements EntityExplosive{
         int tickDiff = currentTick - this.lastUpdate;
         this.lastUpdate = currentTick;
         this.entityBaseTick(tickDiff);
-
-        if(!(this.baseTarget instanceof EntityCreature)){
-            this.bombTime -= tickDiff;
-            if(this.bombTime < 0){
-                this.bombTime = 0;
-            }
-        }
 
         if(!this.isMovement()){
             return true;
@@ -113,6 +111,7 @@ public class Creeper extends WalkingMonster implements EntityExplosive{
                     this.bombTime += tickDiff;
                     if(this.bombTime >= 64){
                         this.explode();
+                        return false;
                     }
                 }else if(Math.pow(this.x - target.x, 2) + Math.pow(this.z - target.z, 2) <= 1){
                     this.moveTime = 0;
@@ -192,21 +191,6 @@ public class Creeper extends WalkingMonster implements EntityExplosive{
     @Override
     public Vector3 updateMove(int tickDiff){
         return null;
-    }
-
-    @Override
-    public void explode(){
-        ExplosionPrimeEvent ev = new ExplosionPrimeEvent(this, 2.8);
-        this.server.getPluginManager().callEvent(ev);
-
-        if(!ev.isCancelled()){
-            Explosion explosion = new Explosion(this, (float) ev.getForce(), this);
-            if(ev.isBlockBreaking()){
-                explosion.explodeA();
-            }
-            explosion.explodeB();
-            this.close();
-        }
     }
 
     public void attackEntity(Entity player){

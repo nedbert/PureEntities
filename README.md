@@ -25,13 +25,6 @@ See documentation page for details.
 자세한 사항은 아래를 보시기 바랍니다  
   
 ### Method(메소드)
-  * PureEntities
-    * public static void clear()
-    * public static void clear(Class[] type, type)
-    * public static void clear(Class[] type, Level level)
-    * 
-    * public static BaseEntity create(int type, Position pos, Object... args)
-    * public static BaseEntity create(String type, Position pos, Object... args)
   * BaseEntity
     * public boolean isMovement()
     * public boolean isFriendly()
@@ -73,8 +66,4 @@ this.getServer().getDefaultLevel().getEntities().forEach((id, baseEntity) -> {
         mob.setMinDamage(10);
     }
 });
-
-//Create Entity
-Arrow arrow = (Arrow) PureEntities.create("Arrow", position, player, true);
-Zombie zombie = (Zombie) PureEntities.create("Zombie", position);
 ```

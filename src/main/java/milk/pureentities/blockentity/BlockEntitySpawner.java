@@ -1,36 +1,111 @@
 package milk.pureentities.blockentity;
 
+import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntitySpawnable;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ShortTag;
+import cn.nukkit.nbt.tag.*;
+import milk.pureentities.util.Utils;
 
 public class BlockEntitySpawner extends BlockEntitySpawnable{
-    //TODO: This isn't implemeted yet
 
     protected int entityId = -1;
-    protected int delay;
     protected int spawnRange;
-    protected int minSpawnDelay;
-    protected int maxSpawnDelay;
     protected int maxNearbyEntities;
     protected int requiredPlayerRange;
+
+    protected int delay = 0;
+
+    protected int minSpawnDelay;
+    protected int maxSpawnDelay;
 
     public BlockEntitySpawner(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
 
-        if(!this.namedTag.contains("Delay") || !(this.namedTag.get("Delay") instanceof ShortTag)){
-            this.namedTag.putShort("Delay", 120);
+        if(this.namedTag.contains("EntityId")){
+            this.entityId = this.namedTag.getInt("EntityId");
         }
 
         if(!this.namedTag.contains("SpawnRange") || !(this.namedTag.get("SpawnRange") instanceof ShortTag)){
             this.namedTag.putShort("SpawnRange", 25);
         }
 
-        this.entityId = this.namedTag.getInt("EntityId");
-        this.delay = this.namedTag.getInt("Delay");
+        if(!this.namedTag.contains("MinSpawnDelay") || !(this.namedTag.get("MinSpawnDelay") instanceof ShortTag)){
+            this.namedTag.putShort("MinSpawnDelay", 200);
+        }
+
+        if(!this.namedTag.contains("MaxSpawnDelay") || !(this.namedTag.get("MaxSpawnDelay") instanceof ShortTag)){
+            this.namedTag.putShort("MaxSpawnDelay", 8000);
+        }
+
+        if(!this.namedTag.contains("MaxNearbyEntities") || !(this.namedTag.get("MaxNearbyEntities") instanceof ShortTag)){
+            this.namedTag.putShort("MaxNearbyEntities", 25);
+        }
+
+        if(!this.namedTag.contains("RequiredPlayerRange") || !(this.namedTag.get("RequiredPlayerRange") instanceof ShortTag)){
+            this.namedTag.putShort("RequiredPlayerRange", 20);
+        }
+
         this.spawnRange = this.namedTag.getShort("SpawnRange");
+        this.minSpawnDelay = this.namedTag.getInt("MinSpawnDelay");
+        this.maxSpawnDelay = this.namedTag.getInt("MaxSpawnDelay");
+        this.maxNearbyEntities = this.namedTag.getShort("MaxNearbyEntities");
+        this.requiredPlayerRange = this.namedTag.getShort("RequiredPlayerRange");
+
+        this.scheduleUpdate();
+    }
+
+    @Override
+    public boolean onUpdate(){
+        if(this.closed){
+            return false;
+        }
+
+        if(this.delay++ >= Utils.rand(this.minSpawnDelay, this.maxSpawnDelay)){
+            this.delay = 0;
+
+            boolean isVaild = false;
+            for(Player player : this.server.getOnlinePlayers().values()){
+                if(player.distance(this) <= this.requiredPlayerRange){
+                    isVaild = true;
+                    break;
+                }
+            }
+
+            if(isVaild){
+                CompoundTag nbt = new CompoundTag()
+                    .putList(new ListTag<DoubleTag>("Pos")
+                        .add(new DoubleTag("", this.x + Utils.rand(-this.spawnRange, this.spawnRange)))
+                        .add(new DoubleTag("", this.y))
+                        .add(new DoubleTag("", this.z + Utils.rand(-this.spawnRange, this.spawnRange))))
+                    .putList(new ListTag<DoubleTag>("Motion")
+                        .add(new DoubleTag("", 0))
+                        .add(new DoubleTag("", 0))
+                        .add(new DoubleTag("", 0)))
+                    .putList(new ListTag<FloatTag>("Rotation")
+                        .add(new FloatTag("", 0))
+                        .add(new FloatTag("", 0)));
+
+                Entity entity = Entity.createEntity(this.entityId, this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4, true), nbt);
+                if(entity != null){
+                    entity.spawnToAll();
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void saveNBT(){
+        super.saveNBT();
+
+        this.namedTag.putInt("EntityId", this.entityId);
+        this.namedTag.putShort("SpawnRange", this.spawnRange);
+        this.namedTag.putShort("MinSpawnDelay", this.minSpawnDelay);
+        this.namedTag.putShort("MaxSpawnDelay", this.maxSpawnDelay);
+        this.namedTag.putShort("MaxNearbyEntities", this.maxNearbyEntities);
+        this.namedTag.putShort("RequiredPlayerRange", this.requiredPlayerRange);
     }
 
     @Override
@@ -47,6 +122,19 @@ public class BlockEntitySpawner extends BlockEntitySpawnable{
 
     public void setSpawnEntityType(int entityId){
         this.entityId = entityId;
+        this.spawnToAll();
+    }
+
+    public void setSpawnDelay(int minDelay, int maxDelay){
+        if(minDelay > maxDelay){
+            return;
+        }
+        this.minSpawnDelay = minDelay;
+        this.maxSpawnDelay = maxDelay;
+    }
+
+    public void setMaxNearbyEntities(int count){
+        this.maxNearbyEntities = count;
     }
 
 }

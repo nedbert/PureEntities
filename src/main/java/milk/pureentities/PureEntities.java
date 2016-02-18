@@ -15,9 +15,11 @@ import cn.nukkit.level.Location;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.nbt.tag.*;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.DoubleTag;
+import cn.nukkit.nbt.tag.FloatTag;
+import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.plugin.PluginBase;
-import cn.nukkit.utils.TextFormat;
 import milk.pureentities.blockentity.BlockEntitySpawner;
 import milk.pureentities.entity.animal.walking.*;
 import milk.pureentities.entity.monster.walking.*;
@@ -99,16 +101,16 @@ public class PureEntities extends PluginBase implements Listener{
         });
         Entity.registerEntity("FireBall", EntityFireBall.class);
 
-        this.getServer().getLogger().info(TextFormat.GOLD + "[PureEntities]All entities were registered");
+        Utils.logInfo("All entities were registered");
     }
 
     public void onEnable(){
         this.getServer().getPluginManager().registerEvents(this, this);
-        this.getServer().getLogger().info(TextFormat.GOLD + "[PureEntities]Plugin has been enabled");
+        Utils.logInfo("Plugin has been enabled");
     }
 
     public void onDisable(){
-        this.getServer().getLogger().info(TextFormat.GOLD + "[PureEntities]Plugin has been disable");
+        Utils.logInfo("Plugin has been disable");
     }
 
     @EventHandler
@@ -119,37 +121,26 @@ public class PureEntities extends PluginBase implements Listener{
 
         Item item = ev.getItem();
         Block target = ev.getBlock();
-        Player player = ev.getPlayer();
         Block block = target.getSide(ev.getFace());
+        if(item.getId() == Item.SPAWN_EGG && target.getId() == Item.MONSTER_SPAWNER){
+            ev.setCancelled(true);
 
-        if(item.getId() == Item.SPAWN_EGG){
-            /*if(target.getId() == Item.MONSTER_SPAWNER){
+            BlockEntity blockEntity = block.getLevel().getBlockEntity(block);
+            if(blockEntity != null && blockEntity instanceof BlockEntitySpawner){
+                ((BlockEntitySpawner) blockEntity).setSpawnEntityType(item.getDamage());
+            }else{
+                if(blockEntity != null){
+                    blockEntity.close();
+                }
                 CompoundTag nbt = new CompoundTag()
                     .putString("id", BlockEntity.MOB_SPAWNER)
                     .putInt("EntityId", item.getDamage())
                     .putInt("x", (int) target.x)
                     .putInt("y", (int) target.y)
-                    .putInt("z", (int) target.z)
-                    *//*.putShort("SpawnRange", 0)
-                    .putShort("Delay", 0)
-                    .putShort("MinSpawnDelay", 0)
-                    .putShort("MaxSpawnDelay", 0)
-                    .putShort("MaxNearbyEntities", 0)
-                    .putShort("RequiredPlayerRange", 0)*//*;
+                    .putInt("z", (int) target.z);
 
                 new BlockEntitySpawner(block.getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
-            }else{*/
-                Entity entity = create(item.getDamage(), block);
-                if(entity != null){
-                    entity.spawnToAll();
-                }
-
-                if(player.isSurvival()){
-                    item.count--;
-                    player.getInventory().setItemInHand(item);
-                }
-                ev.setCancelled();
-            //}
+            }
         }
     }
 
@@ -171,29 +162,33 @@ public class PureEntities extends PluginBase implements Listener{
                 block.getSide(Vector3.SIDE_DOWN).getId() == Item.SNOW_BLOCK
                 && block.getSide(Vector3.SIDE_DOWN, 2).getId() == Item.SNOW_BLOCK
             ){
-                for(int y = 0; y < 3; y++){
+                for(int y = 1; y < 3; y++){
                     block.getLevel().setBlock(block.add(0, -y, 0), new BlockAir());
                 }
-                create("SnowGolem", block.add(0.5, -2, 0.5));
+                Entity entity = create("SnowGolem", block.add(0.5, -2, 0.5));
+                if(entity != null){
+                    entity.spawnToAll();
+                }
+                ev.setCancelled(true);
             }
         }
     }
 
     @EventHandler
     public void BlockBreakEvent(BlockBreakEvent ev){
-        Block pos = ev.getBlock();
         if(ev.isCancelled()){
             return;
         }
 
+        Block block = ev.getBlock();
         if(
-            ev.getBlock().getId() == Block.STONE
-            || ev.getBlock().getId() == Block.STONE_BRICK
-            || ev.getBlock().getId() == Block.STONE_WALL
-            || ev.getBlock().getId() == Block.STONE_BRICK_STAIRS
+            block.getId() == Block.STONE
+            || block.getId() == Block.STONE_BRICK
+            || block.getId() == Block.STONE_WALL
+            || block.getId() == Block.STONE_BRICK_STAIRS
         ){
             if(ev.getBlock().getLightLevel() < 12 && Utils.rand(1,3) < 2){
-                Silverfish entity = (Silverfish) create("Silverfish", pos.add(0.5, 0, 0.5));
+                Silverfish entity = (Silverfish) create("Silverfish", block.add(0.5, 0, 0.5));
                 if(entity != null){
                     entity.spawnToAll();
                 }
