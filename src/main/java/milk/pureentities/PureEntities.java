@@ -1,6 +1,5 @@
 package milk.pureentities;
 
-import cn.nukkit.Player;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
@@ -152,16 +151,10 @@ public class PureEntities extends PluginBase implements Listener{
 
         Block block = ev.getBlock();
         if(block.getId() == Item.JACK_O_LANTERN || block.getId() == Item.PUMPKIN){
-            //TODO: spawn IronGolem
-            /*if(
-                block.getSide(Vector3.SIDE_DOWN).getId() == Item.IRON_BLOCK
-                && block.getSide(Vector3.SIDE_DOWN, 2).getId() == Item.IRON_BLOCK
-            ){
-
-            }else */if(
+            if(
                 block.getSide(Vector3.SIDE_DOWN).getId() == Item.SNOW_BLOCK
-                && block.getSide(Vector3.SIDE_DOWN, 2).getId() == Item.SNOW_BLOCK
-            ){
+                    && block.getSide(Vector3.SIDE_DOWN, 2).getId() == Item.SNOW_BLOCK
+                ){
                 for(int y = 1; y < 3; y++){
                     block.getLevel().setBlock(block.add(0, -y, 0), new BlockAir());
                 }
@@ -170,7 +163,12 @@ public class PureEntities extends PluginBase implements Listener{
                     entity.spawnToAll();
                 }
                 ev.setCancelled(true);
-            }
+            }/*else if(
+                block.getSide(Vector3.SIDE_DOWN).getId() == Item.IRON_BLOCK
+                && block.getSide(Vector3.SIDE_DOWN, 2).getId() == Item.IRON_BLOCK
+            ){
+                //TODO: spawn IronGolem
+            }*/
         }
     }
 
@@ -182,16 +180,16 @@ public class PureEntities extends PluginBase implements Listener{
 
         Block block = ev.getBlock();
         if(
-            block.getId() == Block.STONE
-            || block.getId() == Block.STONE_BRICK
-            || block.getId() == Block.STONE_WALL
-            || block.getId() == Block.STONE_BRICK_STAIRS
+            (
+                block.getId() == Block.STONE
+                || block.getId() == Block.STONE_BRICK
+                || block.getId() == Block.STONE_WALL
+                || block.getId() == Block.STONE_BRICK_STAIRS
+            ) && block.getLightLevel() < 12 && Utils.rand(1,3) < 2
         ){
-            if(ev.getBlock().getLightLevel() < 12 && Utils.rand(1,3) < 2){
-                Silverfish entity = (Silverfish) create("Silverfish", block.add(0.5, 0, 0.5));
-                if(entity != null){
-                    entity.spawnToAll();
-                }
+            Silverfish entity = (Silverfish) create("Silverfish", block.add(0.5, 0, 0.5));
+            if(entity != null){
+                entity.spawnToAll();
             }
         }
     }
