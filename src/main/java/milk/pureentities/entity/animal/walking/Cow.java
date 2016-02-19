@@ -23,12 +23,23 @@ public class Cow extends WalkingAnimal{
 
     @Override
     public float getWidth(){
-        return 1.45f;
+        return 0.9f;
     }
 
     @Override
     public float getHeight(){
-        return 1.12f;
+        if(this.isBaby()){
+            return 0.65f;
+        }
+        return 1.3f;
+    }
+
+    @Override
+    public float getEyeHeight(){
+        if(this.isBaby()){
+            return 0.65f;
+        }
+        return 1.2f;
     }
 
     public String getName(){

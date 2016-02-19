@@ -22,6 +22,7 @@ import java.util.List;
 
 public abstract class BaseEntity extends EntityCreature{
 
+    protected int stayTime = 0;
     protected int moveTime = 0;
 
     protected Vector3 baseTarget = null;
@@ -123,8 +124,9 @@ public abstract class BaseEntity extends EntityCreature{
             this.lastZ = this.z;
             this.lastYaw = this.yaw;
             this.lastPitch = this.pitch;
+
+            this.level.addEntityMovement(this.chunk.getX(), this.chunk.getZ(), this.id, this.x, this.y, this.z, this.yaw, this.pitch);
         }
-        this.level.addEntityMovement(this.chunk.getX(), this.chunk.getZ(), this.id, this.x, this.y, this.z, this.yaw, this.pitch);
     }
 
     public boolean targetOption(EntityCreature creature, double distance){
@@ -253,6 +255,8 @@ public abstract class BaseEntity extends EntityCreature{
         if(source.isCancelled() || !(source instanceof EntityDamageByEntityEvent)){
             return;
         }
+
+        this.baseTarget = null;
 
         Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
         Vector3 motion = new Vector3(this.x - damager.x, this.y - damager.y, this.z - damager.z).normalize();

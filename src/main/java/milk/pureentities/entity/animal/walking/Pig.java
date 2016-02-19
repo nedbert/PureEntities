@@ -23,12 +23,17 @@ public class Pig extends WalkingAnimal implements EntityRideable{
 
     @Override
     public float getWidth(){
-        return 1.45f;
+        return 0.9f;
     }
 
     @Override
     public float getHeight(){
-        return 1.12f;
+        return 0.9f;
+    }
+
+    @Override
+    public float getEyeHeight(){
+        return 0.9f;
     }
 
     public String getName(){

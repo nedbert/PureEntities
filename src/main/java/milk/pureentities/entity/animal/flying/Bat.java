@@ -7,7 +7,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import milk.pureentities.entity.animal.FlyingAnimal;
 
 public class Bat extends FlyingAnimal{
-    //TODO: This isn't implemeted yet
+    //TODO: This isn't implemented yet
     public static final int NETWORK_ID = 13;
 
     public Bat(FullChunk chunk, CompoundTag nbt){

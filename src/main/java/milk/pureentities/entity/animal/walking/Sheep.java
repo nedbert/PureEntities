@@ -23,12 +23,12 @@ public class Sheep extends WalkingAnimal{
 
     @Override
     public float getWidth(){
-        return 1.45f;
+        return 0.9f;
     }
 
     @Override
     public float getHeight(){
-        return 1.12f;
+        return 1.3f;
     }
 
     @Override

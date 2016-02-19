@@ -1,6 +1,8 @@
 package milk.pureentities.entity.monster.flying;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Location;
@@ -52,8 +54,16 @@ public class Ghast extends FlyingMonster{
         return "Ghast";
     }
 
+    public boolean targetOption(EntityCreature creature, double distance){
+        if(creature instanceof Player){
+            Player player = (Player) creature;
+            return player.spawned && player.isAlive() && !player.closed && player.isSurvival() && distance <= 81;
+        }
+        return creature.isAlive() && !creature.closed && distance <= 81;
+    }
+
 	public void attackEntity(Entity player){
-        if(this.attackDelay > 30 && Utils.rand(1, 32) < 4 && this.distanceSquared(player) <= 10000){
+        if(this.attackDelay > 30 && Utils.rand(1, 32) < 4 && this.distance(player) <= 100){
             this.attackDelay = 0;
 
             double f = 2;
@@ -75,9 +85,9 @@ public class Ghast extends FlyingMonster{
             EntityFireBall fireball = (EntityFireBall) k;
             fireball.setExplode(true);
             fireball.setMotion(new Vector3(
-                -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * f * f,
-                -Math.sin(pitch / 180 * Math.PI) * f * f,
-                Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * f * f
+                -Math.sin(Math.toDegrees(yaw)) * Math.cos(Math.toDegrees(pitch)) * f * f,
+                -Math.sin(Math.toDegrees(pitch)) * f * f,
+                Math.cos(Math.toDegrees(yaw)) * Math.cos(Math.toDegrees(pitch)) * f * f
             ));
 
             ProjectileLaunchEvent launch = new ProjectileLaunchEvent(fireball);

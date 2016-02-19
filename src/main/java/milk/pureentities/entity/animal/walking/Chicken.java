@@ -28,7 +28,18 @@ public class Chicken extends WalkingAnimal{
 
     @Override
     public float getHeight(){
-        return 0.75f;
+        if(this.isBaby()){
+            return 0.51f;
+        }
+        return 0.7f;
+    }
+
+    @Override
+    public float getEyeHeight(){
+        if(this.isBaby()){
+            return 0.51f;
+        }
+        return 0.7f;
     }
 
     @Override
