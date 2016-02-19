@@ -2,7 +2,7 @@
   
 Author(제작자): **[SW-Team](https://github.com/SW-Team)**  
   
-자매품(PMMP): [PureEntities-PHP](https://github.com/milk0417/PureEntities)  
+자매품(PMMP): [PureEntities-PMMP](https://github.com/milk0417/PureEntities)  
 추가 플러그인(Sub Module): [EntityManager](https://github.com/SW-Team/EntityManager)  
   
 **[NOTICE] This plug-in is not perfect, the entity may move abnormally (It was written in Java8)**
