@@ -55,9 +55,9 @@ public class Skeleton extends WalkingMonster{
             double yaw = this.yaw + Utils.rand(-220, 220) / 10;
             double pitch = this.pitch + Utils.rand(-120, 120) / 10;
             Location pos = new Location(
-                this.x - Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * 0.5,
+                this.x - Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * 0.5,
                 this.y + this.getHeight() - 0.18,
-                this.z + Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * 0.5,
+                this.z + Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * 0.5,
                 yaw,
                 pitch,
                 this.level
@@ -69,9 +69,9 @@ public class Skeleton extends WalkingMonster{
 
             EntityArrow arrow = (EntityArrow) k;
             arrow.setMotion(new Vector3(
-                -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * f * f,
-                -Math.sin(pitch / 180 * Math.PI) * f * f,
-                Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * f * f
+                -Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * f * f,
+                -Math.sin(Math.toRadians(pitch)) * f * f,
+                Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * f * f
             ));
 
             EntityShootBowEvent ev = new EntityShootBowEvent(this, Item.get(Item.ARROW, 0, 1), arrow, f);

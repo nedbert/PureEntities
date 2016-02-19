@@ -66,9 +66,9 @@ public class SnowGolem extends WalkingMonster{
             double yaw = this.yaw + Utils.rand(-220, 220) / 10;
             double pitch = this.pitch + Utils.rand(-120, 120) / 10;
             Location location = new Location(
-                this.x + (-Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * 0.5),
+                this.x + (-Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * 0.5),
                 this.getEyeHeight(),
-                this.z +(Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * 0.5),
+                this.z +(Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * 0.5),
                 yaw,
                 pitch,
                 this.level
@@ -80,15 +80,15 @@ public class SnowGolem extends WalkingMonster{
 
             EntitySnowball snowball = (EntitySnowball) k;
             snowball.setMotion(new Vector3(
-                -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * f * f,
-                -Math.sin(pitch / 180 * Math.PI) * f * f,
-                Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * f * f
+                -Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * f * f,
+                -Math.sin(Math.toRadians(pitch)) * f * f,
+                Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * f * f
             ));
 
             Vector3 motion = new Vector3(
-                -Math.sin(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * f * f,
-                -Math.sin(pitch / 180 * Math.PI) * f * f,
-                Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI) * f * f
+                -Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * f * f,
+                -Math.sin(Math.toRadians(pitch)) * f * f,
+                Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * f * f
             ).multiply(f);
             snowball.setMotion(motion);
 
