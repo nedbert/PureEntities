@@ -4,7 +4,6 @@ import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Location;
@@ -136,14 +135,15 @@ public class Blaze extends FlyingMonster{
             double z = this.baseTarget.z - this.z;
 
             double diff = Math.abs(x) + Math.abs(z);
-            if(this.distance(this.baseTarget) <= (this.getWidth() + 0.0d) / 2 + 0.05){
+            double distance = this.distance(this.baseTarget);
+            if(distance <= (this.getWidth() + 0.0d) / 2 + 0.05){
                 this.motionX = 0;
                 this.motionZ = 0;
             }else{
                 if(this.baseTarget instanceof EntityCreature){
                     this.motionX = 0;
                     this.motionZ = 0;
-                    if(this.distance(this.baseTarget) > this.y - this.getLevel().getHighestBlockAt((int) this.x, (int) this.z)){
+                    if(distance > this.y - this.getLevel().getHighestBlockAt((int) this.x, (int) this.z)){
                         this.motionY = this.getGravity();
                     }else{
                         this.motionY = 0;
@@ -199,8 +199,8 @@ public class Blaze extends FlyingMonster{
                     AxisAlignedBB bb = block2.getBoundingBox();
                     if(
                         this.motionY > -this.getGravity() * 4
-                            && (block2.canPassThrough() || (bb == null || bb.maxY - this.y <= 1))
-                        ){
+                        && (block2.canPassThrough() || (bb == null || bb.maxY - this.y <= 1))
+                    ){
                         isJump = true;
                         if(this.motionY >= 0.3){
                             this.motionY += this.getGravity();
@@ -234,11 +234,11 @@ public class Blaze extends FlyingMonster{
             this.attackDelay = 0;
 
             double f = 1.2;
-            double yaw = this.yaw + Utils.rand(-220, 220) / 10;
-            double pitch = this.pitch + Utils.rand(-120, 120) / 10;
+            double yaw = this.yaw + Utils.rand(-150, 150) / 10;
+            double pitch = this.pitch + Utils.rand(-75, 75) / 10;
             Location pos = new Location(
                 this.x - Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * 0.5,
-                this.y + this.getHeight() - 0.18,
+                this.getEyeHeight(),
                 this.z + Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * 0.5,
                 yaw,
                 pitch,
