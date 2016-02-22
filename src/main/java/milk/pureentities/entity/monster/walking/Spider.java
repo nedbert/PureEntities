@@ -16,6 +16,8 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import milk.pureentities.entity.monster.WalkingMonster;
 import milk.pureentities.util.Utils;
 
+import java.util.HashMap;
+
 public class Spider extends WalkingMonster{
     public static final int NETWORK_ID = 35;
 
@@ -98,12 +100,12 @@ public class Spider extends WalkingMonster{
             double z = this.baseTarget.z - this.z;
 
             Vector3 target = this.baseTarget;
+            double diff = Math.abs(x) + Math.abs(z);
             double distance = Math.sqrt(Math.pow(this.x - target.x, 2) + Math.pow(this.z - target.z, 2));
             if(distance <= 2){
                 if(target instanceof EntityCreature){
                     if(distance <= (this.getWidth() + 0.0d) / 2 + 0.05){
                         if(this.attackDelay < 10){
-                            double diff = Math.abs(x) + Math.abs(z);
                             this.motionX = this.getSpeed() * 0.1 * (x / diff);
                             this.motionZ = this.getSpeed() * 0.1 * (z / diff);
                         }else{
@@ -112,7 +114,6 @@ public class Spider extends WalkingMonster{
                             this.attackEntity((Entity) target);
                         }
                     }else{
-                        double diff = Math.abs(x) + Math.abs(z);
                         if(!this.isFriendly()){
                             this.motionY = 0.15;
                         }
@@ -123,11 +124,10 @@ public class Spider extends WalkingMonster{
                     this.moveTime = 0;
                 }
             }else{
-                double diff = Math.abs(x) + Math.abs(z);
                 this.motionX = this.getSpeed() * 0.15 * (x / diff);
                 this.motionZ = this.getSpeed() * 0.15 * (z / diff);
             }
-            this.yaw = Math.toDegrees(-Math.atan2(this.motionX, this.motionZ));
+            this.yaw = Math.toDegrees(-Math.atan2(x / diff, z / diff));
             this.pitch = y == 0 ? 0 : Math.toDegrees(-Math.atan2(y, Math.sqrt(x * x + z * z)));
         }
 
@@ -196,9 +196,43 @@ public class Spider extends WalkingMonster{
 
     @Override
     public void attackEntity(Entity player){
-        if(this.attackDelay > 10 && ((this.isFriendly() && !(player instanceof Player)) || !this.isFriendly())){
+        if(((this.isFriendly() && !(player instanceof Player)) || !this.isFriendly())){
             this.attackDelay = 0;
-            player.attack(new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_ENTITY_ATTACK, this.getDamage()));
+            HashMap<Integer, Float> damage = new HashMap<>();
+            damage.put(EntityDamageEvent.MODIFIER_BASE, (float) this.getDamage());
+
+            if(player instanceof Player){
+                HashMap<Integer, Float> armorValues = new HashMap<Integer, Float>() {{
+                    put(Item.LEATHER_CAP, 1f);
+                    put(Item.LEATHER_TUNIC, 3f);
+                    put(Item.LEATHER_PANTS, 2f);
+                    put(Item.LEATHER_BOOTS, 1f);
+                    put(Item.CHAIN_HELMET, 1f);
+                    put(Item.CHAIN_CHESTPLATE, 5f);
+                    put(Item.CHAIN_LEGGINGS, 4f);
+                    put(Item.CHAIN_BOOTS, 1f);
+                    put(Item.GOLD_HELMET, 1f);
+                    put(Item.GOLD_CHESTPLATE, 5f);
+                    put(Item.GOLD_LEGGINGS, 3f);
+                    put(Item.GOLD_BOOTS, 1f);
+                    put(Item.IRON_HELMET, 2f);
+                    put(Item.IRON_CHESTPLATE, 6f);
+                    put(Item.IRON_LEGGINGS, 5f);
+                    put(Item.IRON_BOOTS, 2f);
+                    put(Item.DIAMOND_HELMET, 3f);
+                    put(Item.DIAMOND_CHESTPLATE, 8f);
+                    put(Item.DIAMOND_LEGGINGS, 6f);
+                    put(Item.DIAMOND_BOOTS, 3f);
+                }};
+
+                float points = 0;
+                for (Item i : ((Player) player).getInventory().getArmorContents()) {
+                    points += armorValues.getOrDefault(i.getId(), 0f);
+                }
+
+                damage.put(EntityDamageEvent.MODIFIER_ARMOR, (float) (damage.getOrDefault(EntityDamageEvent.MODIFIER_ARMOR, 0f) - Math.floor(damage.getOrDefault(EntityDamageEvent.MODIFIER_BASE, 1f) * points * 0.04)));
+            }
+            player.attack(new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_ENTITY_ATTACK, damage));
         }
     }
 
