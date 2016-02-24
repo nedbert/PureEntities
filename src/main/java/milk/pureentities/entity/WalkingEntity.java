@@ -79,6 +79,12 @@ public abstract class WalkingEntity extends BaseEntity{
             this.motionY = this.getGravity() * 4;
             return true;
         }
+
+        if(this.stayTime > 0){
+            return false;
+        }
+
+        //TODO: check Block
         return false;
     }
 
@@ -114,18 +120,16 @@ public abstract class WalkingEntity extends BaseEntity{
         }
 
         double dx = this.motionX * tickDiff;
-        double dy = this.motionY * tickDiff;
         double dz = this.motionZ * tickDiff;
-
-        Vector3 target = this.baseTarget;
         if(this.stayTime > 0){
+            boolean isJump = this.checkJump(dx, dz);
             this.stayTime -= tickDiff;
 
-            this.move(0, dy, 0);
-            if(this.onGround){
-                this.motionY = 0;
-            }else{
-                if(this.motionY > -this.getGravity() * 4){
+            this.move(0, this.motionY * tickDiff, 0);
+            if(!isJump){
+                if(this.onGround){
+                    this.motionY = 0;
+                }else if(this.motionY > -this.getGravity() * 4){
                     this.motionY = -this.getGravity() * 4;
                 }else{
                     this.motionY -= this.getGravity() * tickDiff;
@@ -134,9 +138,8 @@ public abstract class WalkingEntity extends BaseEntity{
         }else{
             boolean isJump = this.checkJump(dx, dz);
 
-            dy = this.motionY;
             Vector2 be = new Vector2(this.x + dx, this.z + dz);
-            this.move(dx, dy, dz);
+            this.move(dx, this.motionY * tickDiff, dz);
             Vector2 af = new Vector2(this.x, this.z);
 
             if((be.x != af.x || be.y != af.y) && !isJump){
@@ -154,7 +157,7 @@ public abstract class WalkingEntity extends BaseEntity{
             }
         }
         this.updateMovement();
-        return target;
+        return this.baseTarget;
     }
 
 }

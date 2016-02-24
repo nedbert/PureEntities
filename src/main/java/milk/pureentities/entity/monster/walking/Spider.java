@@ -131,58 +131,41 @@ public class Spider extends WalkingMonster{
             this.pitch = y == 0 ? 0 : Math.toDegrees(-Math.atan2(y, Math.sqrt(x * x + z * z)));
         }
 
-        boolean isJump = false;
         double dx = this.motionX * tickDiff;
-        double dy = this.motionY * tickDiff;
         double dz = this.motionZ * tickDiff;
+        if(this.stayTime > 0){
+            boolean isJump = this.checkJump(dx, dz);
+            this.stayTime -= tickDiff;
 
-        Vector2 be = new Vector2(this.x + dx, this.z + dz);
-        this.move(dx, dy, dz);
-        Vector2 af = new Vector2(this.x, this.z);
-
-        if(be.x != af.x || be.y != af.y){
-            int x = 0;
-            int z = 0;
-            if(be.x - af.x != 0){
-                x = be.x > af.x ? 1 : -1;
-            }
-            if(be.y - af.y != 0){
-                z = be.y > af.y ? 1 : -1;
-            }
-
-            Vector3 vec = new Vector3(NukkitMath.floorDouble(be.x), this.y, NukkitMath.floorDouble(be.y));
-            Block block = this.level.getBlock(vec.add(x, 0, z));
-            Block block2 = this.level.getBlock(vec.add(x, 1, z));
-            if(!block.canPassThrough()){
-                AxisAlignedBB bb = block2.getBoundingBox();
-                if(
-                    this.motionY > -this.getGravity() * 4
-                    && (block2.canPassThrough() || (bb == null || bb.maxY - this.y <= 1))
-                ){
-                    isJump = true;
-                    if(this.motionY >= 0.3){
-                        this.motionY += this.getGravity();
-                    }else{
-                        this.motionY = 0.3;
-                    }
+            this.move(0, this.motionY * tickDiff, 0);
+            if(!isJump){
+                if(this.onGround){
+                    this.motionY = 0;
+                }else if(this.motionY > -this.getGravity() * 4){
+                    this.motionY = -this.getGravity() * 4;
                 }else{
-                    isJump = true;
-                    this.motionY = 0.15;
+                    this.motionY -= this.getGravity() * tickDiff;
                 }
+            }
+        }else{
+            boolean isJump = this.checkJump(dx, dz);
+
+            Vector2 be = new Vector2(this.x + dx, this.z + dz);
+            this.move(dx, this.motionY * tickDiff, dz);
+            Vector2 af = new Vector2(this.x, this.z);
+
+            if((be.x != af.x || be.y != af.y) && !isJump){
+                this.moveTime -= 90 * tickDiff;
             }
 
             if(!isJump){
-                this.moveTime -= 90 * tickDiff;
-            }
-        }
-
-        if(this.onGround && !isJump){
-            this.motionY = 0;
-        }else if(!isJump){
-            if(this.motionY > -this.getGravity() * 4){
-                this.motionY = -this.getGravity() * 4;
-            }else{
-                this.motionY -= this.getGravity() * tickDiff;
+                if(this.onGround){
+                    this.motionY = 0;
+                }else if(this.motionY > -this.getGravity() * 4){
+                    this.motionY = -this.getGravity() * 4;
+                }else{
+                    this.motionY -= this.getGravity() * tickDiff;
+                }
             }
         }
         this.updateMovement();
