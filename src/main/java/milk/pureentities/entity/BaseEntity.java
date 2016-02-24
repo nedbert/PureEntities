@@ -16,6 +16,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.potion.Effect;
 import milk.pureentities.entity.monster.Monster;
+import milk.pureentities.entity.monster.flying.Blaze;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -261,13 +262,14 @@ public abstract class BaseEntity extends EntityCreature{
             return;
         }
 
+        this.stayTime = 0;
         this.baseTarget = null;
 
         Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
         Vector3 motion = new Vector3(this.x - damager.x, this.y - damager.y, this.z - damager.z).normalize();
         this.motionX = motion.x * 0.19;
         this.motionZ = motion.z * 0.19;
-        if(this instanceof FlyingEntity){
+        if(this instanceof FlyingEntity && !(this instanceof Blaze)){
             this.motionY = motion.y * 0.19;
         }else{
             this.motionY = 0.5;
@@ -275,9 +277,7 @@ public abstract class BaseEntity extends EntityCreature{
     }
 
     @Override
-    public void knockBack(Entity damager, double damage, double x, double z, double base){
-
-    }
+    public void knockBack(Entity damager, double damage, double x, double z, double base){}
 
     @Override
     public boolean move(double dx, double dy, double dz){
