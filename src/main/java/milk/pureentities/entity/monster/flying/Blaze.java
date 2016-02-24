@@ -101,7 +101,7 @@ public class Blaze extends FlyingMonster{
             x = Utils.rand(10, 30);
             z = Utils.rand(10, 30);
             this.baseTarget = this.add(Utils.rand() ? x : -x, Utils.rand(-20, 20) / 10, Utils.rand() ? z : -z);
-        }else if(Utils.rand(1, 370) == 1){
+        }else if(Utils.rand(1, 410) == 1){
             x = Utils.rand(10, 30);
             z = Utils.rand(10, 30);
             this.stayTime = Utils.rand(90, 400);
@@ -113,6 +113,11 @@ public class Blaze extends FlyingMonster{
             this.moveTime = Utils.rand(300, 1200);
             this.baseTarget = this.add(Utils.rand() ? x : -x, 0, Utils.rand() ? z : -z);
         }
+    }
+
+    public boolean checkJump(double dx, double dz){
+        //TODO
+        return false;
     }
 
     @Override
@@ -165,54 +170,26 @@ public class Blaze extends FlyingMonster{
         if(this.stayTime > 0){
             this.stayTime -= tickDiff;
 
-            this.move(dx, dy, dz);
+            this.move(0, dy, 0);
             if(this.onGround){
                 this.motionY = 0;
             }else{
                 if(this.motionY > -this.getGravity() * 4){
                     this.motionY = -this.getGravity() * 4;
                 }else{
-                    this.motionY -= this.getGravity();
+                    this.motionY -= this.getGravity() * tickDiff;
                 }
             }
         }else{
-            boolean isJump = false;
+            boolean isJump = this.checkJump(dx, dz);
 
+            dy = this.motionY;
             Vector2 be = new Vector2(this.x + dx, this.z + dz);
             this.move(dx, dy, dz);
             Vector2 af = new Vector2(this.x, this.z);
 
-            if(be.x != af.x || be.y != af.y){
-                int x = 0;
-                int z = 0;
-                if(be.x - af.x != 0){
-                    x = be.x > af.x ? 1 : -1;
-                }
-                if(be.y - af.y != 0){
-                    z = be.y > af.y ? 1 : -1;
-                }
-
-                Vector3 vec = new Vector3(NukkitMath.floorDouble(be.x) + x, this.y, NukkitMath.floorDouble(be.y) + z);
-                Block block = this.level.getBlock(vec.add(x, 0, z));
-                Block block2 = this.level.getBlock(vec.add(x, 1, z));
-                if(!block.canPassThrough()){
-                    AxisAlignedBB bb = block2.getBoundingBox();
-                    if(
-                        this.motionY > -this.getGravity() * 4
-                        && (block2.canPassThrough() || (bb == null || bb.maxY - this.y <= 1))
-                    ){
-                        isJump = true;
-                        if(this.motionY >= 0.3){
-                            this.motionY += this.getGravity();
-                        }else{
-                            this.motionY = 0.3;
-                        }
-                    }
-                }
-
-                if(!isJump){
-                    this.moveTime -= 90 * tickDiff;
-                }
+            if((be.x != af.x || be.y != af.y) && !isJump){
+                this.moveTime -= 90 * tickDiff;
             }
 
             if(this.onGround && !isJump){
@@ -221,7 +198,7 @@ public class Blaze extends FlyingMonster{
                 if(this.motionY > -this.getGravity() * 4){
                     this.motionY = -this.getGravity() * 4;
                 }else{
-                    this.motionY -= this.getGravity();
+                    this.motionY -= this.getGravity() * tickDiff;
                 }
             }
         }
@@ -238,7 +215,7 @@ public class Blaze extends FlyingMonster{
             double pitch = this.pitch + Utils.rand(-75, 75) / 10;
             Location pos = new Location(
                 this.x - Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * 0.5,
-                this.getEyeHeight(),
+                this.y + this.getEyeHeight(),
                 this.z + Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * 0.5,
                 yaw,
                 pitch,

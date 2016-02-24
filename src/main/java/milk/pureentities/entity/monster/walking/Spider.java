@@ -182,7 +182,7 @@ public class Spider extends WalkingMonster{
             if(this.motionY > -this.getGravity() * 4){
                 this.motionY = -this.getGravity() * 4;
             }else{
-                this.motionY -= this.getGravity();
+                this.motionY -= this.getGravity() * tickDiff;
             }
         }
         this.updateMovement();

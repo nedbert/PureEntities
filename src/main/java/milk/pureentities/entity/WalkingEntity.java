@@ -1,11 +1,8 @@
 package milk.pureentities.entity;
 
-import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockLiquid;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector2;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.entity.EntityCreature;
@@ -62,7 +59,7 @@ public abstract class WalkingEntity extends BaseEntity{
             x = Utils.rand(10, 30);
             z = Utils.rand(10, 30);
             this.baseTarget = this.add(Utils.rand() ? x : -x, Utils.rand(-20, 20) / 10, Utils.rand() ? z : -z);
-        }else if(Utils.rand(1, 370) == 1){
+        }else if(Utils.rand(1, 410) == 1){
             x = Utils.rand(10, 30);
             z = Utils.rand(10, 30);
             this.stayTime = Utils.rand(90, 400);
@@ -74,6 +71,13 @@ public abstract class WalkingEntity extends BaseEntity{
             this.moveTime = Utils.rand(300, 1200);
             this.baseTarget = this.add(Utils.rand() ? x : -x, 0, Utils.rand() ? z : -z);
         }
+    }
+
+    protected boolean checkJump(double dx, double dz){
+        if(this.getLevelBlock() instanceof BlockLiquid){
+            this.motionY = this.getGravity() * 4;
+        }
+        return false;
     }
 
     public Vector3 updateMove(int tickDiff){
@@ -107,62 +111,34 @@ public abstract class WalkingEntity extends BaseEntity{
             this.pitch = y == 0 ? 0 : Math.toDegrees(-Math.atan2(y, Math.sqrt(x * x + z * z)));
         }
 
-        Vector3 target = this.baseTarget;
-
         double dx = this.motionX * tickDiff;
         double dy = this.motionY * tickDiff;
         double dz = this.motionZ * tickDiff;
+
+        Vector3 target = this.baseTarget;
         if(this.stayTime > 0){
             this.stayTime -= tickDiff;
 
-            this.move(dx, dy, dz);
+            this.move(0, dy, 0);
             if(this.onGround){
                 this.motionY = 0;
             }else{
                 if(this.motionY > -this.getGravity() * 4){
                     this.motionY = -this.getGravity() * 4;
                 }else{
-                    this.motionY -= this.getGravity();
+                    this.motionY -= this.getGravity() * tickDiff;
                 }
             }
         }else{
-            boolean isJump = false;
+            boolean isJump = this.checkJump(dx, dz);
 
+            dy = this.motionY;
             Vector2 be = new Vector2(this.x + dx, this.z + dz);
             this.move(dx, dy, dz);
             Vector2 af = new Vector2(this.x, this.z);
 
-            if(be.x != af.x || be.y != af.y){
-                int x = 0;
-                int z = 0;
-                if(be.x - af.x != 0){
-                    x = be.x > af.x ? 1 : -1;
-                }
-                if(be.y - af.y != 0){
-                    z = be.y > af.y ? 1 : -1;
-                }
-
-                Vector3 vec = new Vector3(NukkitMath.floorDouble(be.x), this.y, NukkitMath.floorDouble(be.y));
-                Block block = this.level.getBlock(vec.add(x, 0, z));
-                Block block2 = this.level.getBlock(vec.add(x, 1, z));
-                if(!block.canPassThrough()){
-                    AxisAlignedBB bb = block2.getBoundingBox();
-                    if(this.motionY > -this.getGravity() * 4 && (block2.canPassThrough() || (bb == null || bb.maxY - this.y <= 1))){
-                        isJump = true;
-                        if(this.motionY >= 0.3){
-                            this.motionY += this.getGravity();
-                        }else{
-                            this.motionY = 0.3;
-                        }
-                    }else if(this.level.getBlock(vec).getId() == Item.LADDER){
-                        isJump = true;
-                        this.motionY = 0.15;
-                    }
-                }
-
-                if(!isJump){
-                    this.moveTime -= 90 * tickDiff;
-                }
+            if((be.x != af.x || be.y != af.y) && !isJump){
+                this.moveTime -= 90 * tickDiff;
             }
 
             if(this.onGround && !isJump){
@@ -171,7 +147,7 @@ public abstract class WalkingEntity extends BaseEntity{
                 if(this.motionY > -this.getGravity() * 4){
                     this.motionY = -this.getGravity() * 4;
                 }else{
-                    this.motionY -= this.getGravity();
+                    this.motionY -= this.getGravity() * tickDiff;
                 }
             }
         }

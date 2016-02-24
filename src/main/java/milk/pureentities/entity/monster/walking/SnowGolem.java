@@ -67,7 +67,7 @@ public class SnowGolem extends WalkingMonster{
             double pitch = this.pitch + Utils.rand(-120, 120) / 10;
             Location location = new Location(
                 this.x + (-Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * 0.5),
-                this.getEyeHeight(),
+                this.y + this.getEyeHeight(),
                 this.z +(Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * 0.5),
                 yaw,
                 pitch,

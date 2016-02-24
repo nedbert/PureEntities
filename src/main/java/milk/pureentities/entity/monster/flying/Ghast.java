@@ -71,7 +71,7 @@ public class Ghast extends FlyingMonster{
             double pitch = this.pitch + Utils.rand(-120, 120) / 10;
             Location pos = new Location(
                 this.x - Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * 0.5,
-                this.y + this.getHeight() - 0.18,
+                this.y + this.getEyeHeight(),
                 this.z + Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * 0.5,
                 yaw,
                 pitch,

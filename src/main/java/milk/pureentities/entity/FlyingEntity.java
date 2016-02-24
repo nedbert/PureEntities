@@ -68,7 +68,7 @@ public abstract class FlyingEntity extends BaseEntity{
                 y = Utils.rand(-10, 10);
             }
             this.baseTarget = this.add(Utils.rand() ? x : -x, y, Utils.rand() ? z : -z);
-        }else if(Utils.rand(1, 370) == 1){
+        }else if(Utils.rand(1, 410) == 1){
             x = Utils.rand(10, 30);
             z = Utils.rand(10, 30);
             if(this.y > maxY){
@@ -124,19 +124,15 @@ public abstract class FlyingEntity extends BaseEntity{
             this.pitch = y == 0 ? 0 : Math.toDegrees(-Math.atan2(y, Math.sqrt(x * x + z * z)));
         }
 
+
+        double dx = this.motionX * tickDiff;
+        double dy = this.motionY * tickDiff;
+        double dz = this.motionZ * tickDiff;
         Vector3 target = this.baseTarget;
         if(this.stayTime > 0){
             this.stayTime -= tickDiff;
-
-            double dx = this.motionX;
-            double dy = this.motionY * tickDiff;
-            double dz = this.motionZ;
-            this.move(dx, dy, dz);
+            this.move(0, dy, 0);
         }else{
-            double dx = this.motionX * tickDiff;
-            double dy = this.motionY * tickDiff;
-            double dz = this.motionZ * tickDiff;
-
             Vector2 be = new Vector2(this.x + dx, this.z + dz);
             this.move(dx, dy, dz);
             Vector2 af = new Vector2(this.x, this.z);
