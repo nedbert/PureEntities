@@ -3,6 +3,7 @@ package milk.pureentities.entity;
 import cn.nukkit.block.BlockLiquid;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector2;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.entity.EntityCreature;
@@ -74,8 +75,9 @@ public abstract class WalkingEntity extends BaseEntity{
     }
 
     protected boolean checkJump(double dx, double dz){
-        if(this.getLevelBlock() instanceof BlockLiquid){
+        if(this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) (this.y + 0.4), NukkitMath.floorDouble(this.z))) instanceof BlockLiquid){
             this.motionY = this.getGravity() * 4;
+            return true;
         }
         return false;
     }
@@ -141,10 +143,10 @@ public abstract class WalkingEntity extends BaseEntity{
                 this.moveTime -= 90 * tickDiff;
             }
 
-            if(this.onGround && !isJump){
-                this.motionY = 0;
-            }else if(!isJump){
-                if(this.motionY > -this.getGravity() * 4){
+            if(!isJump){
+                if(this.onGround){
+                    this.motionY = 0;
+                }else if(this.motionY > -this.getGravity() * 4){
                     this.motionY = -this.getGravity() * 4;
                 }else{
                     this.motionY -= this.getGravity() * tickDiff;
