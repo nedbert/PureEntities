@@ -111,6 +111,11 @@ public abstract class BaseEntity extends EntityCreature{
     }
 
     @Override
+    public boolean setMotion(Vector3 motion){
+        return false;
+    }
+
+    @Override
     protected void updateMovement(){
         if(
             this.lastX != this.x
