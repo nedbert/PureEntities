@@ -1,16 +1,12 @@
 package milk.pureentities.entity;
 
-import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector2;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.nbt.tag.CompoundTag;
 import milk.pureentities.entity.animal.Animal;
-import milk.pureentities.entity.monster.flying.Blaze;
 import milk.pureentities.util.Utils;
 
 public abstract class FlyingEntity extends BaseEntity{

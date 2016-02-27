@@ -99,7 +99,7 @@ public abstract class WalkingEntity extends BaseEntity{
         
         if(this.isKnockback()){
             this.move(this.motionX * tickDiff, this.motionY * tickDiff, this.motionZ * tickDiff);
-            this.motionY -= 0.15 * tickDiff;
+            this.motionY -= 0.2 * tickDiff;
             this.updateMovement();
             return null;
         }
