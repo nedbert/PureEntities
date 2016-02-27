@@ -22,6 +22,16 @@ public abstract class FlyingMonster extends FlyingEntity implements Monster{
         super(chunk, nbt);
     }
 
+    @Override
+    public Entity getTarget(){
+        return this.baseTarget instanceof Entity ? (Entity) this.baseTarget : null;
+    }
+
+    @Override
+    public void setTarget(Entity target){
+        //TODO
+    }
+
     public int getDamage(){
         return getDamage(null);
     }
