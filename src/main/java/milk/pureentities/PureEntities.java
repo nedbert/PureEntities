@@ -119,11 +119,11 @@ public class PureEntities extends PluginBase implements Listener{
         }
 
         Item item = ev.getItem();
-        Block target = ev.getBlock();
-        if(item.getId() == Item.SPAWN_EGG && target.getId() == Item.MONSTER_SPAWNER){
+        Block block = ev.getBlock();
+        if(item.getId() == Item.SPAWN_EGG && block.getId() == Item.MONSTER_SPAWNER){
             ev.setCancelled(true);
 
-            BlockEntity blockEntity = target.getLevel().getBlockEntity(target);
+            BlockEntity blockEntity = block.getLevel().getBlockEntity(block);
             if(blockEntity != null && blockEntity instanceof BlockEntitySpawner){
                 ((BlockEntitySpawner) blockEntity).setSpawnEntityType(item.getDamage());
             }else{
@@ -133,11 +133,11 @@ public class PureEntities extends PluginBase implements Listener{
                 CompoundTag nbt = new CompoundTag()
                     .putString("id", BlockEntity.MOB_SPAWNER)
                     .putInt("EntityId", item.getDamage())
-                    .putInt("x", (int) target.x)
-                    .putInt("y", (int) target.y)
-                    .putInt("z", (int) target.z);
+                    .putInt("x", (int) block.x)
+                    .putInt("y", (int) block.y)
+                    .putInt("z", (int) block.z);
 
-                new BlockEntitySpawner(target.getLevel().getChunk((int) target.x >> 4, (int) target.z >> 4), nbt);
+                new BlockEntitySpawner(block.getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
             }
         }
     }
