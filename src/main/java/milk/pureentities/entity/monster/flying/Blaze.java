@@ -114,7 +114,7 @@ public class Blaze extends FlyingMonster{
         }
     }
 
-    protected boolean checkJump(){
+    protected boolean checkJump(double dx, double dz){
         if(this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) (this.y + 0.5), NukkitMath.floorDouble(this.z))) instanceof BlockLiquid){
             this.motionY = this.getGravity() * 4;
             return true;
@@ -173,7 +173,7 @@ public class Blaze extends FlyingMonster{
         double dx = this.motionX * tickDiff;
         double dz = this.motionZ * tickDiff;
         if(this.stayTime > 0){
-            boolean isJump = this.checkJump();
+            boolean isJump = this.checkJump(dx, dz);
             this.stayTime -= tickDiff;
 
             this.move(0, this.motionY * tickDiff, 0);
@@ -187,7 +187,7 @@ public class Blaze extends FlyingMonster{
                 }
             }
         }else{
-            boolean isJump = this.checkJump();
+            boolean isJump = this.checkJump(dx, dz);
 
             Vector2 be = new Vector2(this.x + dx, this.z + dz);
             this.move(dx, this.motionY * tickDiff, dz);

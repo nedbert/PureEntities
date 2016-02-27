@@ -4,9 +4,13 @@ import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.*;
+import milk.pureentities.PureEntities;
 import milk.pureentities.util.Utils;
+
+import java.util.ArrayList;
 
 public class BlockEntitySpawner extends BlockEntitySpawnable{
 
@@ -28,7 +32,7 @@ public class BlockEntitySpawner extends BlockEntitySpawnable{
         }
 
         if(!this.namedTag.contains("SpawnRange") || !(this.namedTag.get("SpawnRange") instanceof ShortTag)){
-            this.namedTag.putShort("SpawnRange", 25);
+            this.namedTag.putShort("SpawnRange", 8);
         }
 
         if(!this.namedTag.contains("MinSpawnDelay") || !(this.namedTag.get("MinSpawnDelay") instanceof ShortTag)){
@@ -65,29 +69,26 @@ public class BlockEntitySpawner extends BlockEntitySpawnable{
         if(this.delay++ >= Utils.rand(this.minSpawnDelay, this.maxSpawnDelay)){
             this.delay = 0;
 
+            ArrayList<Entity> list = new ArrayList<>();
             boolean isVaild = false;
-            for(Player player : this.server.getOnlinePlayers().values()){
-                if(player.distance(this) <= this.requiredPlayerRange){
-                    isVaild = true;
+            for(Entity entity : this.level.getEntities()){
+                if(entity.distance(this) <= this.requiredPlayerRange){
+                    if(entity instanceof Player){
+                        isVaild = true;
+                    }
+                    list.add(entity);
                     break;
                 }
             }
 
-            if(isVaild){
-                CompoundTag nbt = new CompoundTag()
-                    .putList(new ListTag<DoubleTag>("Pos")
-                        .add(new DoubleTag("", this.x + Utils.rand(-this.spawnRange, this.spawnRange)))
-                        .add(new DoubleTag("", this.y))
-                        .add(new DoubleTag("", this.z + Utils.rand(-this.spawnRange, this.spawnRange))))
-                    .putList(new ListTag<DoubleTag>("Motion")
-                        .add(new DoubleTag("", 0))
-                        .add(new DoubleTag("", 0))
-                        .add(new DoubleTag("", 0)))
-                    .putList(new ListTag<FloatTag>("Rotation")
-                        .add(new FloatTag("", 0))
-                        .add(new FloatTag("", 0)));
-
-                Entity entity = Entity.createEntity(this.entityId, this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4, true), nbt);
+            if(isVaild && list.size() <= this.maxNearbyEntities){
+                Position pos = new Position(
+                    this.x + Utils.rand(-this.spawnRange, this.spawnRange),
+                    this.y,
+                    this.z + Utils.rand(-this.spawnRange, this.spawnRange),
+                    this.level
+                );
+                Entity entity = PureEntities.create(this.entityId, pos);
                 if(entity != null){
                     entity.spawnToAll();
                 }
@@ -125,12 +126,33 @@ public class BlockEntitySpawner extends BlockEntitySpawnable{
         this.spawnToAll();
     }
 
+    public void setMinSpawnDelay(int minDelay){
+        if(minDelay > this.maxSpawnDelay){
+            return;
+        }
+
+        this.minSpawnDelay = minDelay;
+    }
+
+    public void setMaxSpawnDelay(int maxDelay){
+        if(this.minSpawnDelay > maxDelay){
+            return;
+        }
+
+        this.maxSpawnDelay = maxDelay;
+    }
+
     public void setSpawnDelay(int minDelay, int maxDelay){
         if(minDelay > maxDelay){
             return;
         }
+
         this.minSpawnDelay = minDelay;
         this.maxSpawnDelay = maxDelay;
+    }
+
+    public void setRequiredPlayerRange(int range){
+        this.requiredPlayerRange = range;
     }
 
     public void setMaxNearbyEntities(int count){

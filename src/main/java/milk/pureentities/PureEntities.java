@@ -120,11 +120,10 @@ public class PureEntities extends PluginBase implements Listener{
 
         Item item = ev.getItem();
         Block target = ev.getBlock();
-        Block block = target.getSide(ev.getFace());
         if(item.getId() == Item.SPAWN_EGG && target.getId() == Item.MONSTER_SPAWNER){
             ev.setCancelled(true);
 
-            BlockEntity blockEntity = block.getLevel().getBlockEntity(block);
+            BlockEntity blockEntity = target.getLevel().getBlockEntity(target);
             if(blockEntity != null && blockEntity instanceof BlockEntitySpawner){
                 ((BlockEntitySpawner) blockEntity).setSpawnEntityType(item.getDamage());
             }else{
@@ -138,7 +137,7 @@ public class PureEntities extends PluginBase implements Listener{
                     .putInt("y", (int) target.y)
                     .putInt("z", (int) target.z);
 
-                new BlockEntitySpawner(block.getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
+                new BlockEntitySpawner(target.getLevel().getChunk((int) target.x >> 4, (int) target.z >> 4), nbt);
             }
         }
     }

@@ -134,7 +134,7 @@ public class Spider extends WalkingMonster{
         double dx = this.motionX * tickDiff;
         double dz = this.motionZ * tickDiff;
         if(this.stayTime > 0){
-            boolean isJump = this.checkJump();
+            boolean isJump = this.checkJump(dx, dz);
             this.stayTime -= tickDiff;
 
             this.move(0, this.motionY * tickDiff, 0);
@@ -148,7 +148,7 @@ public class Spider extends WalkingMonster{
                 }
             }
         }else{
-            boolean isJump = this.checkJump();
+            boolean isJump = this.checkJump(dx, dz);
 
             Vector2 be = new Vector2(this.x + dx, this.z + dz);
             this.move(dx, this.motionY * tickDiff, dz);
