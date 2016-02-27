@@ -1,6 +1,5 @@
 package milk.pureentities.entity.monster.flying;
 
-import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockLiquid;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityCreature;
@@ -10,7 +9,6 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.sound.LaunchSound;
-import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector2;
 import cn.nukkit.math.Vector3;
@@ -117,7 +115,7 @@ public class Blaze extends FlyingMonster{
     }
 
     protected boolean checkJump(){
-        if(this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) (this.y + 0.4), NukkitMath.floorDouble(this.z))) instanceof BlockLiquid){
+        if(this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) (this.y + 0.5), NukkitMath.floorDouble(this.z))) instanceof BlockLiquid){
             this.motionY = this.getGravity() * 4;
             return true;
         }

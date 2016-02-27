@@ -75,9 +75,13 @@ public abstract class WalkingEntity extends BaseEntity{
     }
 
     protected boolean checkJump(){
-        if(this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) (this.y + 0.7), NukkitMath.floorDouble(this.z))) instanceof BlockLiquid){
-            this.motionY = this.getGravity() * 4;
-            return true;
+        if(this.motionY == this.getGravity() * 4){
+            return this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) (this.y + 0.5), NukkitMath.floorDouble(this.z))) instanceof BlockLiquid;
+        }else{
+            if(this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) (this.y + 0.5), NukkitMath.floorDouble(this.z))) instanceof BlockLiquid){
+                this.motionY = this.getGravity() * 4;
+                return true;
+            }
         }
 
         if(this.stayTime > 0){
@@ -94,7 +98,7 @@ public abstract class WalkingEntity extends BaseEntity{
         }
         
         if(this.isKnockback()){
-            this.move(this.motionX * tickDiff, this.motionY, this.motionZ * tickDiff);
+            this.move(this.motionX * tickDiff, this.motionY * tickDiff, this.motionZ * tickDiff);
             this.motionY -= 0.15 * tickDiff;
             this.updateMovement();
             return null;

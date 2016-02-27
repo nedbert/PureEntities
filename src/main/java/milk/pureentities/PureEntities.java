@@ -162,7 +162,7 @@ public class PureEntities extends PluginBase implements Listener{
                 if(entity != null){
                     entity.spawnToAll();
                 }
-                ev.setCancelled(true);
+                ev.setCancelled();
             }/*else if(
                 block.getSide(Vector3.SIDE_DOWN).getId() == Item.IRON_BLOCK
                 && block.getSide(Vector3.SIDE_DOWN, 2).getId() == Item.IRON_BLOCK
@@ -185,7 +185,7 @@ public class PureEntities extends PluginBase implements Listener{
                 || block.getId() == Block.STONE_BRICK
                 || block.getId() == Block.STONE_WALL
                 || block.getId() == Block.STONE_BRICK_STAIRS
-            ) && block.getLightLevel() < 12 && Utils.rand(1,3) < 2
+            ) && block.getLevel().getBlockLightAt((int) block.x, (int) block.y, (int) block.z) < 12 && Utils.rand(1, 5) == 1
         ){
             Silverfish entity = (Silverfish) create("Silverfish", block.add(0.5, 0, 0.5));
             if(entity != null){
