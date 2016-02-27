@@ -102,12 +102,12 @@ public abstract class WalkingMonster extends WalkingEntity implements Monster{
         }
 
         for(int i = 0; i < 4; i++){
-            this.setDamage(Math.min(damage[i], this.getMaxDamage(i)), i);
+            this.setMinDamage(Math.min(damage[i], this.getMaxDamage(i)), i);
         }
     }
 
     public void setMinDamage(int damage){
-        this.setDamage(damage, Server.getInstance().getDifficulty());
+        this.setMinDamage(damage, Server.getInstance().getDifficulty());
     }
 
     public void setMinDamage(int damage, int difficulty){
