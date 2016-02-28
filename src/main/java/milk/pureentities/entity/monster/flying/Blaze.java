@@ -115,9 +115,13 @@ public class Blaze extends FlyingMonster{
     }
 
     protected boolean checkJump(double dx, double dz){
-        if(this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) (this.y + 0.5), NukkitMath.floorDouble(this.z))) instanceof BlockLiquid){
-            this.motionY = this.getGravity() * 4;
-            return true;
+        if(this.motionY == this.getGravity() * 2.5){
+            return this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) this.y, NukkitMath.floorDouble(this.z))) instanceof BlockLiquid;
+        }else{
+            if(this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) (this.y + 0.8), NukkitMath.floorDouble(this.z))) instanceof BlockLiquid){
+                this.motionY = this.getGravity() * 2.5;
+                return true;
+            }
         }
 
         if(this.stayTime > 0){

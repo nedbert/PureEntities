@@ -29,7 +29,6 @@ PureEntities는 또한 개발자 여러분을 위해 **isMovement()** 또는 **i
     * public boolean isMovement()
     * public boolean isFriendly()
     * public boolean isWallCheck()
-    * 
     * public void setMovement(boolean value)
     * public void setFriendly(boolean value)
     * public void setWallCheck(boolean value)
@@ -38,16 +37,15 @@ PureEntities는 또한 개발자 여러분을 위해 **isMovement()** 또는 **i
   * Monster
     * public double getDamage()
     * public double getDamage(int difficulty)
-    * 
     * public double getMinDamage()
     * public double getMinDamage(int difficulty)
-    * 
     * public double getMaxDamage()
     * public double getMaxDamage(int difficulty)
-    * 
     * public void setDamage(double damage)
     * public void setDamage(double[] damage)
     * public void setDamage(double damage, int difficulty)
+  * Zombie
+    * public boolean isBaby()
   * PigZombie, Wolf, Ocelot
     * public boolean isAngry()
     * public void setAngry(int angry)

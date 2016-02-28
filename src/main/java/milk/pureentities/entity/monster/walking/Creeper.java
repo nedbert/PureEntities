@@ -1,14 +1,12 @@
 package milk.pureentities.entity.monster.walking;
 
-import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.entity.EntityExplosive;
+import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.event.entity.ExplosionPrimeEvent;
 import cn.nukkit.level.Explosion;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector2;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -19,6 +17,7 @@ import milk.pureentities.util.Utils;
 
 public class Creeper extends WalkingMonster implements EntityExplosive{
     public static final int NETWORK_ID = 33;
+    public static final int DATA_POWERED = 19;
 
     private int bombTime = 0;
 
@@ -49,6 +48,27 @@ public class Creeper extends WalkingMonster implements EntityExplosive{
     @Override
     public String getName(){
         return "Creeper";
+    }
+
+    @Override
+    public void initEntity(){
+        super.initEntity();
+
+        if(this.namedTag.getBoolean("powered") || this.namedTag.getBoolean("IsPowered")){
+            this.dataProperties.putBoolean(DATA_POWERED, true);
+        }
+    }
+
+    public boolean isPowered(){
+        return this.getDataPropertyBoolean(DATA_POWERED);
+    }
+
+    public void setPowered(boolean powered){
+        this.setDataProperty(new ByteEntityData(DATA_POWERED, powered ? 1 : 0));
+    }
+
+    public int getBombTime(){
+        return this.bombTime;
     }
 
     @Override
