@@ -25,6 +25,7 @@ import milk.pureentities.entity.monster.walking.*;
 import milk.pureentities.entity.projectile.EntityFireBall;
 import milk.pureentities.entity.monster.flying.Blaze;
 import milk.pureentities.entity.monster.flying.Ghast;
+import milk.pureentities.task.AutoSpawnTask;
 import milk.pureentities.util.Utils;
 
 import java.util.*;
@@ -99,11 +100,13 @@ public class PureEntities extends PluginBase implements Listener{
             }catch(Exception ignore){}
         });
         Entity.registerEntity("FireBall", EntityFireBall.class);
+        BlockEntity.registerBlockEntity("MobSpawner", BlockEntitySpawner.class);
 
         Utils.logInfo("All entities were registered");
     }
 
     public void onEnable(){
+        this.getServer().getScheduler().scheduleRepeatingTask(new AutoSpawnTask(), 1);
         this.getServer().getPluginManager().registerEvents(this, this);
         Utils.logInfo("Plugin has been enabled");
     }

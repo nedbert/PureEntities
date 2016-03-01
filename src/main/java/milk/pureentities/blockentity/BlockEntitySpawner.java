@@ -113,7 +113,10 @@ public class BlockEntitySpawner extends BlockEntitySpawnable{
     public CompoundTag getSpawnCompound(){
         return new CompoundTag()
             .putString("id", MOB_SPAWNER)
-            .putInt("EntityId", this.entityId);
+            .putInt("EntityId", this.entityId)
+            .putInt("x", (int) this.x)
+            .putInt("y", (int) this.y)
+            .putInt("z", (int) this.z);
     }
 
     @Override

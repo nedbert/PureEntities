@@ -1,6 +1,9 @@
 package milk.pureentities.entity.monster.flying;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockLiquid;
+import cn.nukkit.block.BlockSlab;
+import cn.nukkit.block.BlockStairs;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -115,11 +118,11 @@ public class Blaze extends FlyingMonster{
     }
 
     protected boolean checkJump(double dx, double dz){
-        if(this.motionY == this.getGravity() * 2.5){
+        if(this.motionY == this.getGravity() * 2){
             return this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) this.y, NukkitMath.floorDouble(this.z))) instanceof BlockLiquid;
         }else{
             if(this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) (this.y + 0.8), NukkitMath.floorDouble(this.z))) instanceof BlockLiquid){
-                this.motionY = this.getGravity() * 2.5;
+                this.motionY = this.getGravity() * 2;
                 return true;
             }
         }
@@ -128,7 +131,11 @@ public class Blaze extends FlyingMonster{
             return false;
         }
 
-        //TODO: check Block
+        Block block = this.level.getBlock(this.add(dx, 0, dz));
+        if(block instanceof BlockSlab || block instanceof BlockStairs){
+            this.motionY = 0.5;
+            return true;
+        }
         return false;
     }
 
