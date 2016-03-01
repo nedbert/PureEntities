@@ -155,22 +155,46 @@ public class PureEntities extends PluginBase implements Listener{
         if(block.getId() == Item.JACK_O_LANTERN || block.getId() == Item.PUMPKIN){
             if(
                 block.getSide(Vector3.SIDE_DOWN).getId() == Item.SNOW_BLOCK
-                    && block.getSide(Vector3.SIDE_DOWN, 2).getId() == Item.SNOW_BLOCK
-                ){
-                for(int y = 1; y < 3; y++){
-                    block.getLevel().setBlock(block.add(0, -y, 0), new BlockAir());
-                }
+                && block.getSide(Vector3.SIDE_DOWN, 2).getId() == Item.SNOW_BLOCK
+            ){
                 Entity entity = create("SnowGolem", block.add(0.5, -2, 0.5));
                 if(entity != null){
                     entity.spawnToAll();
                 }
+
+                block.getLevel().setBlock(block.add(0, -1, 0), new BlockAir());
+                block.getLevel().setBlock(block.add(0, -2, 0), new BlockAir());
                 ev.setCancelled();
-            }/*else if(
+            }else if(
                 block.getSide(Vector3.SIDE_DOWN).getId() == Item.IRON_BLOCK
                 && block.getSide(Vector3.SIDE_DOWN, 2).getId() == Item.IRON_BLOCK
             ){
-                //TODO: spawn IronGolem
-            }*/
+                Block first, second = null;
+                if(
+                    (first = block.getSide(Vector3.SIDE_EAST)).getId() == Item.IRON_BLOCK
+                    && (second = block.getSide(Vector3.SIDE_WEST)).getId() == Item.IRON_BLOCK
+                ){
+                    block.getLevel().setBlock(first, new BlockAir());
+                    block.getLevel().setBlock(second, new BlockAir());
+                }else if(
+                    (first = block.getSide(Vector3.SIDE_NORTH)).getId() == Item.IRON_BLOCK
+                    && (second = block.getSide(Vector3.SIDE_SOUTH)).getId() == Item.IRON_BLOCK
+                ){
+                    block.getLevel().setBlock(first, new BlockAir());
+                    block.getLevel().setBlock(second, new BlockAir());
+                }
+
+                if(second != null){
+                    Entity entity = PureEntities.create("IronGolem", block.add(0.5, -2, 0.5));
+                    if(entity != null){
+                        entity.spawnToAll();
+                    }
+
+                    block.getLevel().setBlock(entity, new BlockAir());
+                    block.getLevel().setBlock(block.add(0, -1, 0), new BlockAir());
+                    ev.setCancelled();
+                }
+            }
         }
     }
 
