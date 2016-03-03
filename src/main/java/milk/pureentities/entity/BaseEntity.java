@@ -193,7 +193,13 @@ public abstract class BaseEntity extends EntityCreature{
 
         boolean hasUpdate = false;
 
-        this.checkBlockCollision();
+        //this.checkBlockCollision();
+        Vector3 vector = new Vector3(0, 0, 0);
+
+        for(Block block : this.getBlocksAround()){
+            block.onEntityCollide(this);
+            block.addVelocityToEntity(this, vector);
+        }
 
         if(this.isInsideOfSolid()){
             hasUpdate = true;
