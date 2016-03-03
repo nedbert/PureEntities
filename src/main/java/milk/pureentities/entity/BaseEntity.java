@@ -193,6 +193,8 @@ public abstract class BaseEntity extends EntityCreature{
 
         boolean hasUpdate = false;
 
+        this.checkBlockCollision();
+
         if(this.isInsideOfSolid()){
             hasUpdate = true;
             this.attack(new EntityDamageEvent(this, EntityDamageEvent.CAUSE_SUFFOCATION, 1));
