@@ -78,6 +78,10 @@ public abstract class WalkingEntity extends BaseEntity{
     }
 
     protected boolean checkJump(double dx, double dz){
+        if(this.motionY < 0){
+            return false;
+        }
+
         if(this.motionY == this.getGravity() * 2){
             return this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) this.y, NukkitMath.floorDouble(this.z))) instanceof BlockLiquid;
         }else{
