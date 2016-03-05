@@ -133,23 +133,11 @@ public class Spider extends WalkingMonster{
 
         double dx = this.motionX * tickDiff;
         double dz = this.motionZ * tickDiff;
+        boolean isJump = this.checkJump(dx, dz);
         if(this.stayTime > 0){
-            boolean isJump = this.checkJump(dx, dz);
             this.stayTime -= tickDiff;
-
             this.move(0, this.motionY * tickDiff, 0);
-            if(!isJump){
-                if(this.onGround){
-                    this.motionY = 0;
-                }else if(this.motionY > -this.getGravity() * 4){
-                    this.motionY = -this.getGravity() * 4;
-                }else{
-                    this.motionY -= this.getGravity() * tickDiff;
-                }
-            }
         }else{
-            boolean isJump = this.checkJump(dx, dz);
-
             Vector2 be = new Vector2(this.x + dx, this.z + dz);
             this.move(dx, this.motionY * tickDiff, dz);
             Vector2 af = new Vector2(this.x, this.z);
@@ -157,15 +145,15 @@ public class Spider extends WalkingMonster{
             if((be.x != af.x || be.y != af.y) && !isJump){
                 this.moveTime -= 90 * tickDiff;
             }
+        }
 
-            if(!isJump){
-                if(this.onGround){
-                    this.motionY = 0;
-                }else if(this.motionY > -this.getGravity() * 4){
-                    this.motionY = -this.getGravity() * 4;
-                }else{
-                    this.motionY -= this.getGravity() * tickDiff;
-                }
+        if(!isJump){
+            if(this.onGround){
+                this.motionY = 0;
+            }else if(this.motionY > -this.getGravity() * 4){
+                this.motionY = -this.getGravity() * 4;
+            }else{
+                this.motionY -= this.getGravity() * tickDiff;
             }
         }
         this.updateMovement();

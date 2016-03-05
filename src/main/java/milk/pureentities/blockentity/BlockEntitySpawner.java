@@ -70,18 +70,18 @@ public class BlockEntitySpawner extends BlockEntitySpawnable{
             this.delay = 0;
 
             ArrayList<Entity> list = new ArrayList<>();
-            boolean isVaild = false;
+            boolean isValid = false;
             for(Entity entity : this.level.getEntities()){
                 if(entity.distance(this) <= this.requiredPlayerRange){
                     if(entity instanceof Player){
-                        isVaild = true;
+                        isValid = true;
                     }
                     list.add(entity);
                     break;
                 }
             }
 
-            if(isVaild && list.size() <= this.maxNearbyEntities){
+            if(isValid && list.size() <= this.maxNearbyEntities){
                 Position pos = new Position(
                     this.x + Utils.rand(-this.spawnRange, this.spawnRange),
                     this.y,
