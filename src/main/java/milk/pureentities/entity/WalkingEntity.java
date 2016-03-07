@@ -78,7 +78,7 @@ public abstract class WalkingEntity extends BaseEntity{
     }
 
     protected boolean checkJump(double dx, double dz){
-        if(this.motionY < 0){
+        if(!this.onGround){
             return false;
         }
 
@@ -95,7 +95,7 @@ public abstract class WalkingEntity extends BaseEntity{
             return false;
         }
 
-        Block block = this.level.getBlock(this.add(dx, 0, dz));
+        Block block = this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x + dx), (int) this.y, NukkitMath.floorDouble(this.z + dz)));
         if(block instanceof BlockSlab || block instanceof BlockStairs){
             this.motionY = 0.5;
             return true;

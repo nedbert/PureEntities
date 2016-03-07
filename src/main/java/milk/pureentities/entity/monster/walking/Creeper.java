@@ -69,7 +69,7 @@ public class Creeper extends WalkingMonster implements EntityExplosive{
     }
 
     public void setPowered(boolean powered){
-        this.namedTag.putBoolean("powered", true);
+        this.namedTag.putBoolean("powered", powered);
         this.setDataProperty(new ByteEntityData(DATA_POWERED, powered ? 1 : 0));
     }
 

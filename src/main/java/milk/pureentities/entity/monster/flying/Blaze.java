@@ -135,7 +135,7 @@ public class Blaze extends FlyingMonster{
             return false;
         }
 
-        Block block = this.level.getBlock(this.add(dx, 0, dz));
+        Block block = this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x + dx), (int) this.y, NukkitMath.floorDouble(this.z + dz)));
         if(block instanceof BlockSlab || block instanceof BlockStairs){
             this.motionY = 0.5;
             return true;
