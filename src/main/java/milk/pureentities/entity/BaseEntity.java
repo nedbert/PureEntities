@@ -261,7 +261,11 @@ public abstract class BaseEntity extends EntityCreature{
     @Override
     public void attack(EntityDamageEvent source){
         if(this.isKnockback()){
-            return;
+        	if((source instanceof EntityDamageByEntityEvent)){
+        		if(!(((EntityDamageByEntityEvent) source).getDamager() instanceof Player)){
+        			return;
+        		}
+        	}
         }
 
         super.attack(source);
@@ -275,6 +279,7 @@ public abstract class BaseEntity extends EntityCreature{
 
         Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
         Vector3 motion = new Vector3(this.x - damager.x, this.y - damager.y, this.z - damager.z).normalize();
+        
         this.motionX = motion.x * 0.19;
         this.motionZ = motion.z * 0.19;
         if(this instanceof FlyingEntity && !(this instanceof Blaze)){
