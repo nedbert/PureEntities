@@ -1,5 +1,6 @@
 package milk.pureentities.entity.monster.walking;
 
+import cn.nukkit.block.BlockLiquid;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.entity.EntityExplosive;
@@ -7,6 +8,7 @@ import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.event.entity.ExplosionPrimeEvent;
 import cn.nukkit.level.Explosion;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector2;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -176,7 +178,8 @@ public class Creeper extends WalkingMonster implements EntityExplosive{
             if(this.onGround){
                 this.motionY = 0;
             }else if(this.motionY > -this.getGravity() * 4){
-                this.motionY = -this.getGravity() * 4;
+                if(!(this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) (this.y + 0.8), NukkitMath.floorDouble(this.z))) instanceof BlockLiquid))
+                	this.motionY -= this.getGravity() * 1;
             }else{
                 this.motionY -= this.getGravity() * tickDiff;
             }

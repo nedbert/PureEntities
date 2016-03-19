@@ -6,7 +6,6 @@ import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.Player;
 import cn.nukkit.nbt.tag.CompoundTag;
 import milk.pureentities.entity.monster.WalkingMonster;
@@ -19,6 +18,7 @@ public class IronGolem extends WalkingMonster{
 
     public IronGolem(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
+        this.setFriendly(true);
     }
 
     @Override
@@ -46,7 +46,6 @@ public class IronGolem extends WalkingMonster{
         this.setMaxHealth(100);
         super.initEntity();
 
-        this.setFriendly(true);
         this.setDamage(new int[]{0, 21, 21, 21});
         this.setMinDamage(new int[]{0, 7, 7, 7});
     }
@@ -97,7 +96,7 @@ public class IronGolem extends WalkingMonster{
     }
 
     public boolean targetOption(EntityCreature creature, double distance){
-        return !(creature instanceof Player) && creature.isAlive() && distance <= 60;
+    	return !(creature instanceof Player) && creature.isAlive() && distance <= 60;
     }
 
     public Item[] getDrops(){

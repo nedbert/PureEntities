@@ -1,10 +1,13 @@
 package milk.pureentities.entity;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockFence;
+import cn.nukkit.block.BlockFenceGate;
 import cn.nukkit.block.BlockLiquid;
 import cn.nukkit.block.BlockSlab;
 import cn.nukkit.block.BlockStairs;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.level.Location;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector2;
@@ -54,7 +57,6 @@ public abstract class WalkingEntity extends BaseEntity{
         if(this.baseTarget instanceof EntityCreature && ((EntityCreature) this.baseTarget).isAlive()){
             return;
         }
-
         int x, z;
         if(this.stayTime > 0){
             if(Utils.rand(1, 100) > 5){
@@ -78,10 +80,6 @@ public abstract class WalkingEntity extends BaseEntity{
     }
 
     protected boolean checkJump(double dx, double dz){
-        if(!this.onGround){
-            return false;
-        }
-
         if(this.motionY == this.getGravity() * 2){
             return this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) this.y, NukkitMath.floorDouble(this.z))) instanceof BlockLiquid;
         }else{
@@ -91,14 +89,41 @@ public abstract class WalkingEntity extends BaseEntity{
             }
         }
 
-        if(this.stayTime > 0){
+        if(!this.onGround){
             return false;
         }
 
-        Block block = this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x + dx), (int) this.y, NukkitMath.floorDouble(this.z + dz)));
-        if(block instanceof BlockSlab || block instanceof BlockStairs){
-            this.motionY = 0.5;
-            return true;
+        if(this.stayTime > 0){
+            return false;
+        }
+        
+        Block block = this.getLevel().getBlock(new Vector3(NukkitMath.floorDouble(this.x + dx), (int) this.y, NukkitMath.floorDouble(this.z + dz)));
+        
+        int side = 0;
+        switch(this.getDirection()){
+        	case 2:
+        		side = Block.SIDE_NORTH;
+        		break;
+        	case 3:
+        		side = Block.SIDE_EAST;
+        		break;
+        	case 0:
+        		side = Block.SIDE_SOUTH;
+        		break;
+        	case 1:
+        		side = Block.SIDE_WEST;
+        		break;
+        }
+        
+        Block directionBlock = block.getSide(side);
+        Block directionUpBlock = block.getSide(Block.SIDE_UP);
+        if(!directionBlock.canPassThrough() && directionUpBlock.canPassThrough()){
+        	if(directionBlock instanceof BlockFence || directionBlock instanceof BlockFenceGate){
+        		this.motionY = this.getGravity() * 2;
+        	}else{
+        		this.motionY = this.getGravity() * 4;
+        	}
+        	return true;
         }
         return false;
     }
@@ -109,8 +134,7 @@ public abstract class WalkingEntity extends BaseEntity{
         }
         
         if(this.isKnockback()){
-            this.move(this.motionX * tickDiff, this.motionY * tickDiff, this.motionZ * tickDiff);
-            this.motionY -= 0.25 * tickDiff;
+            this.move(this.motionX * tickDiff, this.motionY * tickDiff * 0.05, this.motionZ * tickDiff);
             this.updateMovement();
             return null;
         }
@@ -154,7 +178,8 @@ public abstract class WalkingEntity extends BaseEntity{
             if(this.onGround){
                 this.motionY = 0;
             }else if(this.motionY > -this.getGravity() * 4){
-                this.motionY = -this.getGravity() * 4;
+                if(!(this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) (this.y + 0.8), NukkitMath.floorDouble(this.z))) instanceof BlockLiquid))
+                	this.motionY -= this.getGravity() * 1;
             }else{
                 this.motionY -= this.getGravity() * tickDiff;
             }

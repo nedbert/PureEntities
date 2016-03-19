@@ -23,6 +23,7 @@ public class SnowGolem extends WalkingMonster{
 
     public SnowGolem(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
+        this.setFriendly(true);
     }
 
     @Override
@@ -43,8 +44,6 @@ public class SnowGolem extends WalkingMonster{
     @Override
     public void initEntity(){
         super.initEntity();
-
-        this.setFriendly(true);
     }
 
     @Override
