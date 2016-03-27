@@ -47,7 +47,7 @@ public class Spider extends WalkingMonster{
     public float getEyeHeight(){
         return 1;
     }
-    
+
     @Override
     public double getSpeed(){
         return 1.13;
@@ -155,7 +155,7 @@ public class Spider extends WalkingMonster{
                 this.motionY = 0;
             }else if(this.motionY > -this.getGravity() * 4){
                 if(!(this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) (this.y + 0.8), NukkitMath.floorDouble(this.z))) instanceof BlockLiquid))
-                	this.motionY -= this.getGravity() * 1;
+                    this.motionY -= this.getGravity() * 1;
             }else{
                 this.motionY -= this.getGravity() * tickDiff;
             }
@@ -175,28 +175,27 @@ public class Spider extends WalkingMonster{
             }
         }
 
-        Block block = this.getLevel().getBlock(new Vector3(NukkitMath.floorDouble(this.x + dx), (int) this.y, NukkitMath.floorDouble(this.z + dz)));
-        
         int side = 0;
+        Block block = this.getLevel().getBlock(new Vector3(NukkitMath.floorDouble(this.x + dx), (int) this.y, NukkitMath.floorDouble(this.z + dz)));
         switch(this.getDirection()){
-        	case 2:
-        		side = Block.SIDE_NORTH;
-        		break;
-        	case 3:
-        		side = Block.SIDE_EAST;
-        		break;
-        	case 0:
-        		side = Block.SIDE_SOUTH;
-        		break;
-        	case 1:
-        		side = Block.SIDE_WEST;
-        		break;
+            case 0:
+                side = Block.SIDE_SOUTH;
+                break;
+            case 1:
+                side = Block.SIDE_WEST;
+                break;
+            case 2:
+                side = Block.SIDE_NORTH;
+                break;
+            case 3:
+                side = Block.SIDE_EAST;
+                break;
         }
-        
+
         Block directionBlock = block.getSide(side);
         if(!directionBlock.canPassThrough()){
-        	this.motionY = this.getGravity() * 3;
-        	return true;
+            this.motionY = this.getGravity() * 3;
+            return true;
         }
         return false;
     }
@@ -214,7 +213,7 @@ public class Spider extends WalkingMonster{
             damage.put(EntityDamageEvent.MODIFIER_BASE, (float) this.getDamage());
 
             if(player instanceof Player){
-                HashMap<Integer, Float> armorValues = new HashMap<Integer, Float>() {{
+                HashMap<Integer, Float> armorValues = new HashMap<Integer, Float>(){{
                     put(Item.LEATHER_CAP, 1f);
                     put(Item.LEATHER_TUNIC, 3f);
                     put(Item.LEATHER_PANTS, 2f);
@@ -238,10 +237,9 @@ public class Spider extends WalkingMonster{
                 }};
 
                 float points = 0;
-                for (Item i : ((Player) player).getInventory().getArmorContents()) {
+                for(Item i : ((Player) player).getInventory().getArmorContents()){
                     points += armorValues.getOrDefault(i.getId(), 0f);
                 }
-
                 damage.put(EntityDamageEvent.MODIFIER_ARMOR, (float) (damage.getOrDefault(EntityDamageEvent.MODIFIER_ARMOR, 0f) - Math.floor(damage.getOrDefault(EntityDamageEvent.MODIFIER_BASE, 1f) * points * 0.04)));
             }
             player.attack(new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_ENTITY_ATTACK, damage));

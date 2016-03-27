@@ -61,7 +61,7 @@ public class IronGolem extends WalkingMonster{
             damage.put(EntityDamageEvent.MODIFIER_BASE, (float) this.getDamage());
 
             if(player instanceof Player){
-                HashMap<Integer, Float> armorValues = new HashMap<Integer, Float>() {{
+                HashMap<Integer, Float> armorValues = new HashMap<Integer, Float>(){{
                     put(Item.LEATHER_CAP, 1f);
                     put(Item.LEATHER_TUNIC, 3f);
                     put(Item.LEATHER_PANTS, 2f);
@@ -85,10 +85,9 @@ public class IronGolem extends WalkingMonster{
                 }};
 
                 float points = 0;
-                for (Item i : ((Player) player).getInventory().getArmorContents()) {
+                for(Item i : ((Player) player).getInventory().getArmorContents()){
                     points += armorValues.getOrDefault(i.getId(), 0f);
                 }
-
                 damage.put(EntityDamageEvent.MODIFIER_ARMOR, (float) (damage.getOrDefault(EntityDamageEvent.MODIFIER_ARMOR, 0f) - Math.floor(damage.getOrDefault(EntityDamageEvent.MODIFIER_BASE, 1f) * points * 0.04)));
             }
             player.attack(new EntityDamageByEntityEvent(this, player, EntityDamageEvent.CAUSE_ENTITY_ATTACK, damage));
@@ -96,7 +95,7 @@ public class IronGolem extends WalkingMonster{
     }
 
     public boolean targetOption(EntityCreature creature, double distance){
-    	return !(creature instanceof Player) && creature.isAlive() && distance <= 60;
+        return !(creature instanceof Player) && creature.isAlive() && distance <= 60;
     }
 
     public Item[] getDrops(){

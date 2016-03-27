@@ -41,7 +41,7 @@ public abstract class BaseEntity extends EntityCreature{
     public abstract Vector3 updateMove(int tickDiff);
 
     public boolean isFriendly(){
-    	return this.friendly;
+        return this.friendly;
     }
 
     public boolean isMovement(){
@@ -118,13 +118,7 @@ public abstract class BaseEntity extends EntityCreature{
 
     @Override
     protected void updateMovement(){
-        if(
-            this.lastX != this.x
-            || this.lastY != this.y
-            || this.lastZ != this.z
-            || this.lastYaw != this.yaw
-            || this.lastPitch != this.pitch
-        ){
+        if(this.lastX != this.x || this.lastY != this.y || this.lastZ != this.z || this.lastYaw != this.yaw || this.lastPitch != this.pitch){
             this.lastX = this.x;
             this.lastY = this.y;
             this.lastZ = this.z;
@@ -252,7 +246,7 @@ public abstract class BaseEntity extends EntityCreature{
     }
 
     @Override
-    public boolean isInsideOfSolid() {
+    public boolean isInsideOfSolid(){
         Block block = this.level.getBlock(this.temporalVector.setComponents(NukkitMath.floorDouble(this.x), NukkitMath.floorDouble(this.y + this.getHeight() - 0.18f), NukkitMath.floorDouble(this.z)));
         AxisAlignedBB bb = block.getBoundingBox();
         return bb != null && block.isSolid() && !block.isTransparent() && bb.intersectsWith(this.getBoundingBox());
@@ -261,11 +255,11 @@ public abstract class BaseEntity extends EntityCreature{
     @Override
     public void attack(EntityDamageEvent source){
         if(this.isKnockback()){
-        	if((source instanceof EntityDamageByEntityEvent)){
-        		if(!(((EntityDamageByEntityEvent) source).getDamager() instanceof Player)){
-        			return;
-        		}
-        	}
+            if((source instanceof EntityDamageByEntityEvent)){
+                if(!(((EntityDamageByEntityEvent) source).getDamager() instanceof Player)){
+                    return;
+                }
+            }
         }
 
         super.attack(source);
@@ -279,7 +273,7 @@ public abstract class BaseEntity extends EntityCreature{
 
         Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
         Vector3 motion = new Vector3(this.x - damager.x, this.y - damager.y, this.z - damager.z).normalize();
-        
+
         this.motionX = motion.x * 0.19;
         this.motionZ = motion.z * 0.19;
         if(this instanceof FlyingEntity && !(this instanceof Blaze)){

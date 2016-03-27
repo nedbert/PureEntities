@@ -178,8 +178,9 @@ public class Creeper extends WalkingMonster implements EntityExplosive{
             if(this.onGround){
                 this.motionY = 0;
             }else if(this.motionY > -this.getGravity() * 4){
-                if(!(this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) (this.y + 0.8), NukkitMath.floorDouble(this.z))) instanceof BlockLiquid))
-                	this.motionY -= this.getGravity() * 1;
+                if(!(this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) (this.y + 0.8), NukkitMath.floorDouble(this.z))) instanceof BlockLiquid)){
+                    this.motionY -= this.getGravity() * 1;
+                }
             }else{
                 this.motionY -= this.getGravity() * tickDiff;
             }

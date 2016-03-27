@@ -58,7 +58,7 @@ public class SnowGolem extends WalkingMonster{
 
     @Override
     public void attackEntity(Entity player){
-        if(this.attackDelay > 23  && Utils.rand(1, 32) < 4 && this.distanceSquared(player) <= 55){
+        if(this.attackDelay > 23 && Utils.rand(1, 32) < 4 && this.distanceSquared(player) <= 55){
             this.attackDelay = 0;
 
             double f = 1.2;

@@ -96,34 +96,33 @@ public abstract class WalkingEntity extends BaseEntity{
         if(this.stayTime > 0){
             return false;
         }
-        
-        Block block = this.getLevel().getBlock(new Vector3(NukkitMath.floorDouble(this.x + dx), (int) this.y, NukkitMath.floorDouble(this.z + dz)));
-        
+
         int side = 0;
+        Block block = this.getLevel().getBlock(new Vector3(NukkitMath.floorDouble(this.x + dx), (int) this.y, NukkitMath.floorDouble(this.z + dz)));
         switch(this.getDirection()){
-        	case 2:
-        		side = Block.SIDE_NORTH;
-        		break;
-        	case 3:
-        		side = Block.SIDE_EAST;
-        		break;
-        	case 0:
-        		side = Block.SIDE_SOUTH;
-        		break;
-        	case 1:
-        		side = Block.SIDE_WEST;
-        		break;
+            case 2:
+                side = Block.SIDE_NORTH;
+                break;
+            case 3:
+                side = Block.SIDE_EAST;
+                break;
+            case 0:
+                side = Block.SIDE_SOUTH;
+                break;
+            case 1:
+                side = Block.SIDE_WEST;
+                break;
         }
-        
+
         Block directionBlock = block.getSide(side);
         Block directionUpBlock = block.getSide(Block.SIDE_UP);
         if(!directionBlock.canPassThrough() && directionUpBlock.canPassThrough()){
-        	if(directionBlock instanceof BlockFence || directionBlock instanceof BlockFenceGate){
-        		this.motionY = this.getGravity() * 2;
-        	}else{
-        		this.motionY = this.getGravity() * 4;
-        	}
-        	return true;
+            if(directionBlock instanceof BlockFence || directionBlock instanceof BlockFenceGate){
+                this.motionY = this.getGravity() * 2;
+            }else{
+                this.motionY = this.getGravity() * 4;
+            }
+            return true;
         }
         return false;
     }
@@ -132,13 +131,13 @@ public abstract class WalkingEntity extends BaseEntity{
         if(!this.isMovement()){
             return null;
         }
-        
+
         if(this.isKnockback()){
             this.move(this.motionX * tickDiff, this.motionY * tickDiff * 0.05, this.motionZ * tickDiff);
             this.updateMovement();
             return null;
         }
-        
+
         Vector3 before = this.baseTarget;
         this.checkTarget();
         if(this.baseTarget instanceof EntityCreature || before != this.baseTarget){
@@ -179,7 +178,7 @@ public abstract class WalkingEntity extends BaseEntity{
                 this.motionY = 0;
             }else if(this.motionY > -this.getGravity() * 4){
                 if(!(this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) (this.y + 0.8), NukkitMath.floorDouble(this.z))) instanceof BlockLiquid))
-                	this.motionY -= this.getGravity() * 1;
+                    this.motionY -= this.getGravity() * 1;
             }else{
                 this.motionY -= this.getGravity() * tickDiff;
             }

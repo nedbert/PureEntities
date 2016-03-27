@@ -41,8 +41,7 @@ public class AutoSpawnTask implements Runnable{
             int blockId = player.getLevel().getBlockIdAt((int) pos.x, (int) pos.y, (int) pos.z);
             int biomeId = player.getLevel().getBiomeId((int) pos.x, (int) pos.z);
             int blockLightLevel = player.getLevel().getBlockLightAt((int) pos.x, (int) pos.y, (int) pos.z);
-
-            // int blockSkyLightLevel = player.getLevel().getBlockSkyLightAt((int) pos.x, (int) pos.y, (int) pos.z);
+            //int blockSkyLightLevel = player.getLevel().getBlockSkyLightAt((int) pos.x, (int) pos.y, (int) pos.z);
 
             if(blockId == Block.NETHER_BRICK_BLOCK || blockId == Block.NETHER_BRICK_FENCE || blockId == Block.NETHER_BRICKS_STAIRS || blockId == Block.SOUL_SAND || blockId == Block.NETHERRACK){
                 if(Utils.rand(1, 100) <= 20){
@@ -63,8 +62,41 @@ public class AutoSpawnTask implements Runnable{
                 }
             }
 
-            // if (blockSkyLightLevel >= 10) {
-            if(!this.isNight(player.getLevel().getTime())){
+            int time = player.getLevel().getTime() % Level.TIME_FULL;
+            if(time >= Level.TIME_NIGHT && time < Level.TIME_SUNRISE){
+                if(blockLightLevel <= 3 && pos.y <= 63 && Utils.rand(1, 100) <= 20){
+                    this.createEntity("Bat", pos.add(0, 1.3, 0));
+                    return;
+                }
+                if(blockLightLevel <= 3 && pos.y <= 63 && Utils.rand(1, 100) <= 20){
+                    this.createEntity("CaveSpider", pos.add(0, 1.8, 0));
+                    return;
+                }
+                if(blockLightLevel < 2 && Utils.rand(1, 100) <= 20 && blockId == Block.STONE){
+                    this.createEntity("Silverfish", pos.add(0, 1.3, 0));
+                    return;
+                }
+                switch(Utils.rand(1, 6)){
+                    case 1:
+                        this.createEntity("Creeper", pos.add(0, 2.8, 0));
+                        break;
+                    case 2:
+                        this.createEntity("Enderman", pos.add(0, 3.8, 0));
+                        break;
+                    case 3:
+                        this.createEntity("Skeleton", pos.add(0, 2.8, 0));
+                        break;
+                    case 4:
+                        this.createEntity("Spider", pos.add(0, 2.12, 0));
+                        break;
+                    case 5:
+                        this.createEntity("Zombie", pos.add(0, 2.8, 0));
+                        break;
+                    case 6:
+                        this.createEntity("ZombieVillager", pos.add(0, 2.8, 0));
+                        break;
+                }
+            }else{
                 if(blockId == Block.MYCELIUM && Utils.rand(1, 100) <= 70){
                     this.createEntity("Mooshroom", pos.add(0, 2.12, 0));
                     return;
@@ -105,39 +137,6 @@ public class AutoSpawnTask implements Runnable{
                         this.createEntity("Sheep", pos.add(0, 2.3, 0));
                         break;
                 }
-            }else{
-                if(blockLightLevel <= 3 && pos.y <= 63 && Utils.rand(1, 100) <= 20){
-                    this.createEntity("Bat", pos.add(0, 1.3, 0));
-                    return;
-                }
-                if(blockLightLevel <= 3 && pos.y <= 63 && Utils.rand(1, 100) <= 20){
-                    this.createEntity("CaveSpider", pos.add(0, 1.8, 0));
-                    return;
-                }
-                if(blockLightLevel < 2 && Utils.rand(1, 100) <= 20 && blockId == Block.STONE){
-                    this.createEntity("Silverfish", pos.add(0, 1.3, 0));
-                    return;
-                }
-                switch(Utils.rand(1, 6)){
-                    case 1:
-                        this.createEntity("Creeper", pos.add(0, 2.8, 0));
-                        break;
-                    case 2:
-                        this.createEntity("Enderman", pos.add(0, 3.8, 0));
-                        break;
-                    case 3:
-                        this.createEntity("Skeleton", pos.add(0, 2.8, 0));
-                        break;
-                    case 4:
-                        this.createEntity("Spider", pos.add(0, 2.12, 0));
-                        break;
-                    case 5:
-                        this.createEntity("Zombie", pos.add(0, 2.8, 0));
-                        break;
-                    case 6:
-                        this.createEntity("ZombieVillager", pos.add(0, 2.8, 0));
-                        break;
-                }
             }
         }
     }
@@ -147,13 +146,6 @@ public class AutoSpawnTask implements Runnable{
         if(entity != null){
             entity.spawnToAll();
         }
-    }
-
-    public boolean isNight(int tick){
-        int totalhour = (tick / 1000) + 6;
-        int totalday = (int) Math.floor(totalhour / 24);
-        int nowhour = (int) Math.floor(((int) Math.floor(totalhour) - totalday * 24));
-        return nowhour >= 18 || nowhour < 6;
     }
 
     public int getRandomSafeXZCoord(int degree, int safeDegree, int correctionDegree){
