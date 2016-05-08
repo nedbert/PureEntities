@@ -106,8 +106,9 @@ public class PureEntities extends PluginBase implements Listener{
     }
 
     public void onEnable(){
-    	this.getServer().getScheduler().scheduleRepeatingTask(new AutoSpawnTask(), 20);
         this.getServer().getPluginManager().registerEvents(this, this);
+        this.getServer().getScheduler().scheduleRepeatingTask(new AutoSpawnTask(), 200);
+
         Utils.logInfo("Plugin has been enabled");
     }
 

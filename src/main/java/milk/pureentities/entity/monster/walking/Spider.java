@@ -175,24 +175,9 @@ public class Spider extends WalkingMonster{
             }
         }
 
-        int side = 0;
+        int[] sides = {Block.SIDE_SOUTH, Block.SIDE_WEST, Block.SIDE_NORTH, Block.SIDE_EAST};
         Block block = this.getLevel().getBlock(new Vector3(NukkitMath.floorDouble(this.x + dx), (int) this.y, NukkitMath.floorDouble(this.z + dz)));
-        switch(this.getDirection()){
-            case 0:
-                side = Block.SIDE_SOUTH;
-                break;
-            case 1:
-                side = Block.SIDE_WEST;
-                break;
-            case 2:
-                side = Block.SIDE_NORTH;
-                break;
-            case 3:
-                side = Block.SIDE_EAST;
-                break;
-        }
-
-        Block directionBlock = block.getSide(side);
+        Block directionBlock = block.getSide(sides[this.getDirection()]);
         if(!directionBlock.canPassThrough()){
             this.motionY = this.getGravity() * 3;
             return true;

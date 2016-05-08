@@ -1,9 +1,5 @@
 package milk.pureentities.task;
 
-import java.util.Iterator;
-import java.util.Map.Entry;
-
-import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
@@ -16,16 +12,12 @@ import milk.pureentities.util.Utils;
 public class AutoSpawnTask implements Runnable{
 
     public void run(){
-        Iterator<?> iter = Server.getInstance().getOnlinePlayers().entrySet().iterator();
-        while(iter.hasNext()){
-            Entry<?, ?> entry = (Entry<?, ?>) iter.next();
-            if(Utils.rand(1, 100) > 25){
-                continue;
+        Server.getInstance().getOnlinePlayers().forEach((name, player) -> {
+            if(Utils.rand(1, 120) > 30){
+                return;
             }
 
-            Player player = (Player) entry.getValue();
             Position pos = player.getPosition();
-
             pos.x += this.getRandomSafeXZCoord(50, 26, 6);
             pos.z += this.getRandomSafeXZCoord(50, 26, 6);
             pos.y = this.getSafeYCoord(player.getLevel(), pos, 3);
@@ -35,7 +27,7 @@ public class AutoSpawnTask implements Runnable{
                 || pos.y < 1
                 || player.getLevel().getBlockIdAt((int) pos.x, (int) pos.y, (int) pos.z) == Block.AIR
             ){
-                continue;
+                return;
             }
 
             int blockId = player.getLevel().getBlockIdAt((int) pos.x, (int) pos.y, (int) pos.z);
@@ -138,7 +130,7 @@ public class AutoSpawnTask implements Runnable{
                         break;
                 }
             }
-        }
+        });
     }
 
     public void createEntity(Object type, Position pos){

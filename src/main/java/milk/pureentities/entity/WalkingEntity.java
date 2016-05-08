@@ -89,35 +89,19 @@ public abstract class WalkingEntity extends BaseEntity{
             }
         }
 
-        if(!this.onGround){
+        if(!this.onGround || this.stayTime > 0){
             return false;
         }
 
-        if(this.stayTime > 0){
-            return false;
-        }
-
-        int side = 0;
-        Block block = this.getLevel().getBlock(new Vector3(NukkitMath.floorDouble(this.x + dx), (int) this.y, NukkitMath.floorDouble(this.z + dz)));
-        switch(this.getDirection()){
-            case 2:
-                side = Block.SIDE_NORTH;
-                break;
-            case 3:
-                side = Block.SIDE_EAST;
-                break;
-            case 0:
-                side = Block.SIDE_SOUTH;
-                break;
-            case 1:
-                side = Block.SIDE_WEST;
-                break;
-        }
-
-        Block directionBlock = block.getSide(side);
-        Block directionUpBlock = block.getSide(Block.SIDE_UP);
-        if(!directionBlock.canPassThrough() && directionUpBlock.canPassThrough()){
-            if(directionBlock instanceof BlockFence || directionBlock instanceof BlockFenceGate){
+        int[] sides = {Block.SIDE_SOUTH, Block.SIDE_WEST, Block.SIDE_NORTH, Block.SIDE_EAST};
+        Block that = this.getLevel().getBlock(new Vector3(NukkitMath.floorDouble(this.x + dx), (int) this.y, NukkitMath.floorDouble(this.z + dz)));
+        Block block = that.getSide(sides[this.getDirection()]);
+        if(
+            !block.canPassThrough()
+            && block.getSide(Block.SIDE_UP).canPassThrough()
+            && that.getSide(Block.SIDE_UP, 2).canPassThrough()
+        ){
+            if(block instanceof BlockFence || block instanceof BlockFenceGate){
                 this.motionY = this.getGravity() * 2;
             }else{
                 this.motionY = this.getGravity() * 4;

@@ -1,9 +1,6 @@
 package milk.pureentities.entity.monster.flying;
 
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockLiquid;
-import cn.nukkit.block.BlockSlab;
-import cn.nukkit.block.BlockStairs;
+import cn.nukkit.block.*;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -118,10 +115,6 @@ public class Blaze extends FlyingMonster{
     }
 
     protected boolean checkJump(double dx, double dz){
-        if(this.motionY < 0){
-            return false;
-        }
-
         if(this.motionY == this.getGravity() * 2){
             return this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) this.y, NukkitMath.floorDouble(this.z))) instanceof BlockLiquid;
         }else{
@@ -131,13 +124,20 @@ public class Blaze extends FlyingMonster{
             }
         }
 
-        if(this.stayTime > 0){
+        if(!this.onGround || this.stayTime > 0){
             return false;
         }
 
-        Block block = this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x + dx), (int) this.y, NukkitMath.floorDouble(this.z + dz)));
-        if(block instanceof BlockSlab || block instanceof BlockStairs){
-            this.motionY = 0.5;
+        int[] sides = {Block.SIDE_SOUTH, Block.SIDE_WEST, Block.SIDE_NORTH, Block.SIDE_EAST};
+        Block block = this.getLevel().getBlock(new Vector3(NukkitMath.floorDouble(this.x + dx), (int) this.y, NukkitMath.floorDouble(this.z + dz)));
+        Block directionBlock = block.getSide(sides[this.getDirection()]);
+        Block directionUpBlock = block.getSide(Block.SIDE_UP);
+        if(!directionBlock.canPassThrough() && directionUpBlock.canPassThrough()){
+            if(directionBlock instanceof BlockFence || directionBlock instanceof BlockFenceGate){
+                this.motionY = this.getGravity() * 2;
+            }else{
+                this.motionY = this.getGravity() * 4;
+            }
             return true;
         }
         return false;

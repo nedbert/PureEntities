@@ -112,11 +112,6 @@ public abstract class BaseEntity extends EntityCreature{
     }
 
     @Override
-    public boolean setMotion(Vector3 motion){
-        return false;
-    }
-
-    @Override
     protected void updateMovement(){
         if(this.lastX != this.x || this.lastY != this.y || this.lastZ != this.z || this.lastYaw != this.yaw || this.lastPitch != this.pitch){
             this.lastX = this.x;
@@ -125,7 +120,7 @@ public abstract class BaseEntity extends EntityCreature{
             this.lastYaw = this.yaw;
             this.lastPitch = this.pitch;
 
-            this.level.addEntityMovement(this.chunk.getX(), this.chunk.getZ(), this.id, this.x, this.y, this.z, this.yaw, this.pitch);
+            this.level.addEntityMovement(this.chunk.getX(), this.chunk.getZ(), this.id, this.x, this.y, this.z, this.yaw, this.pitch, this.yaw);
         }
     }
 
