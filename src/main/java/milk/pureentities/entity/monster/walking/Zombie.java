@@ -81,7 +81,7 @@ public class Zombie extends WalkingMonster implements EntityAgeable{
 
     @Override
     public void attackEntity(Entity player){
-        if(this.attackDelay > 10 && this.distanceSquared(player) < 2){
+        if(this.attackDelay > 10 && player.distanceSquared(this) <= 1){
             this.attackDelay = 0;
             HashMap<Integer, Float> damage = new HashMap<>();
             damage.put(EntityDamageEvent.MODIFIER_BASE, (float) this.getDamage());
@@ -131,7 +131,7 @@ public class Zombie extends WalkingMonster implements EntityAgeable{
         if(
             !this.isOnFire()
             && !this.level.isRaining()
-            && (time < Level.TIME_NIGHT || time > Level.TIME_SUNRISE)
+            && (time < Level.TIME_NIGHT || time >= Level.TIME_SUNRISE)
         ){
             this.setOnFire(100);
         }

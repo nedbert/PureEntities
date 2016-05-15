@@ -57,6 +57,7 @@ public abstract class WalkingEntity extends BaseEntity{
         if(this.baseTarget instanceof EntityCreature && ((EntityCreature) this.baseTarget).isAlive()){
             return;
         }
+
         int x, z;
         if(this.stayTime > 0){
             if(Utils.rand(1, 100) > 5){
@@ -161,8 +162,9 @@ public abstract class WalkingEntity extends BaseEntity{
             if(this.onGround){
                 this.motionY = 0;
             }else if(this.motionY > -this.getGravity() * 4){
-                if(!(this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) (this.y + 0.8), NukkitMath.floorDouble(this.z))) instanceof BlockLiquid))
+                if(!(this.level.getBlock(new Vector3(NukkitMath.floorDouble(this.x), (int) (this.y + 0.8), NukkitMath.floorDouble(this.z))) instanceof BlockLiquid)){
                     this.motionY -= this.getGravity() * 1;
+                }
             }else{
                 this.motionY -= this.getGravity() * tickDiff;
             }

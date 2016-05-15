@@ -258,28 +258,7 @@ public abstract class BaseEntity extends EntityCreature{
         }
 
         super.attack(source);
-
-        if(source.isCancelled() || !(source instanceof EntityDamageByEntityEvent)){
-            return;
-        }
-
-        this.stayTime = 0;
-        this.moveTime = 0;
-
-        Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
-        Vector3 motion = new Vector3(this.x - damager.x, this.y - damager.y, this.z - damager.z).normalize();
-
-        this.motionX = motion.x * 0.19;
-        this.motionZ = motion.z * 0.19;
-        if(this instanceof FlyingEntity && !(this instanceof Blaze)){
-            this.motionY = motion.y * 0.19;
-        }else{
-            this.motionY = 0.6;
-        }
     }
-
-    @Override
-    public void knockBack(Entity damager, double damage, double x, double z, double base){}
 
     @Override
     public boolean move(double dx, double dy, double dz){
@@ -310,7 +289,7 @@ public abstract class BaseEntity extends EntityCreature{
         this.checkChunks();
 
         this.checkGroundState(movX, movY, movZ, dx, dy, dz);
-        this.updateFallState((float) dy, this.onGround);
+        this.updateFallState(this.onGround);
 
         //Timings.entityMoveTimer.stopTiming();
         return true;
