@@ -118,7 +118,7 @@ public abstract class WalkingEntity extends BaseEntity{
         }
 
         if(this.isKnockback()){
-            this.move(this.motionX * tickDiff, this.motionY * tickDiff * 0.05, this.motionZ * tickDiff);
+            this.move(this.motionX * tickDiff, this.motionY * tickDiff, this.motionZ * tickDiff);
             this.updateMovement();
             return null;
         }
