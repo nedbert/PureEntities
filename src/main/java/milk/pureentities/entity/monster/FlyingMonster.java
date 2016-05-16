@@ -153,7 +153,7 @@ public abstract class FlyingMonster extends FlyingEntity implements Monster{
 
         Vector3 target = this.updateMove(tickDiff);
         if(target instanceof Entity){
-            if(target != this.settingTarget || this.canAttack){
+            if(target != this.followTarget || this.canAttack){
                 this.attackEntity((Entity) target);
             }
         }else if(

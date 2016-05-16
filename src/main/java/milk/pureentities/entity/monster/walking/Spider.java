@@ -87,14 +87,14 @@ public class Spider extends WalkingMonster{
             return true;
         }
 
-        Vector3 before = this.baseTarget;
+        Vector3 before = this.target;
         this.checkTarget();
-        if(this.baseTarget instanceof EntityCreature || before != this.baseTarget){
-            double x = this.baseTarget.x - this.x;
-            double y = this.baseTarget.y - this.y;
-            double z = this.baseTarget.z - this.z;
+        if(this.target instanceof EntityCreature || before != this.target){
+            double x = this.target.x - this.x;
+            double y = this.target.y - this.y;
+            double z = this.target.z - this.z;
 
-            Vector3 target = this.baseTarget;
+            Vector3 target = this.target;
             double diff = Math.abs(x) + Math.abs(z);
             double distance = Math.sqrt(Math.pow(this.x - target.x, 2) + Math.pow(this.z - target.z, 2));
             if(distance <= 2){

@@ -59,7 +59,7 @@ public class Blaze extends FlyingMonster{
             return;
         }
 
-        Vector3 target = this.baseTarget;
+        Vector3 target = this.target;
         if(!(target instanceof EntityCreature) || !this.targetOption((EntityCreature) target, this.distanceSquared(target))){
             double near = Integer.MAX_VALUE;
 
@@ -80,11 +80,11 @@ public class Blaze extends FlyingMonster{
                 near = distance;
 
                 this.moveTime = 0;
-                this.baseTarget = creature;
+                this.target = creature;
             }
         }
 
-        if(this.baseTarget instanceof EntityCreature && ((EntityCreature) this.baseTarget).isAlive()){
+        if(this.target instanceof EntityCreature && ((EntityCreature) this.target).isAlive()){
             return;
         }
 
@@ -95,18 +95,18 @@ public class Blaze extends FlyingMonster{
             }
             x = Utils.rand(10, 30);
             z = Utils.rand(10, 30);
-            this.baseTarget = this.add(Utils.rand() ? x : -x, Utils.rand(-20, 20) / 10, Utils.rand() ? z : -z);
+            this.target = this.add(Utils.rand() ? x : -x, Utils.rand(-20, 20) / 10, Utils.rand() ? z : -z);
         }else if(Utils.rand(1, 410) == 1){
             x = Utils.rand(10, 30);
             z = Utils.rand(10, 30);
             this.stayTime = Utils.rand(90, 400);
-            this.baseTarget = this.add(Utils.rand() ? x : -x, Utils.rand(-20, 20) / 10, Utils.rand() ? z : -z);
-        }else if(this.moveTime <= 0 || this.baseTarget == null){
+            this.target = this.add(Utils.rand() ? x : -x, Utils.rand(-20, 20) / 10, Utils.rand() ? z : -z);
+        }else if(this.moveTime <= 0 || this.target == null){
             x = Utils.rand(20, 100);
             z = Utils.rand(20, 100);
             this.stayTime = 0;
             this.moveTime = Utils.rand(300, 1200);
-            this.baseTarget = this.add(Utils.rand() ? x : -x, 0, Utils.rand() ? z : -z);
+            this.target = this.add(Utils.rand() ? x : -x, 0, Utils.rand() ? z : -z);
         }
     }
 
@@ -154,13 +154,13 @@ public class Blaze extends FlyingMonster{
             return null;
         }
 
-        if(this.settingTarget != null && !this.settingTarget.closed && this.settingTarget.isAlive()){
-            double x = this.settingTarget.x - this.x;
-            double y = this.settingTarget.y - this.y;
-            double z = this.settingTarget.z - this.z;
+        if(this.followTarget != null && !this.followTarget.closed && this.followTarget.isAlive()){
+            double x = this.followTarget.x - this.x;
+            double y = this.followTarget.y - this.y;
+            double z = this.followTarget.z - this.z;
 
             double diff = Math.abs(x) + Math.abs(z);
-            if(this.stayTime > 0 || this.distance(this.settingTarget) <= (this.getWidth() + 0.0d) / 2 + 0.05){
+            if(this.stayTime > 0 || this.distance(this.followTarget) <= (this.getWidth() + 0.0d) / 2 + 0.05){
                 this.motionX = 0;
                 this.motionZ = 0;
             }else{
@@ -169,23 +169,23 @@ public class Blaze extends FlyingMonster{
             }
             this.yaw = Math.toDegrees(-Math.atan2(x / diff, z / diff));
             this.pitch = y == 0 ? 0 : Math.toDegrees(-Math.atan2(y, Math.sqrt(x * x + z * z)));
-            return this.settingTarget;
+            return this.followTarget;
         }
 
-        Vector3 before = this.baseTarget;
+        Vector3 before = this.target;
         this.checkTarget();
-        if(this.baseTarget instanceof EntityCreature || before != this.baseTarget){
-            double x = this.baseTarget.x - this.x;
-            double y = this.baseTarget.y - this.y;
-            double z = this.baseTarget.z - this.z;
+        if(this.target instanceof EntityCreature || before != this.target){
+            double x = this.target.x - this.x;
+            double y = this.target.y - this.y;
+            double z = this.target.z - this.z;
 
             double diff = Math.abs(x) + Math.abs(z);
-            double distance = this.distance(this.baseTarget);
+            double distance = this.distance(this.target);
             if(distance <= (this.getWidth() + 0.0d) / 2 + 0.05){
                 this.motionX = 0;
                 this.motionZ = 0;
             }else{
-                if(this.baseTarget instanceof EntityCreature){
+                if(this.target instanceof EntityCreature){
                     this.motionX = 0;
                     this.motionZ = 0;
                     if(distance > this.y - this.getLevel().getHighestBlockAt((int) this.x, (int) this.z)){
@@ -228,7 +228,7 @@ public class Blaze extends FlyingMonster{
             }
         }
         this.updateMovement();
-        return this.baseTarget;
+        return this.target;
     }
 
 	public void attackEntity(Entity player){

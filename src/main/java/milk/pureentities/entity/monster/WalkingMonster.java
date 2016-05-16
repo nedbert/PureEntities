@@ -159,7 +159,7 @@ public abstract class WalkingMonster extends WalkingEntity implements Monster{
             ((this.isFriendly() && !(target instanceof Player)) || !this.isFriendly())
             && target instanceof Entity
         ){
-            if(target != this.settingTarget || this.canAttack){
+            if(target != this.followTarget || this.canAttack){
                 this.attackEntity((Entity) target);
             }
         }else if(target != null && (Math.pow(this.x - target.x, 2) + Math.pow(this.z - target.z, 2)) <= 1){

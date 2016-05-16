@@ -20,7 +20,7 @@ public abstract class FlyingEntity extends BaseEntity{
             return;
         }
 
-        Vector3 target = this.baseTarget;
+        Vector3 target = this.target;
         if(!(target instanceof EntityCreature) || !this.targetOption((EntityCreature) target, this.distanceSquared(target))){
             double near = Integer.MAX_VALUE;
 
@@ -41,11 +41,11 @@ public abstract class FlyingEntity extends BaseEntity{
                 near = distance;
 
                 this.moveTime = 0;
-                this.baseTarget = creature;
+                this.target = creature;
             }
         }
 
-        if(this.baseTarget instanceof EntityCreature && ((EntityCreature) this.baseTarget).isAlive()){
+        if(this.target instanceof EntityCreature && ((EntityCreature) this.target).isAlive()){
             return;
         }
 
@@ -63,7 +63,7 @@ public abstract class FlyingEntity extends BaseEntity{
             }else{
                 y = Utils.rand(-10, 10);
             }
-            this.baseTarget = this.add(Utils.rand() ? x : -x, y, Utils.rand() ? z : -z);
+            this.target = this.add(Utils.rand() ? x : -x, y, Utils.rand() ? z : -z);
         }else if(Utils.rand(1, 410) == 1){
             x = Utils.rand(10, 30);
             z = Utils.rand(10, 30);
@@ -73,8 +73,8 @@ public abstract class FlyingEntity extends BaseEntity{
                 y = Utils.rand(-10, 10);
             }
             this.stayTime = Utils.rand(90, 400);
-            this.baseTarget = this.add(Utils.rand() ? x : -x, y, Utils.rand() ? z : -z);
-        }else if(this.moveTime <= 0 || !(this.baseTarget instanceof Vector3)){
+            this.target = this.add(Utils.rand() ? x : -x, y, Utils.rand() ? z : -z);
+        }else if(this.moveTime <= 0 || !(this.target instanceof Vector3)){
             x = Utils.rand(20, 100);
             z = Utils.rand(20, 100);
             if(this.y > maxY){
@@ -84,7 +84,7 @@ public abstract class FlyingEntity extends BaseEntity{
             }
             this.stayTime = 0;
             this.moveTime = Utils.rand(300, 1200);
-            this.baseTarget = this.add(Utils.rand() ? x : -x, y, Utils.rand() ? z : -z);
+            this.target = this.add(Utils.rand() ? x : -x, y, Utils.rand() ? z : -z);
         }
     }
 
@@ -100,13 +100,13 @@ public abstract class FlyingEntity extends BaseEntity{
             return null;
         }
 
-        if(this.settingTarget != null && !this.settingTarget.closed && this.settingTarget.isAlive()){
-            double x = this.settingTarget.x - this.x;
-            double y = this.settingTarget.y - this.y;
-            double z = this.settingTarget.z - this.z;
+        if(this.followTarget != null && !this.followTarget.closed && this.followTarget.isAlive()){
+            double x = this.followTarget.x - this.x;
+            double y = this.followTarget.y - this.y;
+            double z = this.followTarget.z - this.z;
 
             double diff = Math.abs(x) + Math.abs(z);
-            if(this.stayTime > 0 || this.distance(this.settingTarget) <= (this.getWidth() + 0.0d) / 2 + 0.05){
+            if(this.stayTime > 0 || this.distance(this.followTarget) <= (this.getWidth() + 0.0d) / 2 + 0.05){
                 this.motionX = 0;
                 this.motionZ = 0;
             }else{
@@ -118,15 +118,15 @@ public abstract class FlyingEntity extends BaseEntity{
             this.pitch = y == 0 ? 0 : Math.toDegrees(-Math.atan2(y, Math.sqrt(x * x + z * z)));
         }
 
-        Vector3 before = this.baseTarget;
+        Vector3 before = this.target;
         this.checkTarget();
-        if(this.baseTarget instanceof EntityCreature || before != this.baseTarget){
-            double x = this.baseTarget.x - this.x;
-            double y = this.baseTarget.y - this.y;
-            double z = this.baseTarget.z - this.z;
+        if(this.target instanceof EntityCreature || before != this.target){
+            double x = this.target.x - this.x;
+            double y = this.target.y - this.y;
+            double z = this.target.z - this.z;
 
             double diff = Math.abs(x) + Math.abs(z);
-            if(this.stayTime > 0 || this.distance(this.baseTarget) <= (this.getWidth() + 0.0d) / 2 + 0.05){
+            if(this.stayTime > 0 || this.distance(this.target) <= (this.getWidth() + 0.0d) / 2 + 0.05){
                 this.motionX = 0;
                 this.motionZ = 0;
             }else{
@@ -142,7 +142,7 @@ public abstract class FlyingEntity extends BaseEntity{
         double dx = this.motionX * tickDiff;
         double dy = this.motionY * tickDiff;
         double dz = this.motionZ * tickDiff;
-        Vector3 target = this.baseTarget;
+        Vector3 target = this.target;
         if(this.stayTime > 0){
             this.stayTime -= tickDiff;
             this.move(0, dy, 0);
