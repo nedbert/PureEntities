@@ -12,7 +12,7 @@ import milk.pureentities.util.Utils;
 
 import java.util.HashMap;
 
-public class CaveSpider extends WalkingMonster{
+public class CaveSpider extends Spider{
     public static final int NETWORK_ID = 40;
 
     public CaveSpider(FullChunk chunk, CompoundTag nbt){

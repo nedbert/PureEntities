@@ -114,7 +114,7 @@ public class Creeper extends WalkingMonster implements EntityExplosive{
 
         if(this.isKnockback()){
             this.move(this.motionX * tickDiff, this.motionY, this.motionZ * tickDiff);
-            this.motionY -= 0.15 * tickDiff;
+            this.motionY -= this.getGravity() * tickDiff;
             this.updateMovement();
             return true;
         }

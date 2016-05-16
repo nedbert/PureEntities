@@ -1,11 +1,11 @@
 # PureEntities
   
-**[주의] 이 플러그인은 완벽하지 않습니다. 엔티티가 꽤 비정상적으로 활동합니다.**  
+**[주의]이 플러그인은 미완성입니다. 엔티티가 비정상적으로 활동할 수 있습니다.**  
   
 제작자: **[SW-Team](https://github.com/SW-Team)**  
   
 PMMP(PHP Server) Version: [PureEntities-PMMP](https://github.com/milk0417/PureEntities)  
-(본 제품은 더이상 지원되지 않습니다)  
+(그러나 이 제품은 더이상 지원할 예정이 없습니다)  
   
 Sub Module: [EntityManager](https://github.com/SW-Team/EntityManager)  
 이 플러그인과 함께 사용하시면 더욱 편합니다.  
@@ -13,6 +13,7 @@ Sub Module: [EntityManager](https://github.com/SW-Team/EntityManager)
   
 PureEntities는 엔티티를 구현시켜주는 플러그인입니다.  
 이 플러그인은 간단한 Entity AI를 제공합니다.  
+아직까진 많이 미흡하므로 이점은 유의해주시기 바랍니다.  
   
 개발자분들을 위한 간단한 API도 제공중입니다.  
   

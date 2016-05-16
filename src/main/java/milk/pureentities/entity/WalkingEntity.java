@@ -4,10 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockFence;
 import cn.nukkit.block.BlockFenceGate;
 import cn.nukkit.block.BlockLiquid;
-import cn.nukkit.block.BlockSlab;
-import cn.nukkit.block.BlockStairs;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.level.Location;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector2;
@@ -119,6 +116,7 @@ public abstract class WalkingEntity extends BaseEntity{
 
         if(this.isKnockback()){
             this.move(this.motionX * tickDiff, this.motionY * tickDiff, this.motionZ * tickDiff);
+            this.motionY -= this.getGravity() * tickDiff;
             this.updateMovement();
             return null;
         }

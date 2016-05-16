@@ -85,7 +85,7 @@ public class Spider extends WalkingMonster{
 
         if(this.isKnockback()){
             this.move(this.motionX * tickDiff, this.motionY, this.motionZ * tickDiff);
-            this.motionY -= 0.15 * tickDiff;
+            this.motionY -= this.getGravity() * tickDiff;
             this.updateMovement();
             return true;
         }
@@ -104,8 +104,8 @@ public class Spider extends WalkingMonster{
                 if(target instanceof EntityCreature){
                     if(distance <= (this.getWidth() + 0.0d) / 2 + 0.05){
                         if(this.attackDelay < 10){
-                            this.motionX = this.getSpeed() * 0.1 * (x / diff);
-                            this.motionZ = this.getSpeed() * 0.1 * (z / diff);
+                            this.motionX = this.getSpeed() * 0.25 * (x / diff);
+                            this.motionZ = this.getSpeed() * 0.25 * (z / diff);
                         }else{
                             this.motionX = 0;
                             this.motionZ = 0;
