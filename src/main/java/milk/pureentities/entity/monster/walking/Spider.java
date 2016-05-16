@@ -2,8 +2,6 @@ package milk.pureentities.entity.monster.walking;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockFence;
-import cn.nukkit.block.BlockFenceGate;
 import cn.nukkit.block.BlockLiquid;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityCreature;
@@ -11,7 +9,6 @@ import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector2;
 import cn.nukkit.math.Vector3;
@@ -102,10 +99,10 @@ public class Spider extends WalkingMonster{
             double distance = Math.sqrt(Math.pow(this.x - target.x, 2) + Math.pow(this.z - target.z, 2));
             if(distance <= 2){
                 if(target instanceof EntityCreature){
-                    if(distance <= (this.getWidth() + 0.0d) / 2 + 0.05){
+                    if(distance <= (this.getWidth() + 0.0d) / 2 + 0.05 && Math.abs(target.y - this.y) < 1){
                         if(this.attackDelay < 10){
-                            this.motionX = this.getSpeed() * 0.25 * (x / diff);
-                            this.motionZ = this.getSpeed() * 0.25 * (z / diff);
+                            this.motionX = this.getSpeed() * 0.23 * (x / diff);
+                            this.motionZ = this.getSpeed() * 0.23 * (z / diff);
                         }else{
                             this.motionX = 0;
                             this.motionZ = 0;
@@ -118,7 +115,7 @@ public class Spider extends WalkingMonster{
                         this.motionX = this.getSpeed() * 0.15 * (x / diff);
                         this.motionZ = this.getSpeed() * 0.15 * (z / diff);
                     }
-                }else if(Math.pow(this.x - target.x, 2) + Math.pow(this.z - target.z, 2) <= 1){
+                }else if(this.distanceSquared(target) <= 1.2){
                     this.moveTime = 0;
                 }
             }else{
