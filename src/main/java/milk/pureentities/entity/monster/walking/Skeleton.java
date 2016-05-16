@@ -42,11 +42,6 @@ public class Skeleton extends WalkingMonster{
         return 1.8f;
     }
 
-    @Override
-    public String getName(){
-        return "Skeleton";
-    }
-
     public void attackEntity(Entity player){
         if(this.attackDelay > 30 && Utils.rand(1, 32) < 4 && this.distanceSquared(player) <= 55){
             this.attackDelay = 0;

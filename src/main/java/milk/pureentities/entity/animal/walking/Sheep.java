@@ -32,14 +32,8 @@ public class Sheep extends WalkingAnimal{
     }
 
     @Override
-    public String getName(){
-        return "Sheep";
-    }
-
-    @Override
     public void initEntity(){
         super.initEntity();
-
         this.setMaxHealth(8);
     }
 

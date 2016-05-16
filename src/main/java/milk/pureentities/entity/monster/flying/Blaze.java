@@ -54,10 +54,6 @@ public class Blaze extends FlyingMonster{
         this.setDamage(new int[]{0, 0, 0, 0});
     }
 
-    public String getName(){
-        return "Blaze";
-    }
-
     protected void checkTarget(){
         if(this.isKnockback()){
             return;

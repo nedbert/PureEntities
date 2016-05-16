@@ -47,11 +47,6 @@ public class ZombieVillager extends WalkingMonster{
     }
 
     @Override
-    public String getName(){
-        return "ZombieVillager";
-    }
-
-    @Override
     public void attackEntity(Entity player){
         if(this.attackDelay > 10 && this.distanceSquared(player) < 1){
             this.attackDelay = 0;

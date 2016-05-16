@@ -50,10 +50,6 @@ public class Ghast extends FlyingMonster{
         this.setDamage(new int[]{0, 0, 0, 0});
     }
 
-    public String getName(){
-        return "Ghast";
-    }
-
     public boolean targetOption(EntityCreature creature, double distance){
         if(creature instanceof Player){
             Player player = (Player) creature;

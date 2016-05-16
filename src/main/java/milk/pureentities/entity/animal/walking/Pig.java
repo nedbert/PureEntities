@@ -36,13 +36,8 @@ public class Pig extends WalkingAnimal implements EntityRideable{
         return 0.9f;
     }
 
-    public String getName(){
-        return "Pig";
-    }
-
     public void initEntity(){
         super.initEntity();
-
         this.setMaxHealth(10);
     }
 

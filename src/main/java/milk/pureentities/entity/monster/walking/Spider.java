@@ -61,11 +61,6 @@ public class Spider extends WalkingMonster{
     }
 
     @Override
-    public String getName(){
-        return "Spider";
-    }
-
-    @Override
     public boolean onUpdate(int currentTick){
         if(this.server.getDifficulty() < 1){
             this.close();

@@ -37,13 +37,7 @@ public class Ocelot extends WalkingAnimal{
     @Override
     protected void initEntity(){
         super.initEntity();
-
         this.setMaxHealth(10);
-    }
-
-    @Override
-    public String getName(){
-        return "Ocelot";
     }
 
     public boolean targetOption(EntityCreature creature, double distance){

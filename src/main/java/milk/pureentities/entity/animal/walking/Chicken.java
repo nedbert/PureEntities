@@ -43,11 +43,6 @@ public class Chicken extends WalkingAnimal{
     }
 
     @Override
-    public String getName(){
-        return "Chicken";
-    }
-
-    @Override
     public void initEntity(){
         super.initEntity();
 

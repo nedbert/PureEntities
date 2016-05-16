@@ -47,11 +47,6 @@ public class Silverfish extends WalkingMonster{
     }
 
     @Override
-    public String getName(){
-        return "Silverfish";
-    }
-
-    @Override
     public void attackEntity(Entity player){
         if(this.attackDelay > 10 && this.distanceSquared(player) < 1){
             this.attackDelay = 0;

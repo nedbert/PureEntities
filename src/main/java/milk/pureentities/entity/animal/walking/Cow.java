@@ -42,13 +42,8 @@ public class Cow extends WalkingAnimal{
         return 1.2f;
     }
 
-    public String getName(){
-        return "Cow";
-    }
-
     public void initEntity(){
         super.initEntity();
-
         this.setMaxHealth(10);
     }
 

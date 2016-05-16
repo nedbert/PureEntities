@@ -60,10 +60,6 @@ public class Wolf extends WalkingMonster{
         this.namedTag.putInt("Angry", this.angry);
     }
 
-    public String getName(){
-        return "Wolf";
-    }
-
     @Override
     public boolean targetOption(EntityCreature creature, double distance){
     	return this.isAngry() && super.targetOption(creature, distance);

@@ -48,11 +48,6 @@ public class CaveSpider extends WalkingMonster{
     }
 
     @Override
-    public String getName(){
-        return "CaveSpider";
-    }
-
-    @Override
     public void attackEntity(Entity player){
         if(this.attackDelay > 10 && this.distanceSquared(player) < 1.32){
             this.attackDelay = 0;

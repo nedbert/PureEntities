@@ -48,11 +48,6 @@ public class Creeper extends WalkingMonster implements EntityExplosive{
     }
 
     @Override
-    public String getName(){
-        return "Creeper";
-    }
-
-    @Override
     public void initEntity(){
         super.initEntity();
 

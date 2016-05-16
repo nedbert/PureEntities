@@ -68,11 +68,6 @@ public class PigZombie extends WalkingMonster{
     }
 
     @Override
-    public String getName(){
-        return "PigZombie";
-    }
-
-    @Override
     public boolean targetOption(EntityCreature creature, double distance){
         if(
             distance <= 100 && this.isAngry()

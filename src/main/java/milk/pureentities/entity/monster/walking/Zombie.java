@@ -43,11 +43,6 @@ public class Zombie extends WalkingMonster implements EntityAgeable{
     }
 
     @Override
-    public String getName(){
-        return "Zombie";
-    }
-
-    @Override
     protected void initEntity(){
         super.initEntity();
 

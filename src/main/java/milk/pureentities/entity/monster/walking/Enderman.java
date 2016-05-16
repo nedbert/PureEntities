@@ -45,10 +45,6 @@ public class Enderman extends WalkingMonster{
         this.setDamage(new int[]{0, 4, 7, 10});
     }
 
-    public String getName(){
-        return "Enderman";
-    }
-
     public void attackEntity(Entity player){
         if(this.attackDelay > 10 && this.distanceSquared(player) < 1){
             this.attackDelay = 0;

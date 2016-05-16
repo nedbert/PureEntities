@@ -3,7 +3,6 @@ package milk.pureentities.entity;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.EntityCreature;
-import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -16,7 +15,6 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.potion.Effect;
 import milk.pureentities.entity.monster.Monster;
-import milk.pureentities.entity.monster.flying.Blaze;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -182,13 +180,7 @@ public abstract class BaseEntity extends EntityCreature{
 
         boolean hasUpdate = false;
 
-        //this.checkBlockCollision();
-        Vector3 vector = new Vector3(0, 0, 0);
-
-        for(Block block : this.getBlocksAround()){
-            block.onEntityCollide(this);
-            block.addVelocityToEntity(this, vector);
-        }
+        this.checkBlockCollision();
 
         if(this.isInsideOfSolid()){
             hasUpdate = true;
@@ -249,12 +241,12 @@ public abstract class BaseEntity extends EntityCreature{
 
     @Override
     public void attack(EntityDamageEvent source){
-        if(this.isKnockback()){
-            if((source instanceof EntityDamageByEntityEvent)){
-                if(!(((EntityDamageByEntityEvent) source).getDamager() instanceof Player)){
-                    return;
-                }
-            }
+        if(
+            this.isKnockback()
+            && source instanceof EntityDamageByEntityEvent
+            && ((EntityDamageByEntityEvent) source).getDamager() instanceof Player
+        ){
+            return;
         }
 
         super.attack(source);

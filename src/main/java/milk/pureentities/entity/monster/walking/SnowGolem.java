@@ -47,11 +47,6 @@ public class SnowGolem extends WalkingMonster{
     }
 
     @Override
-    public String getName(){
-        return "SnowGolem";
-    }
-
-    @Override
     public boolean targetOption(EntityCreature creature, double distance){
         return !(creature instanceof Player) && creature.isAlive() && distance <= 60;
     }

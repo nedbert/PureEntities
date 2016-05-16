@@ -30,11 +30,6 @@ public class Bat extends FlyingAnimal{
     }
 
     @Override
-    public String getName(){
-        return "Bat";
-    }
-
-    @Override
     public void initEntity(){
         super.initEntity();
 

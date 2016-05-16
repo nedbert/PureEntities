@@ -50,10 +50,6 @@ public class IronGolem extends WalkingMonster{
         this.setMinDamage(new int[]{0, 7, 7, 7});
     }
 
-    public String getName(){
-        return "IronGolem";
-    }
-
     public void attackEntity(Entity player){
         if(this.attackDelay > 10 && this.distanceSquared(player) < 4){
             this.attackDelay = 0;

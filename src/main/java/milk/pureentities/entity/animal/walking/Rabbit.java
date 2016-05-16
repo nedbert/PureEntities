@@ -33,14 +33,9 @@ public class Rabbit extends WalkingAnimal{
     public double getSpeed(){
         return 1.2;
     }
-    
-    public String getName(){
-        return "Rabbit";
-    }
 
     public void initEntity(){
         super.initEntity();
-
         this.setMaxHealth(3);
     }
 

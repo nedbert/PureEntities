@@ -54,7 +54,7 @@ public abstract class WalkingEntity extends BaseEntity{
             }
         }
 
-        if(this.baseTarget instanceof EntityCreature && ((EntityCreature) this.baseTarget).isAlive()){
+        if(this.baseTarget instanceof EntityCreature && !((EntityCreature) this.baseTarget).closed && ((EntityCreature) this.baseTarget).isAlive()){
             return;
         }
 

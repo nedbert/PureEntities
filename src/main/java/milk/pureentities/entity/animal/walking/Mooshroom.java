@@ -30,13 +30,8 @@ public class Mooshroom extends WalkingAnimal{
         return 1.12f;
     }
 
-    public String getName(){
-        return "Mooshroom";
-    }
-
     public void initEntity(){
         super.initEntity();
-
         this.setMaxHealth(10);
     }
 
