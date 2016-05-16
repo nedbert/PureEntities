@@ -2,6 +2,7 @@ package milk.pureentities.entity;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -26,6 +27,7 @@ public abstract class BaseEntity extends EntityCreature{
     protected int moveTime = 0;
 
     protected Vector3 baseTarget = null;
+    protected Vector3 setingTarget = null;
 
     protected List<Block> blocksAround = new ArrayList<>();
 
@@ -69,6 +71,15 @@ public abstract class BaseEntity extends EntityCreature{
 
     public double getSpeed(){
         return 1;
+    }
+
+    public Entity getTarget(){
+        return this.baseTarget instanceof Entity ? (Entity) this.baseTarget : null;
+    }
+
+    //TODO
+    public void setTarget(Entity target){
+        this.setingTarget = target;
     }
 
     @Override

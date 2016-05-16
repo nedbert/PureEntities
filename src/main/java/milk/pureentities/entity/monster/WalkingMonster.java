@@ -27,13 +27,8 @@ public abstract class WalkingMonster extends WalkingEntity implements Monster{
     }
 
     @Override
-    public Entity getTarget(){
-        return this.baseTarget instanceof Entity ? (Entity) this.baseTarget : null;
-    }
-
-    @Override
     public void setTarget(Entity target){
-        //TODO
+        super.setTarget(target);
     }
 
     public int getDamage(){

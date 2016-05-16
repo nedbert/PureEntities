@@ -6,9 +6,6 @@ public interface Monster{
 
     void attackEntity(Entity player);
 
-    Entity getTarget();
-    void setTarget(Entity target);
-
     int getDamage();
     int getDamage(Integer difficulty);
 
