@@ -127,7 +127,6 @@ public class Creeper extends WalkingMonster implements EntityExplosive{
             double y = this.target.y - this.y;
             double z = this.target.z - this.z;
 
-            Vector3 target = this.target;
             double diff = Math.abs(x) + Math.abs(z);
             double distance = Math.sqrt(Math.pow(this.x - target.x, 2) + Math.pow(this.z - target.z, 2));
             if(distance <= 4.5){

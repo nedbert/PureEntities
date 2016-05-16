@@ -1,6 +1,6 @@
 # PureEntities
   
-**[주의]이 플러그인은 미완성입니다. 엔티티가 비정상적으로 활동할 수 있습니다.**  
+**[주의]이 플러그인은 개발중입니다. 엔티티가 비정상적으로 반응할 수 있습니다.**  
   
 제작자: **[SW-Team](https://github.com/SW-Team)**  
   
@@ -13,9 +13,10 @@ Sub Module: [EntityManager](https://github.com/SW-Team/EntityManager)
   
 PureEntities는 엔티티를 구현시켜주는 플러그인입니다.  
 이 플러그인은 간단한 Entity AI를 제공합니다.  
-아직까진 많이 미흡하므로 이점은 유의해주시기 바랍니다.  
+아직까진 많이 미흡할 수 있습니다.  
   
-개발자분들을 위한 간단한 API도 제공중입니다.  
+원하시는 내역이나 문제점이 있으면 바로 알려주세요.  
+적극 반영하도록 하겠습니다.  
   
 ### Methods List
   * PureEntities
