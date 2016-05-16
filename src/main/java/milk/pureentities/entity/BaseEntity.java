@@ -27,7 +27,7 @@ public abstract class BaseEntity extends EntityCreature{
     protected int moveTime = 0;
 
     protected Vector3 baseTarget = null;
-    protected Vector3 setingTarget = null;
+    protected Entity settingTarget = null;
 
     protected List<Block> blocksAround = new ArrayList<>();
 
@@ -74,12 +74,16 @@ public abstract class BaseEntity extends EntityCreature{
     }
 
     public Entity getTarget(){
-        return this.baseTarget instanceof Entity ? (Entity) this.baseTarget : null;
+        return this.settingTarget != null ? this.settingTarget : (this.baseTarget instanceof Entity ? (Entity) this.baseTarget : null);
     }
 
     //TODO
     public void setTarget(Entity target){
-        this.setingTarget = target;
+        this.settingTarget = target;
+
+        this.moveTime = 0;
+        this.stayTime = 0;
+        this.baseTarget = null;
     }
 
     @Override

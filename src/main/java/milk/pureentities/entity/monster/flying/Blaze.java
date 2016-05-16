@@ -125,11 +125,14 @@ public class Blaze extends FlyingMonster{
         }
 
         int[] sides = {Block.SIDE_SOUTH, Block.SIDE_WEST, Block.SIDE_NORTH, Block.SIDE_EAST};
-        Block block = this.getLevel().getBlock(new Vector3(NukkitMath.floorDouble(this.x + dx), (int) this.y, NukkitMath.floorDouble(this.z + dz)));
-        Block directionBlock = block.getSide(sides[this.getDirection()]);
-        Block directionUpBlock = block.getSide(Block.SIDE_UP);
-        if(!directionBlock.canPassThrough() && directionUpBlock.canPassThrough()){
-            if(directionBlock instanceof BlockFence || directionBlock instanceof BlockFenceGate){
+        Block that = this.getLevel().getBlock(new Vector3(NukkitMath.floorDouble(this.x + dx), (int) this.y, NukkitMath.floorDouble(this.z + dz)));
+        Block block = that.getSide(sides[this.getDirection()]);
+        if(
+            !block.canPassThrough()
+                && block.getSide(Block.SIDE_UP).canPassThrough()
+                && that.getSide(Block.SIDE_UP, 2).canPassThrough()
+            ){
+            if(block instanceof BlockFence || block instanceof BlockFenceGate){
                 this.motionY = this.getGravity() * 2;
             }else{
                 this.motionY = this.getGravity() * 4;
@@ -149,6 +152,24 @@ public class Blaze extends FlyingMonster{
             this.move(this.motionX * tickDiff, this.motionY * tickDiff, this.motionZ * tickDiff);
             this.updateMovement();
             return null;
+        }
+
+        if(this.settingTarget != null && !this.settingTarget.closed && this.settingTarget.isAlive()){
+            double x = this.settingTarget.x - this.x;
+            double y = this.settingTarget.y - this.y;
+            double z = this.settingTarget.z - this.z;
+
+            double diff = Math.abs(x) + Math.abs(z);
+            if(this.stayTime > 0 || this.distance(this.settingTarget) <= (this.getWidth() + 0.0d) / 2 + 0.05){
+                this.motionX = 0;
+                this.motionZ = 0;
+            }else{
+                this.motionX = this.getSpeed() * 0.15 * (x / diff);
+                this.motionZ = this.getSpeed() * 0.15 * (z / diff);
+            }
+            this.yaw = Math.toDegrees(-Math.atan2(x / diff, z / diff));
+            this.pitch = y == 0 ? 0 : Math.toDegrees(-Math.atan2(y, Math.sqrt(x * x + z * z)));
+            return this.settingTarget;
         }
 
         Vector3 before = this.baseTarget;

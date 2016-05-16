@@ -18,18 +18,20 @@ public abstract class FlyingMonster extends FlyingEntity implements Monster{
 
     protected int attackDelay = 0;
 
+    protected boolean canAttack = true;
+
     public FlyingMonster(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
     }
 
     @Override
-    public Entity getTarget(){
-        return this.baseTarget instanceof Entity ? (Entity) this.baseTarget : null;
+    public void setTarget(Entity target){
+        this.setTarget(target, true);
     }
 
-    @Override
-    public void setTarget(Entity target){
-        //TODO
+    public void setTarget(Entity target, boolean attack){
+        super.setTarget(target);
+        this.canAttack = attack;
     }
 
     public int getDamage(){
@@ -151,7 +153,9 @@ public abstract class FlyingMonster extends FlyingEntity implements Monster{
 
         Vector3 target = this.updateMove(tickDiff);
         if(target instanceof Entity){
-            this.attackEntity((Entity) target);
+            if(target != this.settingTarget || this.canAttack){
+                this.attackEntity((Entity) target);
+            }
         }else if(
             target != null &&
             (Math.pow(this.x - target.x, 2) + Math.pow(this.z - target.z, 2)) <= 1

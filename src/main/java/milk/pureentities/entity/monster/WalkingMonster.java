@@ -22,13 +22,20 @@ public abstract class WalkingMonster extends WalkingEntity implements Monster{
 
     protected int attackDelay = 0;
 
+    protected boolean canAttack = true;
+
     public WalkingMonster(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
     }
 
     @Override
     public void setTarget(Entity target){
+        this.setTarget(target, true);
+    }
+
+    public void setTarget(Entity target, boolean attack){
         super.setTarget(target);
+        this.canAttack = attack;
     }
 
     public int getDamage(){
@@ -152,7 +159,9 @@ public abstract class WalkingMonster extends WalkingEntity implements Monster{
             ((this.isFriendly() && !(target instanceof Player)) || !this.isFriendly())
             && target instanceof Entity
         ){
-            this.attackEntity((Entity) target);
+            if(target != this.settingTarget || this.canAttack){
+                this.attackEntity((Entity) target);
+            }
         }else if(target != null && (Math.pow(this.x - target.x, 2) + Math.pow(this.z - target.z, 2)) <= 1){
             this.moveTime = 0;
         }

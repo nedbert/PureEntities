@@ -99,7 +99,25 @@ public abstract class FlyingEntity extends BaseEntity{
             this.updateMovement();
             return null;
         }
-        
+
+        if(this.settingTarget != null && !this.settingTarget.closed && this.settingTarget.isAlive()){
+            double x = this.settingTarget.x - this.x;
+            double y = this.settingTarget.y - this.y;
+            double z = this.settingTarget.z - this.z;
+
+            double diff = Math.abs(x) + Math.abs(z);
+            if(this.stayTime > 0 || this.distance(this.settingTarget) <= (this.getWidth() + 0.0d) / 2 + 0.05){
+                this.motionX = 0;
+                this.motionZ = 0;
+            }else{
+                this.motionX = this.getSpeed() * 0.15 * (x / diff);
+                this.motionZ = this.getSpeed() * 0.15 * (z / diff);
+                this.motionY = this.getSpeed() * 0.27 * (y / diff);
+            }
+            this.yaw = Math.toDegrees(-Math.atan2(x / diff, z / diff));
+            this.pitch = y == 0 ? 0 : Math.toDegrees(-Math.atan2(y, Math.sqrt(x * x + z * z)));
+        }
+
         Vector3 before = this.baseTarget;
         this.checkTarget();
         if(this.baseTarget instanceof EntityCreature || before != this.baseTarget){
