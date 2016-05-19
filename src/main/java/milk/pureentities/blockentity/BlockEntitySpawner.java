@@ -14,15 +14,15 @@ import java.util.ArrayList;
 
 public class BlockEntitySpawner extends BlockEntitySpawnable{
 
-    protected int entityId = -1;
-    protected int spawnRange;
-    protected int maxNearbyEntities;
-    protected int requiredPlayerRange;
+    private int entityId = -1;
+    private int spawnRange;
+    private int maxNearbyEntities;
+    private int requiredPlayerRange;
 
-    protected int delay = 0;
+    private int delay = 0;
 
-    protected int minSpawnDelay;
-    protected int maxSpawnDelay;
+    private int minSpawnDelay;
+    private int maxSpawnDelay;
 
     public BlockEntitySpawner(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);

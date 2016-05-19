@@ -137,6 +137,10 @@ public abstract class WalkingMonster extends WalkingEntity implements Monster{
     }
 
     public boolean onUpdate(int currentTick){
+        if(this.closed){
+            return false;
+        }
+
         if(this.server.getDifficulty() < 1){
             this.close();
             return false;

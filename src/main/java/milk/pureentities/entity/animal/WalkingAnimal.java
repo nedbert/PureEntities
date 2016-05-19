@@ -59,6 +59,10 @@ public abstract class WalkingAnimal extends WalkingEntity implements Animal{
 
     @Override
     public boolean onUpdate(int currentTick){
+        if(this.closed){
+            return false;
+        }
+
         if(!this.isAlive()){
             if(++this.deadTicks >= 23){
                 this.close();
@@ -79,7 +83,7 @@ public abstract class WalkingAnimal extends WalkingEntity implements Animal{
                 this.y = this.lastY;
                 this.z = this.lastZ;
             }
-        }else if(target != null && this.distanceSquared(target) <= 1){
+        }else if(target != null && (Math.pow(this.x - target.x, 2) + Math.pow(this.z - target.z, 2)) <= 1){
             this.moveTime = 0;
         }
         return true;

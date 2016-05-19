@@ -1,8 +1,8 @@
 # PureEntities
   
-**[주의]이 플러그인은 개발중입니다. 엔티티가 비정상적으로 반응할 수 있습니다.**  
+**[주의]이 플러그인은 개발중입니다. 따라서 비정상적으로 작동할 수 있습니다.**  
   
-제작자: **[SW-Team](https://github.com/SW-Team)**  
+제작: **[SW-Team](https://github.com/SW-Team)**  
   
 PMMP(PHP Server) Version: [PureEntities-PMMP](https://github.com/milk0417/PureEntities)  
 (그러나 이 제품은 더이상 지원할 예정이 없습니다)  

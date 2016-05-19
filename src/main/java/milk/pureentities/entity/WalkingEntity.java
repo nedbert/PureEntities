@@ -11,7 +11,7 @@ import cn.nukkit.math.Vector2;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.nbt.tag.CompoundTag;
-import milk.pureentities.entity.animal.WalkingAnimal;
+import milk.pureentities.entity.animal.Animal;
 import milk.pureentities.util.Utils;
 
 public abstract class WalkingEntity extends BaseEntity{
@@ -30,7 +30,7 @@ public abstract class WalkingEntity extends BaseEntity{
             double near = Integer.MAX_VALUE;
 
             for(Entity entity : this.getLevel().getEntities()){
-                if(entity == this || !(entity instanceof EntityCreature) || entity instanceof WalkingAnimal){
+                if(entity == this || !(entity instanceof EntityCreature) || entity instanceof Animal){
                     continue;
                 }
 
