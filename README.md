@@ -18,7 +18,7 @@ PureEntities는 엔티티를 구현시켜주는 플러그인입니다.
 원하시는 내역이나 문제점이 있으면 바로 알려주세요.  
 적극 반영하도록 하겠습니다.  
   
-### Methods List
+### 메소드 목록
   * PureEntities
     * static BaseEntity create(int type, Position pos, Object... args)
     * static BaseEntity create(String type, Position pos, Object... args)

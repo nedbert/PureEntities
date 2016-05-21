@@ -17,12 +17,12 @@ import milk.pureentities.util.Utils;
 
 public abstract class WalkingMonster extends WalkingEntity implements Monster{
 
-    protected int[] minDamage;
-    protected int[] maxDamage;
+    private int[] minDamage;
+    private int[] maxDamage;
 
     protected int attackDelay = 0;
 
-    protected boolean canAttack = true;
+    private boolean canAttack = true;
 
     public WalkingMonster(FullChunk chunk, CompoundTag nbt){
         super(chunk, nbt);
@@ -160,7 +160,7 @@ public abstract class WalkingMonster extends WalkingEntity implements Monster{
 
         Vector3 target = this.updateMove(tickDiff);
         if(
-            ((this.isFriendly() && !(target instanceof Player)) || !this.isFriendly())
+            (!this.isFriendly() || !(target instanceof Player))
             && target instanceof Entity
         ){
             if(target != this.followTarget || this.canAttack){
