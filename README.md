@@ -6,13 +6,13 @@ PureEntities is a Plug-in that makes implement the entity.
 This Plug-in provides a simple Entity AI.
 
 ## Notice
-#### Welcome Github issu!
+#### Welcome Github issue!
 
 This plug-in is in development. Therefore, It is possible to function abnormally.
 
 #### About PMMP
 PocketMine-MP Version : [PureEntities-PMMP](https://github.com/milk0417/PureEntities)  
-(However, This project was Deprecated.)
+(However, This project was deprecated.)
 
 
 ## Sub Module
