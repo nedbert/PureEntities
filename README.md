@@ -63,7 +63,7 @@ Server.getInstance().getDefaultLevel().getEntities().forEach((id, entity) -> {
 
 Zombie zombie = (Zombie) PureEntities.create("Zombie", position);
 if(zombie != null){
-    zombie.spawnToAll(); //if you don't use this method, you couldn't see it
+    zombie.spawnToAll(); //if you don't use this method, you couldn't see this
 }
 
 EntityArrow arrow = (EntityArrow) PureEntities.create("Arrow", position, player, true);
