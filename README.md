@@ -29,8 +29,6 @@ PocketMine-MP Version : [PureEntities-PMMP](https://github.com/milk0417/PureEnti
     * `void setMovement(boolean value)`
     * `void setFriendly(boolean value)`
     * `void setWallCheck(boolean value)`
-  * Animal
-    * `boolean isBaby()`
   * Monster
     * `double getDamage()`
     * `double getDamage(int difficulty)`
@@ -41,7 +39,7 @@ PocketMine-MP Version : [PureEntities-PMMP](https://github.com/milk0417/PureEnti
     * `void setDamage(double damage)`
     * `void setDamage(double[] damage)`
     * `void setDamage(double damage, int difficulty)`
-  * Zombie
+  * Animal, Zombie
     * `boolean isBaby()`
   * PigZombie, Wolf, Ocelot
     * `boolean isAngry()`
@@ -49,12 +47,12 @@ PocketMine-MP Version : [PureEntities-PMMP](https://github.com/milk0417/PureEnti
 
 ## Example
 ``` java
-this.getServer().getDefaultLevel().getEntities().forEach((id, baseEntity) -> {
-    baseEntity.setWallCheck(false);
-    baseEntity.setMovement(!baseEntity.isMovement());
+Server.getInstance().getDefaultLevel().getEntities().forEach((id, entity) -> {
+    entity.setWallCheck(false);
+    entity.setMovement(!entity.isMovement());
 
-    if(baseEntity instanceof Monster){
-        Monster mob = (Monster) baseEntity;
+    if(entity instanceof Monster){
+        Monster mob = (Monster) entity;
 
         mob.setDamage(10);
 
@@ -63,6 +61,13 @@ this.getServer().getDefaultLevel().getEntities().forEach((id, baseEntity) -> {
     }
 });
 
-Zombie arrow = (Zombie) PureEntities.create("Zombie", position);
+Zombie zombie = (Zombie) PureEntities.create("Zombie", position);
+if(zombie != null){
+    zombie.spawnToAll(); //if you don't use this method, you couldn't see it
+}
+
 EntityArrow arrow = (EntityArrow) PureEntities.create("Arrow", position, player, true);
+if(arrow != null){
+    arrow.spawnToAll();
+}
 ```
