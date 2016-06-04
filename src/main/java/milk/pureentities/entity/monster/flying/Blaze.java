@@ -59,6 +59,10 @@ public class Blaze extends FlyingMonster{
             return;
         }
 
+        if(this.followTarget != null && !this.followTarget.closed && this.followTarget.isAlive()){
+            return;
+        }
+
         Vector3 target = this.target;
         if(!(target instanceof EntityCreature) || !this.targetOption((EntityCreature) target, this.distanceSquared(target))){
             double near = Integer.MAX_VALUE;
