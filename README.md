@@ -2,18 +2,15 @@
 Development: **[SW-Team](https://github.com/SW-Team)**
 
 PureEntities is a Plug-in that makes implement the entity.
-
 This Plug-in provides a simple Entity AI.
 
 ## Notice
 #### Welcome Github issue!
-
 This plug-in is in development. Therefore, It is possible to function abnormally.
 
 #### About PMMP
 PocketMine-MP Version : [PureEntities-PMMP](https://github.com/milk0417/PureEntities)  
 (However, This project was deprecated.)
-
 
 ## Sub Module
 [EntityManager](https://github.com/SW-Team/EntityManager)  
@@ -23,18 +20,20 @@ PocketMine-MP Version : [PureEntities-PMMP](https://github.com/milk0417/PureEnti
     * `static BaseEntity create(int type, Position pos, Object... args)`
     * `static BaseEntity create(String type, Position pos, Object... args)`
   * BaseEntity
+    * `Entity getTarget()`
     * `boolean isMovement()`
     * `boolean isFriendly()`
     * `boolean isWallCheck()`
+    * `void setTarget(Entity target)`
     * `void setMovement(boolean value)`
     * `void setFriendly(boolean value)`
     * `void setWallCheck(boolean value)`
   * Monster
     * `double getDamage()`
-    * `double getDamage(int difficulty)`
     * `double getMinDamage()`
-    * `double getMinDamage(int difficulty)`
     * `double getMaxDamage()`
+    * `double getDamage(int difficulty)`
+    * `double getMinDamage(int difficulty)`
     * `double getMaxDamage(int difficulty)`
     * `void setDamage(double damage)`
     * `void setDamage(double[] damage)`
