@@ -77,7 +77,6 @@ public class BlockEntitySpawner extends BlockEntitySpawnable{
                         isValid = true;
                     }
                     list.add(entity);
-                    break;
                 }
             }
 
