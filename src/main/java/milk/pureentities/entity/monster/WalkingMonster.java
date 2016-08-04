@@ -11,6 +11,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.potion.Effect;
+import cn.nukkit.timings.Timings;
 import milk.pureentities.entity.WalkingEntity;
 import milk.pureentities.entity.monster.walking.Enderman;
 import milk.pureentities.util.Utils;
@@ -174,7 +175,7 @@ public abstract class WalkingMonster extends WalkingEntity implements Monster{
 
     @Override
     public boolean entityBaseTick(int tickDiff){
-        //Timings.timerEntityBaseTick.startTiming();
+        Timings.entityBaseTickTimer.startTiming();
 
         boolean hasUpdate = super.entityBaseTick(tickDiff);
 
@@ -198,7 +199,7 @@ public abstract class WalkingMonster extends WalkingEntity implements Monster{
             }
         }
 
-        //Timings.timerEntityBaseTick.stopTiming();
+        Timings.entityBaseTickTimer.stopTiming();
         return hasUpdate;
     }
 

@@ -266,6 +266,9 @@ public abstract class BaseEntity extends EntityCreature{
         }
 
         super.attack(source);
+
+        this.target = null;
+        this.attackTime = 7;
     }
 
     @Override

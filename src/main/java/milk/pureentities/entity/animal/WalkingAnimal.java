@@ -8,6 +8,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.Player;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.potion.Effect;
+import cn.nukkit.timings.Timings;
 import milk.pureentities.entity.WalkingEntity;
 
 public abstract class WalkingAnimal extends WalkingEntity implements Animal{
@@ -37,7 +38,7 @@ public abstract class WalkingAnimal extends WalkingEntity implements Animal{
 
     @Override
     public boolean entityBaseTick(int tickDiff){
-        //Timings.timerEntityBaseTick.startTiming();
+        Timings.entityBaseTickTimer.startTiming();
 
         boolean hasUpdate = super.entityBaseTick(tickDiff);
 
@@ -53,7 +54,7 @@ public abstract class WalkingAnimal extends WalkingEntity implements Animal{
             this.setDataProperty(new ShortEntityData(DATA_AIR, 300));
         }
 
-        //Timings.timerEntityBaseTick.stopTiming();
+        Timings.entityBaseTickTimer.stopTiming();
         return hasUpdate;
     }
 

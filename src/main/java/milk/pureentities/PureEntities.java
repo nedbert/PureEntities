@@ -107,7 +107,7 @@ public class PureEntities extends PluginBase implements Listener{
 
     public void onEnable(){
         this.getServer().getPluginManager().registerEvents(this, this);
-        this.getServer().getScheduler().scheduleRepeatingTask(new AutoSpawnTask(), 200);
+        this.getServer().getScheduler().scheduleRepeatingTask(new AutoSpawnTask(), 250);
 
         Utils.logInfo("Plugin has been enabled");
     }
@@ -204,18 +204,16 @@ public class PureEntities extends PluginBase implements Listener{
         }
 
         Block block = ev.getBlock();
-        if(
-            (
-                block.getId() == Block.STONE
-                || block.getId() == Block.STONE_BRICK
-                || block.getId() == Block.STONE_WALL
-                || block.getId() == Block.STONE_BRICK_STAIRS
-            ) && block.getLevel().getBlockLightAt((int) block.x, (int) block.y, (int) block.z) < 12 && Utils.rand(1, 5) == 1
-        ){
-            Silverfish entity = (Silverfish) create("Silverfish", block.add(0.5, 0, 0.5));
+        if((block.getId() == Block.STONE
+            || block.getId() == Block.STONE_BRICK
+            || block.getId() == Block.STONE_WALL
+            || block.getId() == Block.STONE_BRICK_STAIRS
+        ) && block.getLevel().getBlockLightAt((int) block.x, (int) block.y, (int) block.z) < 12 && Utils.rand(1, 5) == 1){
+            //TODO: 돌만 붓시면 되긋나
+            /*Silverfish entity = (Silverfish) create("Silverfish", block.add(0.5, 0, 0.5));
             if(entity != null){
                 entity.spawnToAll();
-            }
+            }*/
         }
     }
 

@@ -13,7 +13,7 @@ public class AutoSpawnTask implements Runnable{
 
     public void run(){
         Server.getInstance().getOnlinePlayers().forEach((name, player) -> {
-            if(Utils.rand(1, 120) > 30){
+            if(Utils.rand(1, 190) > 55){
                 return;
             }
 
@@ -22,11 +22,7 @@ public class AutoSpawnTask implements Runnable{
             pos.z += this.getRandomSafeXZCoord(50, 26, 6);
             pos.y = this.getSafeYCoord(player.getLevel(), pos, 3);
 
-            if(
-                pos.y > 127
-                || pos.y < 1
-                || player.getLevel().getBlockIdAt((int) pos.x, (int) pos.y, (int) pos.z) == Block.AIR
-            ){
+            if(pos.y > 127 || pos.y < 1 || player.getLevel().getBlockIdAt((int) pos.x, (int) pos.y, (int) pos.z) == Block.AIR){
                 return;
             }
 
