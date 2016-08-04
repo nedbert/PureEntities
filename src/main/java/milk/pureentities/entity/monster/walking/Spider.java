@@ -102,7 +102,7 @@ public class Spider extends WalkingMonster{
                 if(target instanceof EntityCreature){
                     if(distance <= this.getWidth() && this.y - target.y > 1){
                         this.motionY = -this.getGravity() * 4;
-                        if(this.attackDelay < 25){
+                        if(this.attackDelay < 20){
                             this.motionX = this.getSpeed() * 0.23 * (x / diff);
                             this.motionZ = this.getSpeed() * 0.23 * (z / diff);
                         }else{
