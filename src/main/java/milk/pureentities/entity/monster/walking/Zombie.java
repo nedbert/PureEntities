@@ -126,7 +126,7 @@ public class Zombie extends WalkingMonster implements EntityAgeable{
         if(
             !this.isOnFire()
             && !this.level.isRaining()
-            && (time < Level.TIME_NIGHT || time >= Level.TIME_SUNRISE)
+            && !(time >= Level.TIME_NIGHT && time < Level.TIME_SUNRISE)
         ){
             this.setOnFire(100);
         }

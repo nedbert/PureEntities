@@ -133,13 +133,15 @@ public class Blaze extends FlyingMonster{
         Block block = that.getSide(sides[this.getDirection()]);
         if(
             !block.canPassThrough()
-                && block.getSide(Block.SIDE_UP).canPassThrough()
-                && that.getSide(Block.SIDE_UP, 2).canPassThrough()
-            ){
+            && block.getSide(Block.SIDE_UP).canPassThrough()
+            && that.getSide(Block.SIDE_UP, 2).canPassThrough()
+        ){
             if(block instanceof BlockFence || block instanceof BlockFenceGate){
-                this.motionY = this.getGravity() * 2;
-            }else{
+                this.motionY = this.getGravity();
+            }else if(this.motionY <= this.getGravity() * 4){
                 this.motionY = this.getGravity() * 4;
+            }else{
+                this.motionY += this.getGravity() * 0.25;
             }
             return true;
         }

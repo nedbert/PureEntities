@@ -104,9 +104,11 @@ public abstract class WalkingEntity extends BaseEntity{
             && that.getSide(Block.SIDE_UP, 2).canPassThrough()
         ){
             if(block instanceof BlockFence || block instanceof BlockFenceGate){
-                this.motionY = this.getGravity() * 2;
-            }else{
+                this.motionY = this.getGravity();
+            }else if(this.motionY <= this.getGravity() * 4){
                 this.motionY = this.getGravity() * 4;
+            }else{
+                this.motionY += this.getGravity() * 0.25;
             }
             return true;
         }
