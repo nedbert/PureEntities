@@ -4,6 +4,12 @@ Development: **[SW-Team](https://github.com/SW-Team)**
 PureEntities is a Plug-in that makes implement the entity.
 This Plug-in provides a simple Entity AI.
 
+## How to use this plugin
+1. extract this plugin zip & open that folder
+2. start bash or cmd
+3. write 'mvn install'
+4. you move the PureEntities.jar file to plugin forlder
+
 ## Notice
 #### Welcome Github issue!
 This plug-in is in development. Therefore, It is possible to function abnormally.
@@ -43,10 +49,6 @@ PocketMine-MP Version : [PureEntities-PMMP](https://github.com/milk0417/PureEnti
   * PigZombie, Wolf, Ocelot
     * `boolean isAngry()`
     * `void setAngry(int angry)`
-
-## How to use this plugin
-mvn 빌드를 하세영!
-mvn install! m!v!n! install!
 
 ## Example
 ``` java

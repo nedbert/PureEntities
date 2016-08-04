@@ -10,6 +10,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.timings.Timings;
 import milk.pureentities.entity.monster.WalkingMonster;
 import milk.pureentities.util.Utils;
 
@@ -118,7 +119,7 @@ public class Zombie extends WalkingMonster implements EntityAgeable{
 
     @Override
     public boolean entityBaseTick(int tickDiff){
-        //Timings.timerEntityBaseTick.startTiming();
+        Timings.entityBaseTickTimer.startTiming();
 
         boolean hasUpdate = super.entityBaseTick(tickDiff);
 
@@ -131,7 +132,7 @@ public class Zombie extends WalkingMonster implements EntityAgeable{
             this.setOnFire(100);
         }
 
-        //Timings.timerEntityBaseTick.stopTiming();
+        Timings.entityBaseTickTimer.stopTiming();
         return hasUpdate;
     }
 
