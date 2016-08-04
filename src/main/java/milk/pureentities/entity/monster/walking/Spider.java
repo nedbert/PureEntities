@@ -88,6 +88,7 @@ public class Spider extends WalkingMonster{
         }
 
         Vector3 before = this.target;
+        boolean isJump = false;
         this.checkTarget();
         if(this.target instanceof EntityCreature || before != this.target){
             double x = this.target.x - this.x;
@@ -99,7 +100,7 @@ public class Spider extends WalkingMonster{
             double distance = Math.sqrt(Math.pow(this.x - target.x, 2) + Math.pow(this.z - target.z, 2));
             if(distance <= 2){
                 if(target instanceof EntityCreature){
-                    if(distance <= (this.getWidth() + 0.0d) / 2 + 0.05 && Math.abs(target.y - this.y) < 1){
+                    if(distance <= (this.getWidth() + 0.0d) / 2 + 0.05 && Math.abs(target.y - this.y) <= 1.5){
                         if(this.attackDelay < 10){
                             this.motionX = this.getSpeed() * 0.23 * (x / diff);
                             this.motionZ = this.getSpeed() * 0.23 * (z / diff);
@@ -109,6 +110,7 @@ public class Spider extends WalkingMonster{
                             this.attackEntity((Entity) target);
                         }
                     }else{
+                        isJump = true;
                         if(!this.isFriendly()){
                             this.motionY = 0.15;
                         }
@@ -121,6 +123,8 @@ public class Spider extends WalkingMonster{
             }else{
                 this.motionX = this.getSpeed() * 0.15 * (x / diff);
                 this.motionZ = this.getSpeed() * 0.15 * (z / diff);
+
+                isJump = this.checkJump(this.motionX * tickDiff, this.motionZ * tickDiff);
             }
             this.yaw = Math.toDegrees(-Math.atan2(x / diff, z / diff));
             this.pitch = y == 0 ? 0 : Math.toDegrees(-Math.atan2(y, Math.sqrt(x * x + z * z)));
@@ -128,7 +132,6 @@ public class Spider extends WalkingMonster{
 
         double dx = this.motionX * tickDiff;
         double dz = this.motionZ * tickDiff;
-        boolean isJump = this.checkJump(dx, dz);
         if(this.stayTime > 0){
             this.stayTime -= tickDiff;
             this.move(0, this.motionY * tickDiff, 0);
@@ -184,7 +187,7 @@ public class Spider extends WalkingMonster{
 
     @Override
     public void attackEntity(Entity player){
-        if(((this.isFriendly() && !(player instanceof Player)) || !this.isFriendly())){
+        if(!this.isFriendly() || !(player instanceof Player)){
             this.attackDelay = 0;
             HashMap<Integer, Float> damage = new HashMap<>();
             damage.put(EntityDamageEvent.MODIFIER_BASE, (float) this.getDamage());
