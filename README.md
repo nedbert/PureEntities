@@ -44,6 +44,10 @@ PocketMine-MP Version : [PureEntities-PMMP](https://github.com/milk0417/PureEnti
     * `boolean isAngry()`
     * `void setAngry(int angry)`
 
+## How to use this plugin
+mvn 빌드를 하세영!
+mvn install! m!v!n! install!
+
 ## Example
 ``` java
 Server.getInstance().getDefaultLevel().getEntities().forEach((id, entity) -> {
