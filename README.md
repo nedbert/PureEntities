@@ -4,11 +4,11 @@ Development: **[SW-Team](https://github.com/SW-Team)**
 PureEntities is a Plug-in that makes implement the entity.
 This Plug-in provides a simple Entity AI.
 
-## How to use this plugin
-1. extract this plugin zip & open that folder
-2. start bash or cmd
-3. write 'mvn install'
-4. you move the PureEntities.jar file to plugin forlder
+## How to build
+1. Extract [plugin.zip](https://github.com/SW-Team/PureEntities/archive/master.zip)
+2. Enter to the extracted folder
+3. Run `mvn install` command from shell
+4. Move the build output(PureEntities.jar) to `${NUKKIT_DIR}/plugins` folder
 
 ## Notice
 #### Welcome Github issue!
