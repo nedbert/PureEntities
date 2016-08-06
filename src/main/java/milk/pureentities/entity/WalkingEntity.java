@@ -97,6 +97,10 @@ public abstract class WalkingEntity extends BaseEntity{
 
         int[] sides = {Block.SIDE_SOUTH, Block.SIDE_WEST, Block.SIDE_NORTH, Block.SIDE_EAST};
         Block that = this.getLevel().getBlock(new Vector3(NukkitMath.floorDouble(this.x + dx), (int) this.y, NukkitMath.floorDouble(this.z + dz)));
+        if(this.getDirection() == null){
+            return false;
+        }
+
         Block block = that.getSide(sides[this.getDirection()]);
         if(
             !block.canPassThrough()
