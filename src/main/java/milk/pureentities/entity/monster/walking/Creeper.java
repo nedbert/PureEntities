@@ -75,7 +75,7 @@ public class Creeper extends WalkingMonster implements EntityExplosive{
     }
 
     @Override
-    public void explode(){
+    /*public void explode(){
         ExplosionPrimeEvent ev = new ExplosionPrimeEvent(this, 2.8);
         this.server.getPluginManager().callEvent(ev);
 
@@ -87,7 +87,7 @@ public class Creeper extends WalkingMonster implements EntityExplosive{
             explosion.explodeB();
         }
         this.close();
-    }
+    }*/
 
     @Override
     public boolean onUpdate(int currentTick){
