@@ -60,13 +60,13 @@ public class AutoSpawnTask implements Runnable{
                     this.createEntity("CaveSpider", pos.add(0, 1.8, 0));
                     return;
                 }
-                if(blockLightLevel < 2 && Utils.rand(1, 100) <= 20 && blockId == Block.STONE){
+                /*if(blockLightLevel < 2 && Utils.rand(1, 100) <= 20 && blockId == Block.STONE){
                     this.createEntity("Silverfish", pos.add(0, 1.3, 0));
                     return;
-                }
+                }*/
                 switch(Utils.rand(1, 6)){
                     case 1:
-                        this.createEntity("Creeper", pos.add(0, 2.8, 0));
+                        //this.createEntity("Creeper", pos.add(0, 2.8, 0));
                         break;
                     case 2:
                         this.createEntity("Enderman", pos.add(0, 3.8, 0));
@@ -97,12 +97,12 @@ public class AutoSpawnTask implements Runnable{
                     this.createEntity("Slime", pos.add(0, 2.2, 0));
                     return;
                 }
-                if(blockId == Block.GRASS && Utils.rand(1, 100) <= 30){
+                /*if(blockId == Block.GRASS && Utils.rand(1, 100) <= 30){
                     if(biomeId == Biome.FOREST || biomeId == Biome.BIRCH_FOREST || biomeId == Biome.TAIGA){
                         this.createEntity("Wolf", pos.add(0, 1.9, 0));
                         return;
                     }
-                }
+                }*/
                 if(blockId == Block.GRASS && Utils.rand(1, 100) <= 10){
                     this.createEntity("IronGolem", pos.add(0, 3.1, 0));
                     return;
