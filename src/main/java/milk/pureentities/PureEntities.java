@@ -59,13 +59,13 @@ public class PureEntities extends PluginBase implements Listener{
 
     public void onLoad(){
         ArrayList<Class<? extends Entity>> clazz2 = new ArrayList<>();
-        clazz2.add(Blaze.class);
+        //clazz2.add(Blaze.class);
         clazz2.add(CaveSpider.class);
         clazz2.add(Chicken.class);
         clazz2.add(Cow.class);
-        clazz2.add(Creeper.class);
+        //clazz2.add(Creeper.class);
         clazz2.add(Enderman.class);
-        clazz2.add(Ghast.class);
+        //clazz2.add(Ghast.class);
         clazz2.add(IronGolem.class);
         //clazz2.add(MagmaCube.class);
         clazz2.add(Mooshroom.class);
