@@ -11,7 +11,7 @@ import milk.pureentities.util.Utils;
 
 public class AutoSpawnTask implements Runnable{
 
-    public void run(){
+    /*public void run(){
         Server.getInstance().getOnlinePlayers().forEach((name, player) -> {
             if(Utils.rand(1, 210) > 40){
                 return;
@@ -215,5 +215,5 @@ public class AutoSpawnTask implements Runnable{
             }
         }
         return y;
-    }
+    }*/
 }
