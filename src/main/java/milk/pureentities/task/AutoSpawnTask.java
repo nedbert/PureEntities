@@ -1,15 +1,6 @@
 package milk.pureentities.task;
 
-import cn.nukkit.Server;
-import cn.nukkit.block.Block;
-import cn.nukkit.entity.Entity;
-import cn.nukkit.level.Level;
-import cn.nukkit.level.Position;
-import cn.nukkit.level.generator.biome.Biome;
-import milk.pureentities.PureEntities;
-import milk.pureentities.util.Utils;
-
-public class AutoSpawnTask implements Runnable{
+public class AutoSpawnTask {
 
     /*public void run(){
         Server.getInstance().getOnlinePlayers().forEach((name, player) -> {
